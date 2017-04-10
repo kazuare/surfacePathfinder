@@ -8,6 +8,14 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.Triangle2D;
 
 public class TrianglesToGraphConverter {
+	public static double edgeWeight(Point a, Point b){
+		return Math.abs(a.alt-b.alt) +
+				Math.sqrt(
+					(a.x-b.x)*(a.x-b.x)+
+					(a.y-b.y)*(a.y-b.y)+
+					(a.alt-b.alt)*(a.alt-b.alt)
+				);
+	}
 	public static SimpleWeightedGraph<Integer,DefaultWeightedEdge> convert(List<Triangle2D> triangles){
 		
 		SimpleWeightedGraph<Integer,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Integer,DefaultWeightedEdge>(DefaultWeightedEdge.class);
@@ -28,15 +36,15 @@ public class TrianglesToGraphConverter {
 			
 			if(!graph.containsEdge(a.id, b.id)){
 				DefaultWeightedEdge e = graph.addEdge(a.id,b.id);
-				graph.setEdgeWeight(e, Math.abs(a.alt-b.alt));
+				graph.setEdgeWeight(e, edgeWeight(a,b));
 			}
 			if(!graph.containsEdge(a.id, c.id)){
 				DefaultWeightedEdge e = graph.addEdge(a.id,c.id);
-				graph.setEdgeWeight(e, Math.abs(a.alt-c.alt));
+				graph.setEdgeWeight(e, edgeWeight(a,c));
 			}
 			if(!graph.containsEdge(c.id, b.id)){
 				DefaultWeightedEdge e = graph.addEdge(c.id,b.id);
-				graph.setEdgeWeight(e, Math.abs(c.alt-b.alt));
+				graph.setEdgeWeight(e, edgeWeight(b,c));
 			}
 		}
 		
