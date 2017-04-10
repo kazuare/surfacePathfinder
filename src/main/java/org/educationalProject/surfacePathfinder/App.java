@@ -16,13 +16,25 @@ public class App {
 
 	public static void main(String[] args) {
 		try {
+			long startTime;
+			long endTime;
 			
+			startTime = System.nanoTime();
 			Vector<Vector2D> points = ObjFileParser.getPoints("C:\\digdes\\map.obj");
-			System.out.println("Reading is finished");
+			endTime = System.nanoTime();
+			System.out.println("Reading is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			
+			startTime = System.nanoTime();
 			List<Triangle2D> triangles = Triangulator.triangulate(points);
-			System.out.println("Triangulation is finished");
+			endTime = System.nanoTime();
+			System.out.println("Triangulation is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			
+			startTime = System.nanoTime();
 			SimpleWeightedGraph<Integer,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles);
-			System.out.println("Graph building is finished");
+			endTime = System.nanoTime();
+			System.out.println("Graph building is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			
+			startTime = System.nanoTime();
 			AStarShortestPath<Integer,DefaultWeightedEdge> astar = 
 					new AStarShortestPath<Integer,DefaultWeightedEdge>(
 						graph,
@@ -30,18 +42,15 @@ public class App {
 					);
 			GraphPath path = astar.getPath((int)(Math.random()*points.size()), (int)(Math.random()*points.size()));
 			List nodes = path.getVertexList();
-			System.out.println("Pathfinding is finished");
+			endTime = System.nanoTime();
+			System.out.println("Pathfinding is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			
 			Vector<Vector2D> pathCoords = new Vector<Vector2D>();
 			for(int i = 0; i < nodes.size(); i++)
 				pathCoords.add(points.get((int) nodes.get(i)));
-			System.out.println("Id to coords mapping is finished");
 			MapVisualizer visualizer = new MapVisualizer();
 			visualizer.run(triangles,pathCoords);
-			System.out.println("Visualizing is finished");
-			
-			
-				
-			
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
