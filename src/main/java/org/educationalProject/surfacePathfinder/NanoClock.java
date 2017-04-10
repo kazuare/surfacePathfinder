@@ -20,7 +20,7 @@ public class NanoClock {
 		if(ticked){
 			end = System.nanoTime();
 			ticked = false;
-			System.out.println((end - start)/1000000000.0);
+			System.out.println("elapsed time: " + (end - start)/1000000000.0);
 		}else{
 			throw new TicTocException("no tic - no toc!");
 		}
@@ -30,8 +30,8 @@ public class NanoClock {
 	 * ends time measuring and returns the result. requires tic invocation.
 	 * */
 	public double tocd() throws Exception{
+		end = System.nanoTime();
 		if(ticked){
-			end = System.nanoTime();
 			ticked = false;
 			return (end - start)/1000000000.0;
 		}else{

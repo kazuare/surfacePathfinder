@@ -67,8 +67,9 @@ public class App {
 			for(int i = 0; i < nodes.size(); i++)
 				pathCoords.add(points.get((int) nodes.get(i)));
 			MapVisualizer visualizer = new MapVisualizer();
-			visualizer.run(triangles,pathCoords);
-						
+			visualizer.setData(triangles, pathCoords);
+			visualizer.visualize();
+			System.out.println("end");			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
