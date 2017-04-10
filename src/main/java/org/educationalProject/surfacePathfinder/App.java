@@ -40,6 +40,10 @@ public class App {
 						graph,
 						new ALTAdmissibleHeuristic<Integer,DefaultWeightedEdge>(graph,graph.vertexSet())
 					);
+			endTime = System.nanoTime();
+			System.out.println("Euristic building is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			
+			startTime = System.nanoTime();
 			GraphPath path = astar.getPath((int)(Math.random()*points.size()), (int)(Math.random()*points.size()));
 			List nodes = path.getVertexList();
 			endTime = System.nanoTime();
