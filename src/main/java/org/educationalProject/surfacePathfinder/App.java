@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.ALTAdmissibleHeuristic;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -44,10 +45,25 @@ public class App {
 			System.out.println("Euristic building is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
 			
 			startTime = System.nanoTime();
-			GraphPath path = astar.getPath((int)(Math.random()*points.size()), (int)(Math.random()*points.size()));
+			Integer a = (int)(Math.random()*points.size());
+			Integer b = (int)(Math.random()*points.size());
+			GraphPath path = astar.getPath(a, b);
 			List nodes = path.getVertexList();
 			endTime = System.nanoTime();
 			System.out.println("Pathfinding is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			
+			startTime = System.nanoTime();
+			DijkstraShortestPath<Integer,DefaultWeightedEdge> alternative = new DijkstraShortestPath<Integer,DefaultWeightedEdge>(graph);
+			List dijkstraNodes = alternative.getPath(a, b).getVertexList();
+			endTime = System.nanoTime();
+			System.out.println("Alternative algo is finished, phase duration is: " + (endTime - startTime)/1000000000.0);
+			boolean equal = true;
+			for(int i = 0; i < dijkstraNodes.size(); i++)
+				if(!dijkstraNodes.get(i).equals(nodes.get(i)))
+					equal = false;
+			System.out.println("alternative and main are equal: " + equal);
+			
+			
 			
 			Vector<Vector2D> pathCoords = new Vector<Vector2D>();
 			for(int i = 0; i < nodes.size(); i++)
