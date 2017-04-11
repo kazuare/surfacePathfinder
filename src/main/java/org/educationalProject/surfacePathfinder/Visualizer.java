@@ -5,6 +5,8 @@ import com.jogamp.opengl.glu.GLU;
 public abstract class Visualizer {
 	protected boolean done = false;
 	protected boolean dataSet = false;
+	protected int width;
+	protected int height;
 	
     protected void setup( GL2 gl2, int width, int height ) {
         gl2.glMatrixMode( GL2.GL_PROJECTION );
@@ -18,12 +20,18 @@ public abstract class Visualizer {
 
         gl2.glViewport( 0, 0, width, height );
     }
+    private void setResolution(int width, int height){
+    	this.width = width;
+    	this.height = height;
+    }
     
     protected void checkAndDisplay( GL2 gl2, int width, int height ){
-    	if(dataSet)
-    		display(gl2, width, height);
+    	if(dataSet){
+    		setResolution(width, height);
+    		display(gl2);
+    	}
     	else System.out.println("Warning: no data is set");
     }
 
-    protected abstract void display( GL2 gl2, int width, int height );
+    protected abstract void display( GL2 gl2 );
 }
