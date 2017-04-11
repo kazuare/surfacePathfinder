@@ -21,6 +21,6 @@ public class VisualizerEventListener implements GLEventListener{
     
     @Override
     public void display( GLAutoDrawable glautodrawable ){
-    	visualizer.display( glautodrawable.getGL().getGL2(), glautodrawable.getSurfaceWidth(), glautodrawable.getSurfaceHeight() );
+    	visualizer.checkAndDisplay( glautodrawable.getGL().getGL2(), glautodrawable.getSurfaceWidth(), glautodrawable.getSurfaceHeight() );
     }
 }

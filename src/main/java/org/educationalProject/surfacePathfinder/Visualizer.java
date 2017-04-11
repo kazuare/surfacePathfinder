@@ -18,6 +18,12 @@ public abstract class Visualizer {
 
         gl2.glViewport( 0, 0, width, height );
     }
+    
+    protected void checkAndDisplay( GL2 gl2, int width, int height ){
+    	if(dataSet)
+    		display(gl2, width, height);
+    	else System.out.println("Warning: no data is set");
+    }
 
     protected abstract void display( GL2 gl2, int width, int height );
 }
