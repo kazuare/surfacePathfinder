@@ -3,6 +3,9 @@ package org.educationalProject.surfacePathfinder;
 import java.util.List;
 import java.util.Vector;
 
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
@@ -10,10 +13,18 @@ import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 
 public abstract class MapVisualizer extends Visualizer {
-	protected List<Triangle2D> triangles;
 	protected List<Point> path;
+	protected List<Triangle2D> triangles;
+	protected SimpleWeightedGraph<Point,DefaultWeightedEdge> graph;
+
+	public void setData(List<Triangle2D> triangles, List<Point> pathCoords, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+		this.triangles = triangles;
+		this.path = pathCoords;		
+		this.graph = graph;
+		dataSet = true;
+	}
 	
-	protected abstract void drawTriangles( GL2 gl2 );
+	protected abstract void drawContent( GL2 gl2 );
 	
 	protected double maxX = Double.NEGATIVE_INFINITY;
 	protected double minX = Double.POSITIVE_INFINITY;
@@ -21,12 +32,6 @@ public abstract class MapVisualizer extends Visualizer {
 	protected double minY = Double.POSITIVE_INFINITY;
 	protected double maxAlt = Double.NEGATIVE_INFINITY;
 	protected double minAlt = Double.POSITIVE_INFINITY;
-	
-	public void setData(List<Triangle2D> triangles, List<Point> pathCoords){
-		this.triangles = triangles;
-		this.path = pathCoords;		
-		dataSet = true;
-	}
 	
 	protected float normalizeWidth(double data){
 		return (float) (width * (data - minX)/(maxX - minX));
@@ -106,7 +111,7 @@ public abstract class MapVisualizer extends Visualizer {
 	        
 			findExtremes();				
 			
-			drawTriangles(gl2);
+			drawContent(gl2);
 			
 			drawPath(gl2);
 			

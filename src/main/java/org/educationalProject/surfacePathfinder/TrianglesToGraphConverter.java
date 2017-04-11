@@ -17,7 +17,7 @@ public class TrianglesToGraphConverter {
 				);
 	}
 	
-	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convertToPointGraph(List<Triangle2D> triangles){
+	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convert(List<Triangle2D> triangles){
 		
 		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		
