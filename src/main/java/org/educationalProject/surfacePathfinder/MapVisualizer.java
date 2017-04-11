@@ -13,7 +13,7 @@ public abstract class MapVisualizer extends Visualizer {
 	protected List<Triangle2D> triangles;
 	protected Vector<Vector2D> path;
 	
-	protected abstract void drawTriangles( GL2 gl2, int width, int height );
+	protected abstract void drawTriangles( GL2 gl2 );
 	
 	protected double maxX = Double.NEGATIVE_INFINITY;
 	protected double minX = Double.POSITIVE_INFINITY;
@@ -28,16 +28,16 @@ public abstract class MapVisualizer extends Visualizer {
 		dataSet = true;
 	}
 	
-	protected float normalizeWidth(double data, double min, double max, int width){
-		return (float) (width * (data - min)/(max - min));
+	protected float normalizeWidth(double data){
+		return (float) (width * (data - minX)/(maxX - minX));
 	}
 	
-	protected float normalizeHeight(double data, double min, double max, int height){
-		return (float) (height * (data - min)/(max - min));
+	protected float normalizeHeight(double data){
+		return (float) (height * (data - minY)/(maxY - minY));
 	}
 	
-	protected float normalizeColor(double data, double min, double max){
-		return (float) ((data - min)/(max - min));
+	protected float normalizeColor(double data){
+		return (float) ((data - minAlt)/(maxAlt - minAlt));
 	}
 
 	protected void findExtremes(){
@@ -72,7 +72,7 @@ public abstract class MapVisualizer extends Visualizer {
 		}
 	}
 	
-	protected void drawPath( GL2 gl2, int width, int height ){
+	protected void drawPath( GL2 gl2 ){
 		
         gl2.glColor3f( 1, 1, 1 );
 
@@ -82,28 +82,28 @@ public abstract class MapVisualizer extends Visualizer {
 		int size = path.size();
         for(int i = 0; i < size-1; i++){
         	gl2.glVertex2f(
-        		normalizeWidth(path.get(i).x, minX, maxX, width),
-        		normalizeHeight(path.get(i).y, minY, maxY, height)
+        		normalizeWidth(path.get(i).x),
+        		normalizeHeight(path.get(i).y)
         	);
         	gl2.glVertex2f(
-        		normalizeWidth(path.get(i+1).x, minX, maxX, width), 
-        		normalizeHeight(path.get(i+1).y, minY, maxY, height)
+        		normalizeWidth(path.get(i+1).x), 
+        		normalizeHeight(path.get(i+1).y)
         	);
         }
         
         gl2.glEnd();
 	}
 	
-	public void display( GL2 gl2, int width, int height ){
+	public void display( GL2 gl2 ){
 		if(!done){
 			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
 	        gl2.glLoadIdentity();
 	        
 			findExtremes();				
 			
-			drawTriangles(gl2, width, height);
+			drawTriangles(gl2);
 			
-			drawPath(gl2, width, height);
+			drawPath(gl2);
 			
 		}
 		
