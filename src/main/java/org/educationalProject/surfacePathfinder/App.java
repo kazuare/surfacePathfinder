@@ -32,29 +32,29 @@ public class App {
 			System.out.println("Triangulation is finished, phase duration is: " + resultingTime);
 			
 			clock.tic();
-			SimpleWeightedGraph<Integer,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles);
+			SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convertToPointGraph(triangles);
 			resultingTime = clock.tocd();
 			System.out.println("Graph building is finished, phase duration is: " + resultingTime);
 			
 			clock.tic();
-			AStarShortestPath<Integer,DefaultWeightedEdge> astar = 
-					new AStarShortestPath<Integer,DefaultWeightedEdge>(
+			AStarShortestPath<Point,DefaultWeightedEdge> astar = 
+					new AStarShortestPath<Point,DefaultWeightedEdge>(
 						graph,
-						new ALTAdmissibleHeuristic<Integer,DefaultWeightedEdge>(graph,graph.vertexSet())
+						new ALTAdmissibleHeuristic<Point,DefaultWeightedEdge>(graph,graph.vertexSet())
 					);
 			resultingTime = clock.tocd();
 			System.out.println("Euristic building is finished, phase duration is: " + resultingTime);
 			
 			clock.tic();
-			Integer a = (int)(Math.random()*points.size());
-			Integer b = (int)(Math.random()*points.size());
-			List<Integer> nodes = astar.getPath(a, b).getVertexList();
+			Point a = (Point)points.get((int)(Math.random()*points.size()));
+			Point b = (Point)points.get((int)(Math.random()*points.size()));
+			List<Point> nodes = astar.getPath(a, b).getVertexList();
 			resultingTime = clock.tocd();
 			System.out.println("Pathfinding is finished, phase duration is: " + resultingTime);
 			
 			clock.tic();
-			DijkstraShortestPath<Integer,DefaultWeightedEdge> alternative = new DijkstraShortestPath<Integer,DefaultWeightedEdge>(graph);
-			List<Integer> dijkstraNodes = alternative.getPath(a, b).getVertexList();
+			DijkstraShortestPath<Point,DefaultWeightedEdge> alternative = new DijkstraShortestPath<Point,DefaultWeightedEdge>(graph);
+			List<Point> dijkstraNodes = alternative.getPath(a, b).getVertexList();
 			resultingTime = clock.tocd();
 			System.out.println("Alternative algo is finished, phase duration is: " + resultingTime);
 			
@@ -64,18 +64,15 @@ public class App {
 					equal = false;
 			System.out.println("alternative and main are equal: " + equal);
 			
-			Vector<Vector2D> pathCoords = new Vector<Vector2D>();
-			for(int i = 0; i < nodes.size(); i++)
-				pathCoords.add(points.get((int) nodes.get(i)));
-			
+		
 			DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
-			vis1.setData(triangles, pathCoords);
+			vis1.setData(triangles, nodes);
 			AwtWindow.start(vis1);
 
 			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
-			vis2.setData(triangles, pathCoords);
+			vis2.setData(triangles, nodes);
 			AwtWindow.start(vis2);
-			
+		
 			System.out.println("end");			
 		} catch (Exception e) {
 			e.printStackTrace();

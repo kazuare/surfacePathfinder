@@ -11,7 +11,7 @@ import io.github.jdiemke.triangulation.Vector2D;
 
 public abstract class MapVisualizer extends Visualizer {
 	protected List<Triangle2D> triangles;
-	protected Vector<Vector2D> path;
+	protected List<Point> path;
 	
 	protected abstract void drawTriangles( GL2 gl2 );
 	
@@ -22,7 +22,7 @@ public abstract class MapVisualizer extends Visualizer {
 	protected double maxAlt = Double.NEGATIVE_INFINITY;
 	protected double minAlt = Double.POSITIVE_INFINITY;
 	
-	public void setData(List<Triangle2D> triangles, Vector<Vector2D> pathCoords){
+	public void setData(List<Triangle2D> triangles, List<Point> pathCoords){
 		this.triangles = triangles;
 		this.path = pathCoords;		
 		dataSet = true;
