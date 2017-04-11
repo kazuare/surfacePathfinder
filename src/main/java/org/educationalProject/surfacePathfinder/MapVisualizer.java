@@ -36,6 +36,17 @@ public abstract class MapVisualizer extends Visualizer {
 		return (float) (height * (data - minY)/(maxY - minY));
 	}
 	
+	protected void drawPoint(GL2 gl2, Vector2D a){
+		gl2.glVertex2f(
+			normalizeWidth(a.x), 
+			normalizeHeight(a.y)
+		); 
+	}
+	protected void drawColoredPoint(GL2 gl2, Point a){
+		gl2.glColor3f(1, normalizeColor(a.alt), 0);	
+		drawPoint(gl2, a);
+	}
+	
 	protected float normalizeColor(double data){
 		return (float) ((data - minAlt)/(maxAlt - minAlt));
 	}
@@ -81,14 +92,8 @@ public abstract class MapVisualizer extends Visualizer {
 		
 		int size = path.size();
         for(int i = 0; i < size-1; i++){
-        	gl2.glVertex2f(
-        		normalizeWidth(path.get(i).x),
-        		normalizeHeight(path.get(i).y)
-        	);
-        	gl2.glVertex2f(
-        		normalizeWidth(path.get(i+1).x), 
-        		normalizeHeight(path.get(i+1).y)
-        	);
+        	drawPoint(gl2, path.get(i));
+        	drawPoint(gl2, path.get(i+1));
         }
         
         gl2.glEnd();
