@@ -8,33 +8,11 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 
 	protected void drawTriangles( GL2 gl2 ){
 		gl2.glBegin(gl2.GL_TRIANGLES);	
-		float color;
 		for(Triangle2D triangle : triangles){
-			
-			Point a = (Point)triangle.a;
-			Point b = (Point)triangle.b;
-			Point c = (Point)triangle.c;
-			
-			color = normalizeColor(a.alt);
-			gl2.glColor3f(1, color, 0);						  
-			gl2.glVertex2f(
-				normalizeWidth(a.x), 
-				normalizeHeight(a.y)
-			); 
 
-			color = normalizeColor(b.alt);
-			gl2.glColor3f(1, color, 0);						  
-			gl2.glVertex2f(
-				normalizeWidth(b.x), 
-				normalizeHeight(b.y)
-			);  
-
-			color = normalizeColor(c.alt);
-			gl2.glColor3f(1, color, 0);						  
-			gl2.glVertex2f(
-				normalizeWidth(c.x), 
-				normalizeHeight(c.y)
-			); 
+			drawColoredPoint(gl2, (Point)triangle.a);
+			drawColoredPoint(gl2, (Point)triangle.b);
+			drawColoredPoint(gl2, (Point)triangle.c);
 			
 		}
 		gl2.glEnd();
@@ -44,34 +22,13 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 		gl2.glColor3f(0.5f, 0, 0.5f);
 		for(Triangle2D triangle : triangles){
 			
-			Point a = (Point)triangle.a;
-			Point b = (Point)triangle.b;
-			Point c = (Point)triangle.c;
+			drawPoint(gl2, triangle.a);
+			drawPoint(gl2, triangle.b);
+			drawPoint(gl2, triangle.b);
+			drawPoint(gl2, triangle.c);
+			drawPoint(gl2, triangle.c);
+			drawPoint(gl2, triangle.a);
 			
-			gl2.glVertex2f(
-	        	normalizeWidth(a.x), 
-	        	normalizeHeight(a.y)
-	        ); 
-			gl2.glVertex2f(
-	        	normalizeWidth(b.x), 
-	        	normalizeHeight(b.y)
-	        );  
-			gl2.glVertex2f(
-	        	normalizeWidth(b.x), 
-	        	normalizeHeight(b.y)
-	        );
-			gl2.glVertex2f(
-	        	normalizeWidth(c.x), 
-	        	normalizeHeight(c.y)
-	        );
-			gl2.glVertex2f(
-	        	normalizeWidth(c.x), 
-	        	normalizeHeight(c.y)
-	        );
-			gl2.glVertex2f(
-	        	normalizeWidth(a.x), 
-	        	normalizeHeight(a.y)
-	        );
 		}
 		gl2.glEnd();
 	}
