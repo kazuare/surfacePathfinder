@@ -1,11 +1,10 @@
 package org.educationalProject.surfacePathfinder;
 
-import org.lwjgl.opengl.*;
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import java.util.List;
 import java.util.Vector;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
@@ -14,7 +13,7 @@ public abstract class MapVisualizer extends Visualizer {
 	protected List<Triangle2D> triangles;
 	protected Vector<Vector2D> path;
 	
-	protected abstract void drawTriangles();
+	protected abstract void drawTriangles( GL2 gl2, int width, int height );
 	
 	protected double maxX = Double.NEGATIVE_INFINITY;
 	protected double minX = Double.POSITIVE_INFINITY;
@@ -29,27 +28,18 @@ public abstract class MapVisualizer extends Visualizer {
 		dataSet = true;
 	}
 	
-	public void run() {
-		init();
-		loop();
-		
-		// Free the window callbacks and destroy the window
-		glfwFreeCallbacks(window);
-		glfwDestroyWindow(window);
-
-		// Terminate GLFW and free the error callback
-		glfwTerminate();
-		glfwSetErrorCallback(null).free();
+	protected float normalizeWidth(double data, double min, double max, int width){
+		return (float) (width * (data - min)/(max - min));
 	}
 	
-	protected float normalizeCoords(double data, double min, double max){
-		return (float) (2*(data - min)/(max - min)-1);
+	protected float normalizeHeight(double data, double min, double max, int height){
+		return (float) (height * (data - min)/(max - min));
 	}
 	
 	protected float normalizeColor(double data, double min, double max){
 		return (float) ((data - min)/(max - min));
 	}
-	
+
 	protected void findExtremes(){
 		for(Triangle2D triangle : triangles){
 			Point a = (Point)triangle.a;
@@ -82,49 +72,42 @@ public abstract class MapVisualizer extends Visualizer {
 		}
 	}
 	
-	protected void drawPath(){
-		glColor3f(1f, 1f, 1f);
-		glLineWidth(4f);
-        glBegin(GL_LINES);
-          int size = path.size();
-          for(int i = 0; i < size-1; i++){
-        	  glVertex2f(normalizeCoords(path.get(i).x,minX,maxX), normalizeCoords(path.get(i).y,minY,maxY));
-          	  glVertex2f(normalizeCoords(path.get(i+1).x,minX,maxX), normalizeCoords(path.get(i+1).y,minY,maxY));
-          }
-        glEnd();
+	protected void drawPath( GL2 gl2, int width, int height ){
+		
+        gl2.glColor3f( 1, 1, 1 );
+
+		gl2.glLineWidth(3);
+		gl2.glBegin( GL.GL_LINES );
+		
+		int size = path.size();
+        for(int i = 0; i < size-1; i++){
+        	gl2.glVertex2f(
+        		normalizeWidth(path.get(i).x, minX, maxX, width),
+        		normalizeHeight(path.get(i).y, minY, maxY, height)
+        	);
+        	gl2.glVertex2f(
+        		normalizeWidth(path.get(i+1).x, minX, maxX, width), 
+        		normalizeHeight(path.get(i+1).y, minY, maxY, height)
+        	);
+        }
+        
+        gl2.glEnd();
 	}
 	
-	private void loop() {
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
-		GL.createCapabilities();
-
-		// Set the clear color
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		
-		
-		// Run the rendering loop until the user has attempted to close
-		// the window or has pressed the ESCAPE key.
-		while ( !glfwWindowShouldClose(window) ) {
-			if(!done){
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-				
-				findExtremes();				
-				
-				drawTriangles();
-				
-				drawPath();
-				
-				glfwSwapBuffers(window); // swap the color buffers
-				done = true;
-			}
-			// Poll for window events. The key callback above will only be
-			// invoked during this call.
-			glfwPollEvents();
+	public void display( GL2 gl2, int width, int height ){
+		if(!done){
+			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
+	        gl2.glLoadIdentity();
+	        
+			findExtremes();				
+			
+			drawTriangles(gl2, width, height);
+			
+			drawPath(gl2, width, height);
 			
 		}
+		
+        
+ 
 	}
 }

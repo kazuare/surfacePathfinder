@@ -15,6 +15,7 @@ import io.github.jdiemke.triangulation.Vector2D;
 public class App {
 
 	public static void main(String[] args) {
+		
 		try {
 			double resultingTime;
 			
@@ -67,18 +68,18 @@ public class App {
 			for(int i = 0; i < nodes.size(); i++)
 				pathCoords.add(points.get((int) nodes.get(i)));
 			
-			MapVisualizer visualizer;
-			
-			visualizer = new DecolorizedMapVisualizer();
-			visualizer.setData(triangles, pathCoords);
-			visualizer.visualize();
+			DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
+			vis1.setData(triangles, pathCoords);
+			AwtWindow.start(vis1);
+
+			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
+			vis2.setData(triangles, pathCoords);
+			AwtWindow.start(vis2);
 			
 			System.out.println("end");			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-
 	}
 
 }

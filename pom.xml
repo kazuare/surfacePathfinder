@@ -4,7 +4,7 @@
 
   <groupId>org.educationalProject</groupId>
   <artifactId>surfacePathfinder</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>surfacePathfinder</name>
@@ -14,160 +14,20 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
 	<maven.compiler.target>1.8</maven.compiler.target>
-    <natives.version>0.0.6</natives.version>
-    <lwjgl.version>3.1.1</lwjgl.version>
   </properties>
-
-  <repositories>
-        <repository>
-            <id>mavenNatives</id>
-            <name>Maven Natives Repository</name>
-            <url>http://mavennatives.googlecode.com/svn/repo</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
   <dependencies>
     <dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-glfw</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-jemalloc</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-nanovg</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-nfd</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-nuklear</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-openal</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-opengl</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-par</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-stb</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-tinyfd</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-vulkan</artifactId>
-		<version>${lwjgl.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-glfw</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-jemalloc</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-nanovg</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-nfd</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-nuklear</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-openal</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-opengl</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-par</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-stb</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.lwjgl</groupId>
-		<artifactId>lwjgl-tinyfd</artifactId>
-		<version>${lwjgl.version}</version>
-		<classifier>${lwjgl.natives}</classifier>
-		<scope>runtime</scope>
-	</dependency>
-	
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt-main</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jogamp.jogl</groupId>
+      <artifactId>jogl-all-main</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -183,65 +43,4 @@
     
   </dependencies>
   
-  <build>
-    <pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
- 
-            <plugin>
-                <groupId>com.googlecode.mavennatives</groupId>
-                <artifactId>maven-nativedependencies-plugin</artifactId>
-                <version>${natives.version}</version>
-                <executions>
-                    <execution>
-                        <id>unpacknatives</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <!--suppress MavenModelInspection (this line is for IDEA)-->
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </pluginManagement>
-    </build>
-    
-<profiles>
-	<profile>
-		<id>lwjgl-natives-linux></id>
-		<activation>
-			<os><family>unix</family></os>
-		</activation>
-		<properties>
-			<lwjgl.natives>natives-linux</lwjgl.natives>
-		</properties>
-	</profile>
-	<profile>
-		<id>lwjgl-natives-macos></id>
-		<activation>
-			<os><family>mac</family></os>
-		</activation>
-		<properties>
-			<lwjgl.natives>natives-macos</lwjgl.natives>
-		</properties>
-	</profile>
-	<profile>
-		<id>lwjgl-natives-windows></id>
-		<activation>
-			<os><family>windows</family></os>
-		</activation>
-		<properties>
-			<lwjgl.natives>natives-windows</lwjgl.natives>
-		</properties>
-	</profile>
-</profiles>
-
 </project>
