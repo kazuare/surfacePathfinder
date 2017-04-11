@@ -66,9 +66,13 @@ public class App {
 			Vector<Vector2D> pathCoords = new Vector<Vector2D>();
 			for(int i = 0; i < nodes.size(); i++)
 				pathCoords.add(points.get((int) nodes.get(i)));
-			MapVisualizer visualizer = new MapVisualizer();
+			
+			MapVisualizer visualizer;
+			
+			visualizer = new DecolorizedMapVisualizer();
 			visualizer.setData(triangles, pathCoords);
 			visualizer.visualize();
+			
 			System.out.println("end");			
 		} catch (Exception e) {
 			e.printStackTrace();
