@@ -1,12 +1,16 @@
 package org.educationalProject.surfacePathfinder;
 
+import java.util.List;
+
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import com.jogamp.opengl.GL2;
 
 import io.github.jdiemke.triangulation.Triangle2D;
 
 public class ColorizedMapVisualizer extends MapVisualizer{
-
-	protected void drawTriangles( GL2 gl2 ){
+	
+	protected void drawContent( GL2 gl2 ){
 		gl2.glBegin(gl2.GL_TRIANGLES);	
 		for(Triangle2D triangle : triangles){
 
@@ -20,16 +24,11 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 		gl2.glLineWidth(1);
 		gl2.glBegin(gl2.GL_LINES);
 		gl2.glColor3f(0.5f, 0, 0.5f);
-		for(Triangle2D triangle : triangles){
-			
-			drawPoint(gl2, triangle.a);
-			drawPoint(gl2, triangle.b);
-			drawPoint(gl2, triangle.b);
-			drawPoint(gl2, triangle.c);
-			drawPoint(gl2, triangle.c);
-			drawPoint(gl2, triangle.a);
-			
+		for(DefaultWeightedEdge edge : graph.edgeSet()){			
+			drawPoint(gl2, graph.getEdgeSource(edge));
+			drawPoint(gl2, graph.getEdgeTarget(edge));	      	        
 		}
+		
 		gl2.glEnd();
 	}
 }

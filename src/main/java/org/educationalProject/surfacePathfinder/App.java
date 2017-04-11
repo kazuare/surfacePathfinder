@@ -32,7 +32,7 @@ public class App {
 			System.out.println("Triangulation is finished, phase duration is: " + resultingTime);
 			
 			clock.tic();
-			SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convertToPointGraph(triangles);
+			SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles);
 			resultingTime = clock.tocd();
 			System.out.println("Graph building is finished, phase duration is: " + resultingTime);
 			
@@ -66,11 +66,11 @@ public class App {
 			
 		
 			DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
-			vis1.setData(triangles, nodes);
+			vis1.setData(triangles, nodes, graph);
 			AwtWindow.start(vis1);
 
 			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
-			vis2.setData(triangles, nodes);
+			vis2.setData(triangles, nodes, graph);
 			AwtWindow.start(vis2);
 		
 			System.out.println("end");			

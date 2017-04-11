@@ -1,25 +1,30 @@
 package org.educationalProject.surfacePathfinder;
 
+import java.util.List;
+
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import com.jogamp.opengl.GL2;
 
 import io.github.jdiemke.triangulation.Triangle2D;
 
 public class DecolorizedMapVisualizer extends MapVisualizer{
 
-	protected void drawTriangles( GL2 gl2 ){
+	public void setData(List<Triangle2D> triangles, List<Point> pathCoords){
+		this.triangles = triangles;
+		this.path = pathCoords;		
+		dataSet = true;
+	}
+	
+	protected void drawContent( GL2 gl2 ){
 		gl2.glLineWidth(2f);
 		gl2.glBegin(gl2.GL_LINES);
         
-		for(Triangle2D triangle : triangles){
-			
-	        drawColoredPoint(gl2, (Point)triangle.a);
-	        drawColoredPoint(gl2, (Point)triangle.b);
-	        drawPoint(gl2, (Point)triangle.b);
-	        drawColoredPoint(gl2, (Point)triangle.c);
-	        drawPoint(gl2, (Point)triangle.c);
-	        drawColoredPoint(gl2, (Point)triangle.a);
-	      	        
+		for(DefaultWeightedEdge edge : graph.edgeSet()){			
+	        drawColoredPoint(gl2, graph.getEdgeSource(edge));
+	        drawColoredPoint(gl2, graph.getEdgeTarget(edge));	      	        
 		}
+		
 		gl2.glEnd();
 	}
 }
