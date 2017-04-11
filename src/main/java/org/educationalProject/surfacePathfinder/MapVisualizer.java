@@ -28,16 +28,16 @@ public abstract class MapVisualizer extends Visualizer {
 		dataSet = true;
 	}
 	
-	protected float normalizeWidth(double data, double min, double max, int width){
-		return (float) (width * (data - min)/(max - min));
+	protected float normalizeWidth(double data, int width){
+		return (float) (width * (data - minX)/(maxX - minX));
 	}
 	
-	protected float normalizeHeight(double data, double min, double max, int height){
-		return (float) (height * (data - min)/(max - min));
+	protected float normalizeHeight(double data, int height){
+		return (float) (height * (data - minY)/(maxY - minY));
 	}
 	
-	protected float normalizeColor(double data, double min, double max){
-		return (float) ((data - min)/(max - min));
+	protected float normalizeColor(double data){
+		return (float) ((data - minAlt)/(maxAlt - minAlt));
 	}
 
 	protected void findExtremes(){
@@ -82,12 +82,12 @@ public abstract class MapVisualizer extends Visualizer {
 		int size = path.size();
         for(int i = 0; i < size-1; i++){
         	gl2.glVertex2f(
-        		normalizeWidth(path.get(i).x, minX, maxX, width),
-        		normalizeHeight(path.get(i).y, minY, maxY, height)
+        		normalizeWidth(path.get(i).x, width),
+        		normalizeHeight(path.get(i).y, height)
         	);
         	gl2.glVertex2f(
-        		normalizeWidth(path.get(i+1).x, minX, maxX, width), 
-        		normalizeHeight(path.get(i+1).y, minY, maxY, height)
+        		normalizeWidth(path.get(i+1).x, width), 
+        		normalizeHeight(path.get(i+1).y, height)
         	);
         }
         

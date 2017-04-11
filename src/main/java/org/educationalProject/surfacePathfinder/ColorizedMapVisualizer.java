@@ -15,25 +15,25 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 			Point b = (Point)triangle.b;
 			Point c = (Point)triangle.c;
 			
-			color = normalizeColor(a.alt, minAlt, maxAlt);
+			color = normalizeColor(a.alt);
 			gl2.glColor3f(1, color, 0);						  
 			gl2.glVertex2f(
-				normalizeWidth(a.x,minX,maxX,width), 
-				normalizeHeight(a.y,minY,maxY,height)
+				normalizeWidth(a.x, width), 
+				normalizeHeight(a.y, height)
 			); 
 
-			color = normalizeColor(b.alt, minAlt, maxAlt);
+			color = normalizeColor(b.alt);
 			gl2.glColor3f(1, color, 0);						  
 			gl2.glVertex2f(
-				normalizeWidth(b.x,minX,maxX,width), 
-				normalizeHeight(b.y,minY,maxY,height)
+				normalizeWidth(b.x, width), 
+				normalizeHeight(b.y, height)
 			);  
 
-			color = normalizeColor(c.alt, minAlt, maxAlt);
+			color = normalizeColor(c.alt);
 			gl2.glColor3f(1, color, 0);						  
 			gl2.glVertex2f(
-				normalizeWidth(c.x,minX,maxX,width), 
-				normalizeHeight(c.y,minY,maxY,height)
+				normalizeWidth(c.x, width), 
+				normalizeHeight(c.y, height)
 			); 
 			
 		}
@@ -49,28 +49,28 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 			Point c = (Point)triangle.c;
 			
 			gl2.glVertex2f(
-	        	normalizeWidth(a.x,minX,maxX,width), 
-	        	normalizeHeight(a.y,minY,maxY,height)
+	        	normalizeWidth(a.x, width), 
+	        	normalizeHeight(a.y, height)
 	        ); 
 			gl2.glVertex2f(
-	        	normalizeWidth(b.x,minX,maxX,width), 
-	        	normalizeHeight(b.y,minY,maxY,height)
+	        	normalizeWidth(b.x, width), 
+	        	normalizeHeight(b.y, height)
 	        );  
 			gl2.glVertex2f(
-	        	normalizeWidth(b.x,minX,maxX,width), 
-	        	normalizeHeight(b.y,minY,maxY,height)
+	        	normalizeWidth(b.x, width), 
+	        	normalizeHeight(b.y, height)
 	        );
 			gl2.glVertex2f(
-	        	normalizeWidth(c.x,minX,maxX,width), 
-	        	normalizeHeight(c.y,minY,maxY,height)
+	        	normalizeWidth(c.x, width), 
+	        	normalizeHeight(c.y, height)
 	        );
 			gl2.glVertex2f(
-	        	normalizeWidth(c.x,minX,maxX,width), 
-	        	normalizeHeight(c.y,minY,maxY,height)
+	        	normalizeWidth(c.x, width), 
+	        	normalizeHeight(c.y, height)
 	        );
 			gl2.glVertex2f(
-	        	normalizeWidth(a.x,minX,maxX,width), 
-	        	normalizeHeight(a.y,minY,maxY,height)
+	        	normalizeWidth(a.x, width), 
+	        	normalizeHeight(a.y, height)
 	        );
 		}
 		gl2.glEnd();
