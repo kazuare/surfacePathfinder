@@ -8,7 +8,8 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.Triangle2D;
 
 public class TrianglesToGraphConverter {
-	public static double edgeWeight(Point a, Point b){
+	private final static double THRESHOLD = 0.8;
+	private static double edgeWeight(Point a, Point b){
 		return Math.abs(a.alt-b.alt) +
 				Math.sqrt(
 					(a.x-b.x)*(a.x-b.x)+
@@ -16,7 +17,13 @@ public class TrianglesToGraphConverter {
 					(a.alt-b.alt)*(a.alt-b.alt)
 				);
 	}
-	
+	private static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+		if(graph.containsEdge(a, b))
+			return false;
+		if(Math.abs(a.alt-b.alt) >= THRESHOLD)
+			return false;
+		return true;
+	}
 	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convert(List<Triangle2D> triangles){
 		
 		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
@@ -33,15 +40,15 @@ public class TrianglesToGraphConverter {
 			if(!graph.containsVertex(c))
 				graph.addVertex(c);
 			
-			if(!graph.containsEdge(a, b)){
+			if(judgeEdge(a, b, graph)){
 				DefaultWeightedEdge e = graph.addEdge(a, b);
 				graph.setEdgeWeight(e, edgeWeight(a, b));
 			}
-			if(!graph.containsEdge(a, c)){
+			if(judgeEdge(a, c, graph)){
 				DefaultWeightedEdge e = graph.addEdge(a, c);
 				graph.setEdgeWeight(e, edgeWeight(a, c));
 			}
-			if(!graph.containsEdge(c, b)){
+			if(judgeEdge(c, b, graph)){
 				DefaultWeightedEdge e = graph.addEdge(c, b);
 				graph.setEdgeWeight(e, edgeWeight(c, b));
 			}
