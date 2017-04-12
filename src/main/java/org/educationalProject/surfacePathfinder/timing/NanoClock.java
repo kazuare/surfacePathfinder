@@ -29,7 +29,7 @@ public class NanoClock {
 	/**
 	 * ends time measuring and returns the result. requires tic invocation.
 	 * */
-	public double tocd() throws Exception{
+	public double tocd() throws TicTocException{
 		end = System.nanoTime();
 		if(ticked){
 			ticked = false;

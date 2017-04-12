@@ -1,7 +1,9 @@
 package org.educationalProject.surfacePathfinder;
 
 import io.github.jdiemke.triangulation.Vector2D;
-
+/**
+* extends Vector2D in order to use altitude
+*/
 public class Point extends Vector2D {
 	public double alt;
 	

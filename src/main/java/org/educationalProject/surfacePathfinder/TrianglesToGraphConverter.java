@@ -6,9 +6,11 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import io.github.jdiemke.triangulation.Triangle2D;
-
+/**
+* takes in some triangles, adds all the satisfactory triangle edges to the graph
+*/
 public class TrianglesToGraphConverter {
-	private final static double COS_THRESHOLD = 0.76;
+	private final static double COS_THRESHOLD = 0.5;
 	private final static double COST_MULTIPLIER = 25;
 	private static double edgeWeight(Point a, Point b){
 		return Math.abs(a.alt-b.alt) * COST_MULTIPLIER +
@@ -18,6 +20,9 @@ public class TrianglesToGraphConverter {
 					(a.alt-b.alt)*(a.alt-b.alt)
 				);
 	}
+	/**
+	* determines if the edge is satisfactory (also returns false is the edge is already in graph)
+	*/
 	private static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
 		if(graph.containsEdge(a, b))
 			return false;

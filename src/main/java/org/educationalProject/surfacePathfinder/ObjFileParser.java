@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.util.Vector;
 
 import io.github.jdiemke.triangulation.Vector2D;
-
+/**
+* Parses obj file and returns found vertices
+*/
 public class ObjFileParser {
 	public static Vector<Vector2D> getPoints(String address) throws IOException{
 		FileInputStream stream =  new FileInputStream(address);

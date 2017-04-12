@@ -8,7 +8,9 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 import io.github.jdiemke.triangulation.Vector2D;
-
+/**
+* Visualizes path altitude change
+*/
 public class PathVisualizer extends Visualizer {
 	protected List<Point> path;
 	protected List<Vector2D> allPoints;
