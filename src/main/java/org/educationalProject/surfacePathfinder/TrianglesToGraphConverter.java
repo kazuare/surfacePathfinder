@@ -8,9 +8,10 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.Triangle2D;
 
 public class TrianglesToGraphConverter {
-	private final static double THRESHOLD = 0.8;
+	private final static double THRESHOLD = 0.7;
+	private final static double COSTMULTIPLIER = 25;
 	private static double edgeWeight(Point a, Point b){
-		return Math.abs(a.alt-b.alt) +
+		return Math.abs(a.alt-b.alt) * COSTMULTIPLIER +
 				Math.sqrt(
 					(a.x-b.x)*(a.x-b.x)+
 					(a.y-b.y)*(a.y-b.y)+

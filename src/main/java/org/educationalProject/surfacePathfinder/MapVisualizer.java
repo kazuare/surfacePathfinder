@@ -1,8 +1,6 @@
 package org.educationalProject.surfacePathfinder;
 
 import java.util.List;
-import java.util.Vector;
-
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -105,19 +103,13 @@ public abstract class MapVisualizer extends Visualizer {
 	}
 	
 	public void display( GL2 gl2 ){
-		if(!done){
-			gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
-	        gl2.glLoadIdentity();
+		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
+	    gl2.glLoadIdentity();
 	        
-			findExtremes();				
+		findExtremes();				
 			
-			drawContent(gl2);
+		drawContent(gl2);
 			
-			drawPath(gl2);
-			
-		}
-		
-        
- 
+		drawPath(gl2);
 	}
 }

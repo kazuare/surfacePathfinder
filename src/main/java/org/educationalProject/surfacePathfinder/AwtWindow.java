@@ -1,7 +1,5 @@
 package org.educationalProject.surfacePathfinder;
 
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.awt.GLCanvas;
@@ -12,7 +10,7 @@ import java.awt.event.WindowEvent;
 
 public class AwtWindow {
 
-    public static void start(Visualizer visualizer){
+    public static void start(Visualizer visualizer, int width, int height){
         GLProfile glprofile = GLProfile.getDefault();
         GLCapabilities glcapabilities = new GLCapabilities( glprofile );
         final GLCanvas glcanvas = new GLCanvas( glcapabilities );
@@ -29,7 +27,7 @@ public class AwtWindow {
             }
         });
 
-        frame.setSize( 800, 600 );
+        frame.setSize( width, height );
         frame.setVisible( true );
     }
 }
