@@ -1,8 +1,6 @@
 package org.educationalProject.surfacePathfinder;
 
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class EuclidianEuristic<V> implements AStarAdmissibleHeuristic<V>{
 	private final static double COST_MULTIPLIER = 25;
