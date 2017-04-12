@@ -1,4 +1,4 @@
-package org.educationalProject.surfacePathfinder;
+package org.educationalProject.surfacePathfinder.timing;
 /**
  * Exception class for NanoClock 
  * */
