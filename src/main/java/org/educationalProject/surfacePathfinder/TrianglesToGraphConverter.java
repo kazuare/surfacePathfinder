@@ -8,10 +8,10 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.Triangle2D;
 
 public class TrianglesToGraphConverter {
-	private final static double THRESHOLD = 0.7;
-	private final static double COSTMULTIPLIER = 25;
+	private final static double COS_THRESHOLD = 0.7;
+	private final static double COST_MULTIPLIER = 25;
 	private static double edgeWeight(Point a, Point b){
-		return Math.abs(a.alt-b.alt) * COSTMULTIPLIER +
+		return Math.abs(a.alt-b.alt) * COST_MULTIPLIER +
 				Math.sqrt(
 					(a.x-b.x)*(a.x-b.x)+
 					(a.y-b.y)*(a.y-b.y)+
@@ -21,7 +21,20 @@ public class TrianglesToGraphConverter {
 	private static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
 		if(graph.containsEdge(a, b))
 			return false;
-		if(Math.abs(a.alt-b.alt) >= THRESHOLD)
+		if(
+			Math.sqrt(
+				(a.x-b.x)*(a.x-b.x)+
+				(a.y-b.y)*(a.y-b.y)
+			)
+			/
+			Math.sqrt(
+				(a.x-b.x)*(a.x-b.x)+
+				(a.y-b.y)*(a.y-b.y)+
+				(a.alt-b.alt)*(a.alt-b.alt)
+			)
+			<= 
+			COS_THRESHOLD
+		)
 			return false;
 		return true;
 	}

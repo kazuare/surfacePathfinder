@@ -40,7 +40,7 @@ public class App {
 			AStarShortestPath<Point,DefaultWeightedEdge> astar = 
 					new AStarShortestPath<Point,DefaultWeightedEdge>(
 						graph,
-						new EuclidianEuristic<Point>(graph)
+						new EuclidianEuristic<Point>()
 						//new ALTAdmissibleHeuristic<Point,DefaultWeightedEdge>(graph,graph.vertexSet())
 					);
 			resultingTime = clock.tocd();
