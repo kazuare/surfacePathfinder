@@ -8,6 +8,7 @@ import org.educationalProject.surfacePathfinder.visualization.AwtWindow;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.PathVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -71,15 +72,15 @@ public class App {
 		
 			DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
 			vis1.setData(triangles, nodes, graph);
-			AwtWindow.start(vis1, 800, 600);
+			SwingWindow.start(vis1, 800, 600);
 
 			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
 			vis2.setData(triangles, nodes, graph);
-			AwtWindow.start(vis2, 800, 600);
+			SwingWindow.start(vis2, 800, 600);
 			
 			PathVisualizer vis3 = new PathVisualizer();
 			vis3.setData(nodes, points);
-			AwtWindow.start(vis3, 1000, 400);
+			SwingWindow.start(vis3, 1000, 400);
 		
 			System.out.println("end");			
 		} catch (Exception e) {
