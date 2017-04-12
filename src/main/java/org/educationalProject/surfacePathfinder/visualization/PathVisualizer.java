@@ -1,6 +1,9 @@
-package org.educationalProject.surfacePathfinder;
+package org.educationalProject.surfacePathfinder.visualization;
 
 import java.util.List;
+
+import org.educationalProject.surfacePathfinder.Point;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 

@@ -1,5 +1,6 @@
-package org.educationalProject.surfacePathfinder;
+package org.educationalProject.surfacePathfinder.visualization;
 
+import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import com.jogamp.opengl.GL;

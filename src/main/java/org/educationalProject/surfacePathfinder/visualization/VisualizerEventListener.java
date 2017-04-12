@@ -1,4 +1,4 @@
-package org.educationalProject.surfacePathfinder;
+package org.educationalProject.surfacePathfinder.visualization;
 
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
