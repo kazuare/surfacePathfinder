@@ -40,7 +40,8 @@ public class App {
 			AStarShortestPath<Point,DefaultWeightedEdge> astar = 
 					new AStarShortestPath<Point,DefaultWeightedEdge>(
 						graph,
-						new ALTAdmissibleHeuristic<Point,DefaultWeightedEdge>(graph,graph.vertexSet())
+						new EuclidianEuristic<Point>(graph)
+						//new ALTAdmissibleHeuristic<Point,DefaultWeightedEdge>(graph,graph.vertexSet())
 					);
 			resultingTime = clock.tocd();
 			System.out.println("Euristic building is finished, phase duration is: " + resultingTime);
