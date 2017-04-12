@@ -3,7 +3,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 public abstract class Visualizer {
-	protected boolean done = false;
 	protected boolean dataSet = false;
 	protected int width;
 	protected int height;
