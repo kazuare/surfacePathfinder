@@ -11,12 +11,18 @@ import com.jogamp.opengl.GL2;
 
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
-
+/**
+* Visualizes top down map image.
+* Subclasses can draw either filled triangles or not filled
+*/
 public abstract class MapVisualizer extends Visualizer {
 	protected List<Point> path;
 	protected List<Triangle2D> triangles;
 	protected SimpleWeightedGraph<Point,DefaultWeightedEdge> graph;
-
+	
+	/**
+	* Sets data that needs to be visualized
+	*/
 	public void setData(List<Triangle2D> triangles, List<Point> pathCoords, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
 		this.triangles = triangles;
 		this.path = pathCoords;		
@@ -33,10 +39,15 @@ public abstract class MapVisualizer extends Visualizer {
 	protected double maxAlt = Double.NEGATIVE_INFINITY;
 	protected double minAlt = Double.POSITIVE_INFINITY;
 	
+	/**
+	* translates map width into screen width
+	*/
 	protected float normalizeWidth(double data){
 		return (float) (width * (data - minX)/(maxX - minX));
 	}
-	
+	/**
+	* translates map height into screen height
+	*/
 	protected float normalizeHeight(double data){
 		return (float) (height * (data - minY)/(maxY - minY));
 	}

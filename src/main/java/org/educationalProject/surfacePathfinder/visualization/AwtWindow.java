@@ -7,7 +7,9 @@ import com.jogamp.opengl.awt.GLCanvas;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+/**
+* AWT window class. Can be used in a static way.
+*/
 public class AwtWindow {
 
     public static void start(Visualizer visualizer, int width, int height){

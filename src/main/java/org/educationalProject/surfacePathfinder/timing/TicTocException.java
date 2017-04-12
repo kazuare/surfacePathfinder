@@ -1,7 +1,7 @@
 package org.educationalProject.surfacePathfinder.timing;
 /**
- * Exception class for NanoClock 
- * */
+* Exception class for NanoClock 
+*/
 public class TicTocException extends Exception{
 	private static final long serialVersionUID = 1L;
 	public TicTocException() { super(); }

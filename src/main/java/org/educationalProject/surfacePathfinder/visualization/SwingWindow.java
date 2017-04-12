@@ -10,7 +10,9 @@ import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+/**
+* Swing window class. Can be used in a static way.
+*/
 public class SwingWindow {
 
     public static void start(Visualizer visualizer, int width, int height){
