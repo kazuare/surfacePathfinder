@@ -1,25 +1,20 @@
 package org.educationalProject.surfacePathfinder;
 
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class EuclidianEuristic<V> implements AStarAdmissibleHeuristic<V>{
-	SimpleWeightedGraph<Point,DefaultWeightedEdge> graph;
-	
-	public EuclidianEuristic(SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
-		this.graph = graph;
-	}
-	
+	private final static double COST_MULTIPLIER = 25;
 	@Override
 	public double getCostEstimate(V sourceVertex, V targetVertex) {
 		Point a = (Point)sourceVertex;
 		Point b = (Point)targetVertex;  
-		double xDistance = a.x-b.x;
-		double yDistance = a.y-b.y;
-		double altDistance = a.alt-b.alt;
 		
-		return Math.sqrt(xDistance*xDistance + yDistance*yDistance + altDistance*altDistance);
+		return Math.abs(a.alt-b.alt) * COST_MULTIPLIER +
+				Math.sqrt(
+					(a.x-b.x)*(a.x-b.x)+
+					(a.y-b.y)*(a.y-b.y)+
+					(a.alt-b.alt)*(a.alt-b.alt)
+				);
 	}
 
 }

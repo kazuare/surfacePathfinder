@@ -3,7 +3,10 @@ package org.educationalProject.surfacePathfinder;
 import java.util.List;
 import java.util.Vector;
 
-import org.jgrapht.alg.shortestpath.ALTAdmissibleHeuristic;
+import org.educationalProject.surfacePathfinder.visualization.AwtWindow;
+import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.PathVisualizer;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -40,8 +43,7 @@ public class App {
 			AStarShortestPath<Point,DefaultWeightedEdge> astar = 
 					new AStarShortestPath<Point,DefaultWeightedEdge>(
 						graph,
-						new EuclidianEuristic<Point>(graph)
-						//new ALTAdmissibleHeuristic<Point,DefaultWeightedEdge>(graph,graph.vertexSet())
+						new EuclidianEuristic<Point>()
 					);
 			resultingTime = clock.tocd();
 			System.out.println("Euristic building is finished, phase duration is: " + resultingTime);
