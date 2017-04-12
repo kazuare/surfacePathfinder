@@ -1,11 +1,14 @@
 package org.educationalProject.surfacePathfinder.visualization;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.util.List;
 
 import org.educationalProject.surfacePathfinder.Point;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import io.github.jdiemke.triangulation.Vector2D;
 /**
@@ -78,6 +81,18 @@ public class PathVisualizer extends Visualizer {
 		findExtremes();				
 			
 		drawPath(gl2);	
+		
+		int fontSize = 10;
+		TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, fontSize));
+		textRenderer.beginRendering(width, height);
+		textRenderer.setColor(Color.RED);
+		textRenderer.setSmoothing(true);
+
+		int numSteps = 5;
+		for( double alt = minAlt; alt < maxAlt; alt += (maxAlt-minAlt)/numSteps )
+			textRenderer.draw("alt: " + alt, 0, (int) Math.floor(normalizeAlt(alt)));			
+		
+		textRenderer.endRendering();
 	}
 	
 }
