@@ -1,4 +1,4 @@
-package org.educationalProject.surfacePathfinder;
+package org.educationalProject.surfacePathfinder.timing;
 /**
  * Class that is used for easy time measuring
  */

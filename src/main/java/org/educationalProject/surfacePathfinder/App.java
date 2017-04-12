@@ -3,6 +3,7 @@ package org.educationalProject.surfacePathfinder;
 import java.util.List;
 import java.util.Vector;
 
+import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.visualization.AwtWindow;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
