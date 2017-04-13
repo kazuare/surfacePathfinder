@@ -108,11 +108,11 @@ public class App {
 			
 			PathVisualizer vis3 = new PathVisualizer();
 			vis3.setData(nodes, points);
-			SwingWindow.start(vis3, 1000, 400, "traditional dijkstra");
+			SwingWindow.start(vis3, 800, vis3.calculateWindowHeight(800), "traditional dijkstra");
 
 			PathVisualizer vis4 = new PathVisualizer();
 			vis4.setData(r, points);
-			SwingWindow.start(vis4, 1000, 400, "hill dijkstra");
+			SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), "hill dijkstra");
 			
 			System.out.println("end");			
 		}catch(IOException e){

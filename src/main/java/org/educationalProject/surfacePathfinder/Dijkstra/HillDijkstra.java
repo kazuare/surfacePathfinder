@@ -12,7 +12,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class HillDijkstra extends Dijkstra{
 	
-	private double gamma = 0.8;
+	private double gamma = 0.9;
 	
 	private double XYDistance(Point a, Point b){
 		return Math.sqrt(
