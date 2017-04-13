@@ -19,7 +19,7 @@ public class AwtWindow {
 
         glcanvas.addGLEventListener( new VisualizerEventListener(visualizer) );
 
-        final Frame frame = new Frame( "Path visualization" );
+        final Frame frame = new Frame( "Visualization" );
         frame.add( glcanvas );
         frame.addWindowListener( new WindowAdapter() {
             public void windowClosing( WindowEvent windowevent ){

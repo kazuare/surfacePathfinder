@@ -22,7 +22,7 @@ public class SwingWindow {
 
         glcanvas.addGLEventListener( new VisualizerEventListener(visualizer)  );
 
-        final JFrame jframe = new JFrame( "Path visualization" ); 
+        final JFrame jframe = new JFrame( "Visualization" ); 
         jframe.addWindowListener( new WindowAdapter() {
             public void windowClosing( WindowEvent windowevent ) {
                 jframe.dispose();
