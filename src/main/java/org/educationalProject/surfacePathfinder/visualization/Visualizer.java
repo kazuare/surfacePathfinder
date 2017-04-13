@@ -1,14 +1,18 @@
 package org.educationalProject.surfacePathfinder.visualization;
+import java.awt.Frame;
+
+import javax.swing.JFrame;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 /**
-* Base class for every visualizer. it is given to any window class in order to display something
+* Base class for every visualizer. it is given to any window class in order to display something.
+* Visualizers can resize their windows if needed
 */
 public abstract class Visualizer {
 	protected boolean dataSet = false;
 	protected int width;
 	protected int height;
-	
 	/**
 	* Is invoked when window init or reshape occurs
 	* Does some geometry stuff

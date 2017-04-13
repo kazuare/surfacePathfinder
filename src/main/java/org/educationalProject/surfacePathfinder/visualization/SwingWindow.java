@@ -29,7 +29,7 @@ public class SwingWindow {
                 System.exit( 0 );
             }
         });
-
+        
         jframe.getContentPane().add( glcanvas, BorderLayout.CENTER );
         jframe.setSize( width, height );
         jframe.setVisible( true );

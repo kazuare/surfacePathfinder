@@ -42,6 +42,7 @@ public class PathVisualizer extends Visualizer {
 			minAlt = Math.min(minAlt, ((Point)p).alt);			
 			maxAlt = Math.max(maxAlt, ((Point)p).alt);
 		}
+	    totalXYPathLength = 0;
 		for(int i = 1; i < path.size(); i++)
 			totalXYPathLength += getXYDistance(path.get(i-1),path.get(i));
 	}
@@ -72,14 +73,18 @@ public class PathVisualizer extends Visualizer {
         
         gl2.glEnd();
 	}
-	
-	public void display( GL2 gl2 ){
+	public int calculateWindowHeight(int width){
+		findExtremes();	
+		double dataHeight = maxAlt - minAlt;
+		double dataWidth = totalXYPathLength;
+		return (int)Math.round(dataHeight/dataWidth*width);
+	}
+	public void display( GL2 gl2 ){		
 		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
-	    gl2.glLoadIdentity();
-	    totalXYPathLength = 0;
-	    		
-		findExtremes();				
-			
+	    gl2.glLoadIdentity();	
+	    
+		findExtremes();	
+		
 		drawPath(gl2);	
 		
 		int fontSize = 10;
