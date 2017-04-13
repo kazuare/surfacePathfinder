@@ -1,9 +1,13 @@
 package org.educationalProject.surfacePathfinder;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import org.educationalProject.surfacePathfinder.Dijkstra.Dijkstra;
+import org.educationalProject.surfacePathfinder.Dijkstra.HillDijkstra;
+import org.educationalProject.surfacePathfinder.Dijkstra.Route;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
@@ -46,6 +50,9 @@ public class App {
 			resultingTime = clock.tocd();
 			System.out.println("Graph building is finished, phase duration is: " + resultingTime);
 			
+			SimpleWeightedGraph<Point,DefaultWeightedEdge> graphWithoutPenalty = TrianglesToGraphConverter.convertWithoutAltitudePenalty(triangles);
+			
+			
 			//Finding the shortest path
 			clock.tic();
 			AStarShortestPath<Point,DefaultWeightedEdge> astar = 
@@ -69,22 +76,44 @@ public class App {
 			resultingTime = clock.tocd();
 			System.out.println("Alternative algo is finished, phase duration is: " + resultingTime);
 			
+			clock.tic();
+			Dijkstra x = new HillDijkstra();
+			x.init(graph);
+			//x.init(graphWithoutPenalty);
+			HashMap<Point, Route> routes = x.run(a);
+			List<Point> r = routes.get(b).vertices;
+			resultingTime = clock.tocd();
+			System.out.println("Alternative 2 algo is finished, phase duration is: " + resultingTime);
+			
 			//Checking algorithm correctness
 			boolean equal = true;
-			for(int i = 0; i < dijkstraNodes.size(); i++)
-				if(!dijkstraNodes.get(i).equals(nodes.get(i)))
-					equal = false;
-			System.out.println("alternative and main are equal: " + equal);
-
+			if(r.size()==dijkstraNodes.size()){
+				for(int i = 0; i < dijkstraNodes.size(); i++)
+					if(!dijkstraNodes.get(i).equals(r.get(i)))
+						equal = false;
+			}else{
+				equal = false;
+			}
+			System.out.println("alternative and alternative 2 are equal: " + (""+equal).toUpperCase());
+			
 			//Visualizing
 			ColorizedMapVisualizer vis1 = new ColorizedMapVisualizer();
 			vis1.setData(triangles, nodes, graph);
-			SwingWindow.start(vis1, 800, 600);
+			SwingWindow.start(vis1, 800, 600, "traditional dijkstra map");
+			
+			//Visualizing
+			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
+			vis2.setData(triangles, r, graph);
+			SwingWindow.start(vis2, 800, 600, "hill dijkstra map");
 			
 			PathVisualizer vis3 = new PathVisualizer();
 			vis3.setData(nodes, points);
-			SwingWindow.start(vis3, 1000, 400);
-		
+			SwingWindow.start(vis3, 1000, 400, "traditional dijkstra");
+
+			PathVisualizer vis4 = new PathVisualizer();
+			vis4.setData(r, points);
+			SwingWindow.start(vis4, 1000, 400, "hill dijkstra");
+			
 			System.out.println("end");			
 		}catch(IOException e){
 			System.out.println("Problem with file reading accured!");
