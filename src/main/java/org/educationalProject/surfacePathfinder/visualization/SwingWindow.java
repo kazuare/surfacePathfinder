@@ -15,14 +15,14 @@ import java.awt.event.WindowEvent;
 */
 public class SwingWindow {
 
-    public static void start(Visualizer visualizer, int width, int height){
+    public static void start(Visualizer visualizer, int width, int height, String title){
         GLProfile glprofile = GLProfile.getDefault();
         GLCapabilities glcapabilities = new GLCapabilities( glprofile );
         final GLCanvas glcanvas = new GLCanvas( glcapabilities );
 
         glcanvas.addGLEventListener( new VisualizerEventListener(visualizer)  );
 
-        final JFrame jframe = new JFrame( "Visualization" ); 
+        final JFrame jframe = new JFrame( title ); 
         jframe.addWindowListener( new WindowAdapter() {
             public void windowClosing( WindowEvent windowevent ) {
                 jframe.dispose();
