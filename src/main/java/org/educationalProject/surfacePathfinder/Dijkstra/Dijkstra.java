@@ -12,7 +12,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 public abstract class Dijkstra {
 	private Set<Point> usedNodes;
 	protected LinkedHashSet<Point> notVisited;
-	private HashMap<Point, HashSet<IdAndLength>> neighbours;
+	protected HashMap<Point, HashSet<IdAndLength>> neighbours;
 	
 	public boolean notVisited(Point id){
 		return notVisited.contains(id);
@@ -46,23 +46,8 @@ public abstract class Dijkstra {
 		}
 
 	}
-	public void process(Point currentNode, HashMap<Point,Route> routes){
-		//System.out.println(currentNode + " is being  processed");
-		HashSet<IdAndLength> currentNeighbours = neighbours.get(currentNode);
-		//System.out.println("neighbours count: " + currentNeighbours.size());
-		if(currentNeighbours == null) return;
-		for(IdAndLength neighbour : currentNeighbours)
-			if(notVisited(neighbour.id)){
-				//System.out.println(currentNode + " <-> " + neighbour.id);
-				//System.out.println(routes.get(neighbour.id).length + " <-> " + (routes.get(currentNode).length + neighbour.length));
-				if(routes.get(neighbour.id).length > routes.get(currentNode).length + neighbour.length){
-					Route newRoute = routes.get(currentNode).copy();
-					newRoute.append(neighbour.id);
-					newRoute.length = routes.get(currentNode).length + neighbour.length; 
-					routes.put(neighbour.id, newRoute);			
-				}
-			}
-	}
+	public abstract void process(Point currentNode, HashMap<Point,Route> routes);
+	
 	
 	public HashMap<Point, Route> run(Point start){
 		

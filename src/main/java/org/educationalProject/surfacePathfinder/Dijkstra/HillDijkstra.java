@@ -35,6 +35,27 @@ public class HillDijkstra extends Dijkstra{
 		return 1 - gamma * Math.cos((maxAngle(angles)+avgAngle(angles))/2) ;
 		
 	}
+	
+	public void process(Point currentNode, HashMap<Point,Route> routes){
+		//System.out.println(currentNode + " is being  processed");
+		HashSet<IdAndLength> currentNeighbours = neighbours.get(currentNode);
+		//System.out.println("neighbours count: " + currentNeighbours.size());
+		if(currentNeighbours == null) return;
+		for(IdAndLength neighbour : currentNeighbours)
+			if(notVisited(neighbour.id)){
+				if(routes.get(neighbour.id).hillness == -1)
+					routes.get(neighbour.id).hillness = hillness(routes.get(neighbour.id));
+				
+				Route newRoute = routes.get(currentNode).copy();
+				newRoute.append(neighbour.id);
+				newRoute.length = routes.get(currentNode).length + neighbour.length; 
+				newRoute.hillness = hillness(newRoute);
+				if(routes.get(neighbour.id).length*routes.get(neighbour.id).hillness > newRoute.length * newRoute.hillness)
+					routes.put(neighbour.id, newRoute);			
+				
+			}
+	}
+	
 	public ArrayList<Double> getAngles(Route route){
 		ArrayList<Double> angles = new ArrayList<Double>();
 		if(route.vertices.size() < 2)
