@@ -8,6 +8,7 @@ import java.util.Vector;
 import org.educationalProject.surfacePathfinder.Dijkstra.Dijkstra;
 import org.educationalProject.surfacePathfinder.Dijkstra.HillDijkstra;
 import org.educationalProject.surfacePathfinder.Dijkstra.Route;
+import org.educationalProject.surfacePathfinder.path.DijkstraPathFind;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
@@ -34,7 +35,8 @@ public class App {
 			
 			// Obj file reading
 			clock.tic();
-			Vector<Vector2D> points = ObjFileParser.getPoints("C:\\digdes\\map.obj");
+			//Vector<Vector2D> points = ObjFileParser.getPoints("C:\\digdes\\map.obj");
+			Vector<Vector2D> points = ObjFileParser.getPoints("/home/merlin/DigDes/map.obj");
 			resultingTime = clock.tocd();
 			System.out.println("Reading is finished, phase duration is: " + resultingTime);
 			
@@ -84,17 +86,25 @@ public class App {
 			List<Point> r = routes.get(b).vertices;
 			resultingTime = clock.tocd();
 			System.out.println("Alternative 2 algo is finished, phase duration is: " + resultingTime);
-			
+
+
+			clock.tic();
+			DijkstraPathFind dijkstraPathFind = new DijkstraPathFind();
+			List<Point> dijkstraNodes1 = dijkstraPathFind.getShortestPath(graph, a, b);
+			resultingTime = clock.tocd();
+			System.out.println("Alternative 3 algo is finished, phase duration is: " + resultingTime);
+
+
 			//Checking algorithm correctness
 			boolean equal = true;
-			if(r.size()==dijkstraNodes.size()){
+			if(dijkstraNodes1.size()==dijkstraNodes.size()){
 				for(int i = 0; i < dijkstraNodes.size(); i++)
-					if(!dijkstraNodes.get(i).equals(r.get(i)))
+					if(!dijkstraNodes.get(i).equals(dijkstraNodes1.get(i)))
 						equal = false;
 			}else{
 				equal = false;
 			}
-			System.out.println("alternative and alternative 2 are equal: " + (""+equal).toUpperCase());
+			System.out.println("alternative and alternative 3 are equal: " + (""+equal).toUpperCase());
 			
 			//Visualizing
 			ColorizedMapVisualizer vis1 = new ColorizedMapVisualizer();
