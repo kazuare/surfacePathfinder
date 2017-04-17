@@ -11,7 +11,7 @@ public class DijkstraPathFind {
 
     private SimpleWeightedGraph<Point, DefaultWeightedEdge> g;
     private Set<Point> settledNodes;
-    private Set<Point> unSettledNodes;
+    private PriorityQueue<DistancePoint> unSettledNodes;
     private Map<Point, Point> predecessors;
     private Map<Point, Double> distance;
 
@@ -26,13 +26,19 @@ public class DijkstraPathFind {
     private void init(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Point source) {
         g = graph;
         settledNodes = new HashSet<Point>();
-        unSettledNodes = new HashSet<Point>();
+        unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
         distance = new HashMap<Point, Double>();
         predecessors = new HashMap<Point, Point>();
         distance.put(source, 0.0);
-        unSettledNodes.add(source);
+        unSettledNodes.add(new DistancePoint(source, 0.0));
     }
 
+    public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
+        @Override
+        public int compare(DistancePoint a, DistancePoint b) {
+            return (int)(a.distance - b.distance);
+        }
+    };
 
     private void findAllPaths() {
         while (unSettledNodes.size() > 0) {
@@ -46,12 +52,16 @@ public class DijkstraPathFind {
     private void findMinimalDistances(Point node) {
         List<Point> adjacentNodes = getNeighbors(node);
         for (Point target : adjacentNodes) {
-            if (getShortestDistance(target) > getShortestDistance(node)
-                    + getDistance(node, target)) {
-                distance.put(target, getShortestDistance(node)
-                        + getDistance(node, target));
+            double getShortestDistanceTarget = getShortestDistance(target);
+            double getShortestDistanceNode = getShortestDistance(node);
+            double getDistanceNodeTarget = getDistance(node, target);
+            if (getShortestDistanceTarget > getShortestDistanceNode
+                    + getDistanceNodeTarget) {
+                distance.put(target, getShortestDistanceNode
+                        + getDistanceNodeTarget);
                 predecessors.put(target, node);
-                unSettledNodes.add(target);
+                unSettledNodes.add(new DistancePoint(target, getShortestDistanceNode
+                        + getDistanceNodeTarget));
             }
         }
 
@@ -76,9 +86,9 @@ public class DijkstraPathFind {
         return neighbors;
     }
 
-    private Point getMinimum(Set<Point> vertexes) {
-        Point minimum = null;
-        for (Point vertex : vertexes) {
+    private Point getMinimum(PriorityQueue<DistancePoint> vertexes) {
+        Point minimum = vertexes.poll().point;
+        /*for (Point vertex : vertexes) {
             if (minimum == null) {
                 minimum = vertex;
             } else {
@@ -86,7 +96,7 @@ public class DijkstraPathFind {
                     minimum = vertex;
                 }
             }
-        }
+        }*/
         return minimum;
     }
 
@@ -123,8 +133,4 @@ public class DijkstraPathFind {
         Collections.reverse(shortestPath);
         return shortestPath;
     }
-
-
-
-
 }
