@@ -11,7 +11,7 @@ public class AStarPathFind {
 
     private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
     private Set<Point> settledNodes;
-    private Set<DistancePoint> unSettledNodes;
+    private Set<Point> unSettledNodes;
     private Map<Point, Point> predecessors;
     private Map<Point, Double> distance;
     private Point source;
@@ -28,24 +28,17 @@ public class AStarPathFind {
         this.source = source;
         this.destination = destination;
         settledNodes = new HashSet<Point>();
-        unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
+        unSettledNodes = new HashSet<Point>();
         distance = new HashMap<Point, Double>();
         predecessors = new HashMap<Point, Point>();
 
         distance.put(source, getHeuristic(this.source, this.source));
-        unSettledNodes.add(new DistancePoint(source, getHeuristic(this.source, this.source)));
+        unSettledNodes.add(source);
     }
-
-    public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
-        @Override
-        public int compare(DistancePoint a, DistancePoint b) {
-            return (int)(a.distance - b.distance);
-        }
-    };
 
     private void findPath() {
         while (unSettledNodes.size() > 0) {
-            Point current = getMinimum(unSettledNodes);
+            Point current = getMinimum();
             if (current.equals(destination))
                 return;
             settledNodes.add(current);
@@ -61,15 +54,14 @@ public class AStarPathFind {
             if (isSettled(neighbor))
                 continue;
             if (!isUnSettled(neighbor)) {
-                unSettledNodes.add(new DistancePoint(neighbor, getHeuristic(node, neighbor)));
+                unSettledNodes.add(neighbor);
                 distance.put(neighbor, getHeuristic(node, neighbor));
                 predecessors.put(neighbor, node);
                 continue;
             } else if(getDistance(node) + getDistance(node, neighbor) > distance.get(neighbor)) {
                 continue;
             } else {
-                unSettledNodes.remove(new DistancePoint(neighbor, 0.0));
-                unSettledNodes.add(new DistancePoint(neighbor, getHeuristic(node, neighbor)));
+                predecessors.remove(neighbor);
                 predecessors.put(neighbor, node);
                 distance.remove(neighbor);
                 distance.put(neighbor, getHeuristic(node, neighbor));
@@ -79,7 +71,7 @@ public class AStarPathFind {
 
     private Double getHeuristic(Point current, Point next) {
         Double g = getDistance(current, next) + getDistance(current);
-        Double h = Math.abs(next.alt - destination.alt) +
+        Double h = /*Math.abs(next.alt - destination.alt) +*/
                 Math.sqrt((next.x - destination.x) * (next.x - destination.x)
                         + (next.y - destination.y) * (next.y - destination.y)
                         + (next.alt - destination.alt)*(next.alt - destination.alt));
@@ -114,8 +106,17 @@ public class AStarPathFind {
         return neighbors;
     }
 
-    private Point getMinimum(PriorityQueue<DistancePoint> vertexes) {
-        Point minimum = vertexes.poll().point;
+    private Point getMinimum() {
+        Point minimum = null;
+        for (Point node : unSettledNodes) {
+            if (minimum == null) {
+                minimum = node;
+            } else {
+                if (getDistance(node) < getDistance(minimum)) {
+                    minimum = node;
+                }
+            }
+        }
         return minimum;
     }
 
