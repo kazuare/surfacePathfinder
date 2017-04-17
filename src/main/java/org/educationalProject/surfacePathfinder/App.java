@@ -8,6 +8,7 @@ import java.util.Vector;
 import org.educationalProject.surfacePathfinder.Dijkstra.Dijkstra;
 import org.educationalProject.surfacePathfinder.Dijkstra.HillDijkstra;
 import org.educationalProject.surfacePathfinder.Dijkstra.Route;
+import org.educationalProject.surfacePathfinder.path.AStarPathFind;
 import org.educationalProject.surfacePathfinder.path.DijkstraPathFind;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
@@ -94,6 +95,13 @@ public class App {
 			resultingTime = clock.tocd();
 			System.out.println("Sereja`s dijkstra is finished, phase duration is: " + resultingTime);
 
+			clock.tic();
+			AStarPathFind aStarPathFind = new AStarPathFind();
+			List<Point> aStarNodes = aStarPathFind.getShortestPath(graph, a, b);
+			resultingTime = clock.tocd();
+			System.out.println("Sereja`s A* is finished, phase duration is: " + resultingTime);
+
+
 
 			//Checking algorithm correctness
 			boolean equal = true;
@@ -113,16 +121,16 @@ public class App {
 			
 			//Visualizing
 			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
-			vis2.setData(triangles, dijkstraNodes1, graph);
-			SwingWindow.start(vis2, 800, 600, "Sereja`s dijkstra map");
+			vis2.setData(triangles, aStarNodes, graph);
+			SwingWindow.start(vis2, 800, 600, "Sereja`s A* map");
 			
 			PathVisualizer vis3 = new PathVisualizer();
 			vis3.setData(nodes, points);
 			SwingWindow.start(vis3, 800, vis3.calculateWindowHeight(800), "Jgrapht`s dijkstra");
 
 			PathVisualizer vis4 = new PathVisualizer();
-			vis4.setData(dijkstraNodes1, points);
-			SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s dijkstra");
+			vis4.setData(aStarNodes, points);
+			SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s A*");
 			
 			System.out.println("end");			
 		}catch(IOException e){
