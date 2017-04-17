@@ -70,29 +70,29 @@ public class App {
 			Point b = (Point)points.get((int)(Math.random()*points.size()));
 			List<Point> nodes = astar.getPath(a, b).getVertexList();
 			resultingTime = clock.tocd();
-			System.out.println("Pathfinding is finished, phase duration is: " + resultingTime);
+			System.out.println("A* from jgrapht is finished, phase duration is: " + resultingTime);
 			
 			clock.tic();
 			DijkstraShortestPath<Point,DefaultWeightedEdge> alternative = new DijkstraShortestPath<Point,DefaultWeightedEdge>(graph);
 			List<Point> dijkstraNodes = alternative.getPath(a, b).getVertexList();
 			resultingTime = clock.tocd();
-			System.out.println("Alternative algo is finished, phase duration is: " + resultingTime);
+			System.out.println("Dijkstra from jgrapht is finished, phase duration is: " + resultingTime);
 			
-			clock.tic();
+			/*clock.tic();
 			Dijkstra x = new HillDijkstra();
 			x.init(graph);
 			//x.init(graphWithoutPenalty);
 			HashMap<Point, Route> routes = x.run(a);
 			List<Point> r = routes.get(b).vertices;
 			resultingTime = clock.tocd();
-			System.out.println("Alternative 2 algo is finished, phase duration is: " + resultingTime);
+			System.out.println("Alternative 2 algo is finished, phase duration is: " + resultingTime);*/
 
 
 			clock.tic();
 			DijkstraPathFind dijkstraPathFind = new DijkstraPathFind();
 			List<Point> dijkstraNodes1 = dijkstraPathFind.getShortestPath(graph, a, b);
 			resultingTime = clock.tocd();
-			System.out.println("Alternative 3 algo is finished, phase duration is: " + resultingTime);
+			System.out.println("Sereja`s dijkstra is finished, phase duration is: " + resultingTime);
 
 
 			//Checking algorithm correctness
@@ -104,25 +104,25 @@ public class App {
 			}else{
 				equal = false;
 			}
-			System.out.println("alternative and alternative 3 are equal: " + (""+equal).toUpperCase());
+			System.out.println("Jgrapht`s dijkstra and Sereja`s dijkstra are equal: " + (""+equal).toUpperCase());
 			
 			//Visualizing
 			ColorizedMapVisualizer vis1 = new ColorizedMapVisualizer();
 			vis1.setData(triangles, nodes, graph);
-			SwingWindow.start(vis1, 800, 600, "traditional dijkstra map");
+			SwingWindow.start(vis1, 800, 600, "Jgrapht`s dijkstra map");
 			
 			//Visualizing
 			ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
-			vis2.setData(triangles, r, graph);
-			SwingWindow.start(vis2, 800, 600, "hill dijkstra map");
+			vis2.setData(triangles, dijkstraNodes1, graph);
+			SwingWindow.start(vis2, 800, 600, "Sereja`s dijkstra map");
 			
 			PathVisualizer vis3 = new PathVisualizer();
 			vis3.setData(nodes, points);
-			SwingWindow.start(vis3, 800, vis3.calculateWindowHeight(800), "traditional dijkstra");
+			SwingWindow.start(vis3, 800, vis3.calculateWindowHeight(800), "Jgrapht`s dijkstra");
 
 			PathVisualizer vis4 = new PathVisualizer();
-			vis4.setData(r, points);
-			SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), "hill dijkstra");
+			vis4.setData(dijkstraNodes1, points);
+			SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s dijkstra");
 			
 			System.out.println("end");			
 		}catch(IOException e){
