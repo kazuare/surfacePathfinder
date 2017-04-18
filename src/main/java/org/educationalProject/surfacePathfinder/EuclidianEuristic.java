@@ -10,8 +10,7 @@ public class EuclidianEuristic<V> implements AStarAdmissibleHeuristic<V>{
 		Point a = (Point)sourceVertex;
 		Point b = (Point)targetVertex;  
 		//we must use the same formula as in graph constructor
-		return Math.abs(a.alt-b.alt) +
-				Math.sqrt(
+		return Math.sqrt(
 					(a.x-b.x)*(a.x-b.x)+
 					(a.y-b.y)*(a.y-b.y)+
 					(a.alt-b.alt)*(a.alt-b.alt)
