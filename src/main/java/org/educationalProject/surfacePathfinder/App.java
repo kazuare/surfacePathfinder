@@ -26,7 +26,13 @@ import io.github.jdiemke.triangulation.Vector2D;
  * */
 public class App {
 
+	//addition punishment in our distances 
+	static final double ALTITUDE_MULTIPLIER = 16;
+	//is used to determene whether the edge is "bad" and should not be included
+	static final double COS_THRESHOLD = 0.7;
+	
 	public static void main(String[] args) {
+		
 		try{
 			double resultingTime;
 			// We will used this clock to measure time through all the phases
@@ -46,12 +52,9 @@ public class App {
 			
 			// Triangles -> graph convertion. Some edges are deleted if they have high altitude delta
 			clock.tic();
-			SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles);
+			SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles, COS_THRESHOLD, ALTITUDE_MULTIPLIER);
 			resultingTime = clock.tocd();
 			System.out.println("Graph building is finished, phase duration is: " + resultingTime);
-			
-			SimpleWeightedGraph<Point,DefaultWeightedEdge> graphWithoutPenalty = TrianglesToGraphConverter.convertWithoutAltitudePenalty(triangles);
-			
 			
 			//Finding the shortest path
 			clock.tic();
