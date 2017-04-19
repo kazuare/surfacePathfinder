@@ -3,6 +3,7 @@ package org.educationalProject.surfacePathfinder.visualization;
 import java.util.List;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -18,12 +19,12 @@ import io.github.jdiemke.triangulation.Vector2D;
 public abstract class MapVisualizer extends Visualizer {
 	protected List<Point> path;
 	protected List<Triangle2D> triangles;
-	protected SimpleWeightedGraph<Point,DefaultWeightedEdge> graph;
+	protected WeightedGraph<Point, DefaultWeightedEdge> graph;
 	
 	/**
 	* Sets data that needs to be visualized
 	*/
-	public void setData(List<Triangle2D> triangles, List<Point> pathCoords, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+	public void setData(List<Triangle2D> triangles, List<Point> pathCoords, WeightedGraph<Point, DefaultWeightedEdge> graph){
 		this.triangles = triangles;
 		this.path = pathCoords;		
 		this.graph = graph;
