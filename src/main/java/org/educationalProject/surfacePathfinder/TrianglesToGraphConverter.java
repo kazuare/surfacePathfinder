@@ -13,7 +13,12 @@ public class TrianglesToGraphConverter {
 	private static double COS_THRESHOLD;
 	private static double COST_MULTIPLIER;
 	
-	private static double edgeWeight(Point a, Point b){
+	public static void setParams(double threshold, double multiplier){
+		COS_THRESHOLD = threshold;
+		COST_MULTIPLIER = multiplier;
+	}
+	
+	public static double edgeWeight(Point a, Point b){
 		return Math.abs(a.alt-b.alt) * COST_MULTIPLIER +
 				Math.sqrt(
 					(a.x-b.x)*(a.x-b.x)+
@@ -25,7 +30,7 @@ public class TrianglesToGraphConverter {
 	/**
 	* determines if the edge is satisfactory (also returns false is the edge is already in graph)
 	*/
-	private static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+	public static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
 		if(graph.containsEdge(a, b))
 			return false;
 		if(
@@ -47,8 +52,7 @@ public class TrianglesToGraphConverter {
 	}
 	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convert(List<Triangle2D> triangles, double threshold, double multiplier){
 		
-		COS_THRESHOLD = threshold;
-		COST_MULTIPLIER = multiplier;
+		setParams(threshold,multiplier);
 		
 		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		
@@ -83,8 +87,7 @@ public class TrianglesToGraphConverter {
 	
 	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convertWithoutAltitudePenalty(List<Triangle2D> triangles, double threshold){
 		
-		COS_THRESHOLD = threshold;
-		COST_MULTIPLIER = 0;
+		setParams(threshold,0);
 		
 		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		

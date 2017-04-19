@@ -16,22 +16,28 @@ import io.github.jdiemke.triangulation.Vector2D;
 * Visualizes top down map image.
 * Subclasses can draw either filled triangles or not filled
 */
-public abstract class MapVisualizer extends Visualizer {
-	protected List<Point> path;
-	protected List<Triangle2D> triangles;
+public class GraphVisualizer extends Visualizer {
 	protected WeightedGraph<Point, DefaultWeightedEdge> graph;
 	
 	/**
 	* Sets data that needs to be visualized
 	*/
-	public void setData(List<Triangle2D> triangles, List<Point> pathCoords, WeightedGraph<Point, DefaultWeightedEdge> graph){
-		this.triangles = triangles;
-		this.path = pathCoords;		
+	public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph){
 		this.graph = graph;
 		dataSet = true;
 	}
 	
-	protected abstract void drawContent( GL2 gl2 );
+	protected void drawContent( GL2 gl2 ){
+		gl2.glLineWidth(1f);
+		gl2.glBegin(GL.GL_LINES);
+        
+		for(DefaultWeightedEdge edge : graph.edgeSet()){			
+	        drawColoredPoint(gl2, graph.getEdgeSource(edge));
+	        drawColoredPoint(gl2, graph.getEdgeTarget(edge));	      	        
+		}
+		
+		gl2.glEnd();
+	}
 	
 	protected double maxX = Double.NEGATIVE_INFINITY;
 	protected double minX = Double.POSITIVE_INFINITY;
@@ -68,53 +74,18 @@ public abstract class MapVisualizer extends Visualizer {
 		return (float) ((data - minAlt)/(maxAlt - minAlt));
 	}
 
-	protected void findExtremes(){
-		for(Triangle2D triangle : triangles){
-			Point a = (Point)triangle.a;
-			Point b = (Point)triangle.b;
-			Point c = (Point)triangle.c;
-			
-			minX = Math.min(minX, a.x);
-			minX = Math.min(minX, b.x);
-			minX = Math.min(minX, c.x);
-			
+	protected void findExtremes(){		
+		for(Point a : graph.vertexSet()){			
+			minX = Math.min(minX, a.x);			
 			minY = Math.min(minY, a.y);
-			minY = Math.min(minY, b.y);
-			minY = Math.min(minY, c.y);
-			
-			minAlt = Math.min(minAlt, a.alt);
-			minAlt = Math.min(minAlt, b.alt);
-			minAlt = Math.min(minAlt, c.alt);
-			
-			maxX = Math.max(maxX, a.x);
-			maxX = Math.max(maxX, b.x);
-			maxX = Math.max(maxX, c.x);
-			
-			maxY = Math.max(maxY, a.y);
-			maxY = Math.max(maxY, b.y);
-			maxY = Math.max(maxY, c.y);
-			
+			minAlt = Math.min(minAlt, a.alt);			
+			maxX = Math.max(maxX, a.x);			
+			maxY = Math.max(maxY, a.y);			
 			maxAlt = Math.max(maxAlt, a.alt);
-			maxAlt = Math.max(maxAlt, b.alt);
-			maxAlt = Math.max(maxAlt, c.alt);
-		}
+		}		
 	}
 	
-	protected void drawPath( GL2 gl2 ){
-		
-        gl2.glColor3f( 1, 1, 1 );
-
-		gl2.glLineWidth(3);
-		gl2.glBegin( GL.GL_LINES );
-		
-		int size = path.size();
-        for(int i = 0; i < size-1; i++){
-        	drawPoint(gl2, path.get(i));
-        	drawPoint(gl2, path.get(i+1));
-        }
-        
-        gl2.glEnd();
-	}
+	
 	
 	public void display( GL2 gl2 ){
 		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
@@ -124,6 +95,5 @@ public abstract class MapVisualizer extends Visualizer {
 			
 		drawContent(gl2);
 			
-		drawPath(gl2);
 	}
 }
