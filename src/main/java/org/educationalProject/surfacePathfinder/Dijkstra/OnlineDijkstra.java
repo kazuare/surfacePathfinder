@@ -10,7 +10,7 @@ import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-public abstract class Dijkstra {
+public abstract class OnlineDijkstra {
 	private Set<Point> usedNodes;
 	protected LinkedHashSet<Point> notVisited;
 	protected HashMap<Point, HashSet<IdAndLength>> neighbours;
@@ -35,22 +35,13 @@ public abstract class Dijkstra {
 		for(Point x : usedNodes){
 			notVisited.add(x);
 			neighbours.put(x, new HashSet<IdAndLength>());
-			for (DefaultWeightedEdge y: g.edgesOf(x)){	
-				if(g.getEdgeTarget(y) != x)
-					neighbours.get(x).add(
-						new IdAndLength(g.getEdgeTarget(y), g.getEdgeWeight(y))
-					);
-				if(g.getEdgeSource(y) != x)
-					neighbours.get(x).add(
-						new IdAndLength(g.getEdgeSource(y), g.getEdgeWeight(y))
-					);
-			}
+			
 		}
 	}
 	public abstract void process(Point currentNode, HashMap<Point,Route> routes);
 	
 	
-	public HashMap<Point, Route> run(Point start){
+	public HashMap<Point, Route> run(Point start, WeightedGraph<Point, DefaultWeightedEdge> g){
 		
 		HashMap<Point,Route> routes = new HashMap<Point,Route>();
 		
@@ -69,6 +60,57 @@ public abstract class Dijkstra {
 		while(currentNode != null){
 			++count;
 			if(count%800 == 0)System.out.println(count);
+			
+			for (DefaultWeightedEdge y: g.edgesOf(currentNode)){	
+				if(g.getEdgeTarget(y) != currentNode)
+					neighbours.get(currentNode).add(
+						new IdAndLength(g.getEdgeTarget(y), g.getEdgeWeight(y))
+					);
+				if(g.getEdgeSource(y) != currentNode)
+					neighbours.get(currentNode).add(
+						new IdAndLength(g.getEdgeSource(y), g.getEdgeWeight(y))
+					);
+			}
+			
+			process(currentNode, routes);
+			setVisited(currentNode);
+			currentNode = findMin(routes);
+		}
+				
+		return routes;
+	}
+	
+public HashMap<Point, Route> run(Point start, Point end, WeightedGraph<Point, DefaultWeightedEdge> g){
+		
+		HashMap<Point,Route> routes = new HashMap<Point,Route>();
+		
+		for(Point usedNode : usedNodes){
+			Route r = new Route();
+			if(!usedNode.equals(start))
+				r.length = Double.POSITIVE_INFINITY;
+			else
+				r.length = 0;
+			routes.put(usedNode, r);
+		}
+		
+		Point currentNode = start;
+		routes.get(currentNode).append(currentNode);
+		int count = 0;
+		while(currentNode != null && !currentNode.equals(end)){
+			++count;
+			if(count%800 == 0)System.out.println(count);
+			
+			for (DefaultWeightedEdge y: g.edgesOf(currentNode)){	
+				if(g.getEdgeTarget(y) != currentNode)
+					neighbours.get(currentNode).add(
+						new IdAndLength(g.getEdgeTarget(y), g.getEdgeWeight(y))
+					);
+				if(g.getEdgeSource(y) != currentNode)
+					neighbours.get(currentNode).add(
+						new IdAndLength(g.getEdgeSource(y), g.getEdgeWeight(y))
+					);
+			}
+			
 			process(currentNode, routes);
 			setVisited(currentNode);
 			currentNode = findMin(routes);
