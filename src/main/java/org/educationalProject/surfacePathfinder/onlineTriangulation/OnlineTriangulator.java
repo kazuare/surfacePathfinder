@@ -13,8 +13,6 @@ public interface OnlineTriangulator {
 	public SimpleWeightedGraph<Point,DefaultWeightedEdge> init(Point start);
 	/**
 	 * adds new edges to the graph based on new points given
-	 * Previous and recent areas MUST intersect (one point at least).
-	 * It is not checked through.
 	 **/
 	public SimpleWeightedGraph<Point,DefaultWeightedEdge> update(Point start);
 	

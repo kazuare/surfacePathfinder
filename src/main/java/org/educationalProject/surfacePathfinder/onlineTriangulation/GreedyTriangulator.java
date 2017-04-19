@@ -22,6 +22,8 @@ public class GreedyTriangulator implements OnlineTriangulator{
 	
 		this.points = points;
 		this.graph = graph;
+		for(Point v : points)
+			graph.addVertex(v);
 		this.radius = radius;
 		r2 = radius * radius;
 	}
@@ -81,11 +83,6 @@ public class GreedyTriangulator implements OnlineTriangulator{
 				Point a = edges.get(i).a;
 				Point b = edges.get(i).b;
 				
-				if(!graph.containsVertex(a))
-					graph.addVertex(a);
-				if(!graph.containsVertex(b))
-					graph.addVertex(b);
-				
 				DefaultWeightedEdge e = graph.addEdge(a, b);
 				graph.setEdgeWeight(e, TrianglesToGraphConverter.edgeWeight(a, b));
 			}			
@@ -130,11 +127,7 @@ public class GreedyTriangulator implements OnlineTriangulator{
 					edges.add(edge);
 					
 					Point a = edge.a;
-					Point b = edge.b;					
-					if(!graph.containsVertex(a))
-						graph.addVertex(a);
-					if(!graph.containsVertex(b))
-						graph.addVertex(b);
+					Point b = edge.b;		
 					
 					DefaultWeightedEdge e = graph.addEdge(a, b);
 					graph.setEdgeWeight(e, TrianglesToGraphConverter.edgeWeight(a, b));
