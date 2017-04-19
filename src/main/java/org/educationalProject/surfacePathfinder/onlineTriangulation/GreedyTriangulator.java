@@ -2,6 +2,8 @@ package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -17,11 +19,13 @@ public class GreedyTriangulator implements OnlineTriangulator{
 	private double r2;
 	private Vector<Point> points;
 	private Vector<EdgeWithDistance> edges;
-	
-	GreedyTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Vector<Point> points, double radius){
-	
+	private HashSet<Point> processedPoints;
+	GreedyTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Vector<Point> points, HashSet<Point> processedPoints, double radius){
+		this.processedPoints = processedPoints;
 		this.points = points;
 		this.graph = graph;
+		for(Point v : points)
+			graph.addVertex(v);
 		this.radius = radius;
 		r2 = radius * radius;
 	}
@@ -81,18 +85,16 @@ public class GreedyTriangulator implements OnlineTriangulator{
 				Point a = edges.get(i).a;
 				Point b = edges.get(i).b;
 				
-				if(!graph.containsVertex(a))
-					graph.addVertex(a);
-				if(!graph.containsVertex(b))
-					graph.addVertex(b);
-				
 				DefaultWeightedEdge e = graph.addEdge(a, b);
 				graph.setEdgeWeight(e, TrianglesToGraphConverter.edgeWeight(a, b));
 			}			
 			
+			setProcessedPoints(neighbours,hull);
+			
 		} catch (Exception e3) {
 			e3.printStackTrace();
 		}
+		
 		
 		return graph;
 	}
@@ -130,20 +132,19 @@ public class GreedyTriangulator implements OnlineTriangulator{
 					edges.add(edge);
 					
 					Point a = edge.a;
-					Point b = edge.b;					
-					if(!graph.containsVertex(a))
-						graph.addVertex(a);
-					if(!graph.containsVertex(b))
-						graph.addVertex(b);
+					Point b = edge.b;		
 					
 					DefaultWeightedEdge e = graph.addEdge(a, b);
 					graph.setEdgeWeight(e, TrianglesToGraphConverter.edgeWeight(a, b));
 				}
 			}
 			
+			setProcessedPoints(neighbours,hull);
+			
 		} catch (Exception e3) {
 			e3.printStackTrace();
 		}
+		
 		
 		return graph;
 	}
@@ -174,6 +175,18 @@ public class GreedyTriangulator implements OnlineTriangulator{
 			
 		}	
 		return edges;
+	}
+	
+	private void setProcessedPoints(Vector<Point> neighbours, Vector<Point> hull ){
+		HashSet<Point> touchesHull = new HashSet<Point>();
+		for( Point x: hull )
+			for(DefaultWeightedEdge y: graph.edgesOf(x)){
+				touchesHull.add(graph.getEdgeSource(y));
+				touchesHull.add(graph.getEdgeTarget(y));
+			}
+		for( Point x : neighbours )
+			if(!touchesHull.contains(x))
+				processedPoints.add(x);
 	}
 	
 	private class EdgeWithDistance{
