@@ -1,5 +1,6 @@
 package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
+import java.util.HashSet;
 import java.util.Vector;
 
 import org.educationalProject.surfacePathfinder.Point;
@@ -13,7 +14,9 @@ public interface OnlineTriangulator {
 	public SimpleWeightedGraph<Point,DefaultWeightedEdge> init(Point start);
 	/**
 	 * adds new edges to the graph based on new points given
+	 * for triangulation to be always correct new area need to intersect with some previous ones.
 	 **/
 	public SimpleWeightedGraph<Point,DefaultWeightedEdge> update(Point start);
 	
+		
 }
