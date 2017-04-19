@@ -3,6 +3,7 @@ package org.educationalProject.surfacePathfinder.visualization;
 import java.util.List;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -16,12 +17,12 @@ import io.github.jdiemke.triangulation.Vector2D;
 * Subclasses can draw either filled triangles or not filled
 */
 public class GraphVisualizer extends Visualizer {
-	protected SimpleWeightedGraph<Point,DefaultWeightedEdge> graph;
+	protected WeightedGraph<Point, DefaultWeightedEdge> graph;
 	
 	/**
 	* Sets data that needs to be visualized
 	*/
-	public void setData(SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+	public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph){
 		this.graph = graph;
 		dataSet = true;
 	}
