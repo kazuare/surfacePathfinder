@@ -3,6 +3,7 @@ package org.educationalProject.surfacePathfinder.test;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -25,7 +26,9 @@ import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.Dijkstra.OnlineNormalDijkstra;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.GreedyTriangulator;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 
 public class YegorTest {
 
@@ -34,6 +37,8 @@ public class YegorTest {
     //is used to determine whether the edge is "bad" and should not be included
     static final double COS_THRESHOLD = 0.7;
     static final double TRIANGULATION_RADIUS = 0.3;
+    
+    
     public static void partialTriangulationExample(){
 		try{
 			double resultingTime;

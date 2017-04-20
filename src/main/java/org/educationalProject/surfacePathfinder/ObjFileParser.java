@@ -27,8 +27,7 @@ public class ObjFileParser {
 				points.add( new Point(
 					Double.valueOf(components[1]),
 					Double.valueOf(components[2]),
-					Double.valueOf(components[3]),
-					currentId++
+					Double.valueOf(components[3])
 				));
 			}
 		reader.close();
@@ -50,11 +49,11 @@ public class ObjFileParser {
 				points.add( new Point(
 					Double.valueOf(components[1]),
 					Double.valueOf(components[2]),
-					Double.valueOf(components[3]),
-					currentId++
+					Double.valueOf(components[3])
 				));
 			}
 		reader.close();
 		return points;
 	}
+	
 }

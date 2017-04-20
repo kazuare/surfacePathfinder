@@ -7,7 +7,7 @@ import io.github.jdiemke.triangulation.Vector2D;
 public class Point extends Vector2D {
 	public double alt;
 	
-	public Point(double x, double y, double alt, int id){
+	public Point(double x, double y, double alt){
 		super(x, y);
 		this.alt = alt;
 	}
@@ -28,6 +28,10 @@ public class Point extends Vector2D {
 			return false;
 		Point b = (Point)obj;
 		return (x == b.x) && (y == b.y);
+	}
+	@Override
+	public String toString(){
+		return "point: " + x + " " + y + " " + alt; 
 	}
 	
 }
