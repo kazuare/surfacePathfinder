@@ -34,5 +34,27 @@ public class ObjFileParser {
 		reader.close();
 		return points;
 	}
-	
+	public static Vector<Point> getPoints2(String address) throws IOException{
+		FileInputStream stream =  new FileInputStream(address);
+		BufferedReader reader = new BufferedReader(
+			new InputStreamReader(stream, "UTF-8")
+		);		
+		
+		Vector<Point> points = new Vector<Point>();
+		
+		String a;
+		int currentId = 0;
+		while((a = reader.readLine()) != null)
+			if(a.charAt(0) == 'v'){
+				String[] components = a.split(" ");
+				points.add( new Point(
+					Double.valueOf(components[1]),
+					Double.valueOf(components[2]),
+					Double.valueOf(components[3]),
+					currentId++
+				));
+			}
+		reader.close();
+		return points;
+	}
 }
