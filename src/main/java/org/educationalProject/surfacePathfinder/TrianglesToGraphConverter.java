@@ -10,9 +10,15 @@ import io.github.jdiemke.triangulation.Triangle2D;
 * takes in some triangles, adds all the satisfactory triangle edges to the graph
 */
 public class TrianglesToGraphConverter {
-	private final static double COS_THRESHOLD = 0.7;
-	private final static double COST_MULTIPLIER = 25;
-	private static double edgeWeight(Point a, Point b){
+	private static double COS_THRESHOLD;
+	private static double COST_MULTIPLIER;
+	
+	public static void setParams(double threshold, double multiplier){
+		COS_THRESHOLD = threshold;
+		COST_MULTIPLIER = multiplier;
+	}
+	
+	public static double edgeWeight(Point a, Point b){
 		return Math.abs(a.alt-b.alt) * COST_MULTIPLIER +
 				Math.sqrt(
 					(a.x-b.x)*(a.x-b.x)+
@@ -21,17 +27,10 @@ public class TrianglesToGraphConverter {
 				);
 	}
 	
-	private static double edgeWeightWithoutAltitudePenalty(Point a, Point b){
-		return 	Math.sqrt(
-					(a.x-b.x)*(a.x-b.x)+
-					(a.y-b.y)*(a.y-b.y)+
-					(a.alt-b.alt)*(a.alt-b.alt)
-				);
-	}
 	/**
 	* determines if the edge is satisfactory (also returns false is the edge is already in graph)
 	*/
-	private static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+	public static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
 		if(graph.containsEdge(a, b))
 			return false;
 		if(
@@ -51,7 +50,9 @@ public class TrianglesToGraphConverter {
 			return false;
 		return true;
 	}
-	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convert(List<Triangle2D> triangles){
+	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convert(List<Triangle2D> triangles, double threshold, double multiplier){
+		
+		setParams(threshold,multiplier);
 		
 		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		
@@ -84,7 +85,9 @@ public class TrianglesToGraphConverter {
 		return graph;
 	}
 	
-	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convertWithoutAltitudePenalty(List<Triangle2D> triangles){
+	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convertWithoutAltitudePenalty(List<Triangle2D> triangles, double threshold){
+		
+		setParams(threshold,0);
 		
 		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		
@@ -102,15 +105,15 @@ public class TrianglesToGraphConverter {
 			
 			if(judgeEdge(a, b, graph)){
 				DefaultWeightedEdge e = graph.addEdge(a, b);
-				graph.setEdgeWeight(e, edgeWeightWithoutAltitudePenalty(a, b));
+				graph.setEdgeWeight(e, edgeWeight(a, b));
 			}
 			if(judgeEdge(a, c, graph)){
 				DefaultWeightedEdge e = graph.addEdge(a, c);
-				graph.setEdgeWeight(e, edgeWeightWithoutAltitudePenalty(a, c));
+				graph.setEdgeWeight(e, edgeWeight(a, c));
 			}
 			if(judgeEdge(c, b, graph)){
 				DefaultWeightedEdge e = graph.addEdge(c, b);
-				graph.setEdgeWeight(e, edgeWeightWithoutAltitudePenalty(c, b));
+				graph.setEdgeWeight(e, edgeWeight(c, b));
 			}
 		}
 		
