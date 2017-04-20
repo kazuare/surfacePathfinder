@@ -23,7 +23,9 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.NotEnoughPointsException;
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
-
+import org.educationalProject.surfacePathfinder.Dijkstra.OnlineNormalDijkstra;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
+import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
 
 public class YegorTest {
 
@@ -32,9 +34,78 @@ public class YegorTest {
     //is used to determene whether the edge is "bad" and should not be included
     static final double COS_THRESHOLD = 0.7;
 
-    public void test() {
-
-        try{
+    public static void partialTriangulationExample(){
+		try{
+			double resultingTime;
+			// We will used this clock to measure time through all the phases
+			NanoClock clock = new NanoClock();
+			
+			// Obj file reading
+			clock.tic();
+			Vector<Vector2D> points = ObjFileParser.getPoints("C:\\digdes\\map.obj");
+			resultingTime = clock.tocd();
+			System.out.println("Reading is finished, phase duration is: " + resultingTime);
+			
+			clock.tic();
+			Vector<Point> realPoints = new Vector<Point>();
+			for(int i = 0; i < points.size(); i++)
+				realPoints.add((Point)points.get(i));
+			
+			GraphProxy graph = new GraphProxy(0.3, realPoints);
+			GraphProxy graph2 = new GraphProxy(0.3, realPoints);
+			
+			Point a = (Point)points.get((int)(Math.random()*points.size()));
+			Point b = (Point)points.get((int)(Math.random()*points.size()));
+			
+			showDijkstra(clock, graph, a, b);
+			showAStar(clock, graph2, a, b);
+			
+			System.out.println("end");			
+		}catch(IOException e){
+			System.out.println("Problem with file reading accured!");
+		}catch(TicTocException e){
+			System.out.println("There is a problem with time measuring code. toc is executed before tic.");
+		}
+		
+	}
+    
+    public static void showAStar(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
+    	double resultingTime;
+    	clock.tic();
+		AStarShortestPath<Point,DefaultWeightedEdge> alternative = 
+				new AStarShortestPath<Point,DefaultWeightedEdge>(
+					graph,
+					new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
+				);
+		List<Point> dijkstraNodes = alternative.getPath(a, b).getVertexList();
+		resultingTime = clock.tocd();
+		System.out.println("Astar algo is finished, phase duration is: " + resultingTime);
+		System.out.println("Path length is: " + alternative.getPath(a, b).getWeight());
+		//Visualizing
+		DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
+		vis.setData(graph, dijkstraNodes);
+		SwingWindow.start(vis, 700, 700, "Astar");
+    }
+    
+    public static void showDijkstra(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
+    	double resultingTime;
+    	clock.tic();
+		OnlineNormalDijkstra x = new OnlineNormalDijkstra();
+		x.init(graph);
+		HashMap<Point, Route> routes = x.run(a,b,graph);
+		List<Point> r = routes.get(b).vertices;
+		resultingTime = clock.tocd();
+		System.out.println("Dijkstra algo is finished, phase duration is: " + resultingTime);
+		System.out.println("Path length is: " + routes.get(b).length);
+		
+		//Visualizing
+		DecolorizedMapVisualizer vis2 = new DecolorizedMapVisualizer();
+		vis2.setData(graph, r);
+		SwingWindow.start(vis2, 700, 700, "map");
+    }
+    
+    public static void fullTriangulationExample(){
+    	try{
             double resultingTime;
             // We will used this clock to measure time through all the phases
             NanoClock clock = new NanoClock();

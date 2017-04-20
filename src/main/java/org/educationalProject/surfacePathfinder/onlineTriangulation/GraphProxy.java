@@ -7,12 +7,15 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
+import org.jgrapht.UndirectedGraph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>{
+public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,UndirectedGraph<Point, DefaultWeightedEdge>{
 	private double radius;
 	private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
 	private OnlineTriangulator triangulator;
@@ -24,10 +27,6 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>{
 		this.radius = radius;
 		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		triangulator = new GreedyTriangulator(graph, points, processedPoints, radius);
-		
-		//triangulator.init((Point)points.get((int)(Math.random()*points.size())));
-		//Point p = (Point) graph.getEdgeSource((DefaultWeightedEdge) graph.edgeSet().toArray()[20]);
-		//triangulator.update(p);
 	}
 	
 	private boolean notProcessed(Point p){
@@ -57,7 +56,12 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>{
 	public Set<Point> vertexSet() {
 		return graph.vertexSet();
 	}
-	
+	@Override
+	public int degreeOf(Point vertex) {
+		if(notProcessed(vertex))
+			update(vertex);
+		return graph.degreeOf(vertex);
+	}
 	
 	@Override
 	public Point getEdgeSource(DefaultWeightedEdge e) {
@@ -116,67 +120,27 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>{
 	
 	
 	@Override
-	public EdgeFactory getEdgeFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public EdgeFactory getEdgeFactory() {return null;}
 	@Override
-	public boolean removeAllEdges(Collection edges) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public boolean removeAllEdges(Collection edges) {return false;}	
+	@Override
+	public boolean removeAllVertices(Collection vertices) {return false;}	
+	@Override
+	public DefaultWeightedEdge addEdge(Point sourceVertex, Point targetVertex) {return null;}
+	@Override
+	public boolean addEdge(Point sourceVertex, Point targetVertex, DefaultWeightedEdge e) {return false;}
+	@Override
+	public boolean addVertex(Point v) {return false;}
+	@Override
+	public Set<DefaultWeightedEdge> removeAllEdges(Point sourceVertex, Point targetVertex) {return null;}
+	@Override
+	public DefaultWeightedEdge removeEdge(Point sourceVertex, Point targetVertex) {return null;}
+	@Override
+	public boolean removeEdge(DefaultWeightedEdge e) {return false;}
+	@Override
+	public boolean removeVertex(Point v) {return false;}
+	@Override
+	public void setEdgeWeight(DefaultWeightedEdge e, double weight) {}
+
 	
-	@Override
-	public boolean removeAllVertices(Collection vertices) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public DefaultWeightedEdge addEdge(Point sourceVertex, Point targetVertex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean addEdge(Point sourceVertex, Point targetVertex, DefaultWeightedEdge e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addVertex(Point v) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Set<DefaultWeightedEdge> removeAllEdges(Point sourceVertex, Point targetVertex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public DefaultWeightedEdge removeEdge(Point sourceVertex, Point targetVertex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean removeEdge(DefaultWeightedEdge e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeVertex(Point v) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setEdgeWeight(DefaultWeightedEdge e, double weight) {
-		// TODO Auto-generated method stub
-		
-	}
 }
