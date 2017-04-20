@@ -3,6 +3,8 @@ package org.educationalProject.surfacePathfinder.path;
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.util.FibonacciHeap;
+import org.jgrapht.util.FibonacciHeapNode;
 
 import java.util.*;
 
@@ -11,7 +13,7 @@ public class DijkstraPathFind {
 
     private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
     private Set<Point> settledNodes;
-    private PriorityQueue<DistancePoint> unSettledNodes;
+    private FibonacciHeap<Point> unSettledNodes;
     private Map<Point, Point> predecessors;
     private Map<Point, Double> distance;
 
@@ -26,42 +28,33 @@ public class DijkstraPathFind {
     private void init(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Point source) {
         this.graph = graph;
         settledNodes = new HashSet<Point>();
-        unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
+        unSettledNodes = new FibonacciHeap<Point>();
         distance = new HashMap<Point, Double>();
         predecessors = new HashMap<Point, Point>();
         distance.put(source, 0.0);
-        unSettledNodes.add(new DistancePoint(source, 0.0));
+        unSettledNodes.insert(new FibonacciHeapNode<Point>(source), 0.0);
     }
-
-    public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
-        @Override
-        public int compare(DistancePoint a, DistancePoint b) {
-            return (int)Math.signum(a.distance - b.distance);
-        }
-    };
 
     private void findAllPaths() {
         while (unSettledNodes.size() > 0) {
-            Point node = getMinimum(unSettledNodes);
-            settledNodes.add(node);
-            unSettledNodes.remove(node);
-            findMinimalDistances(node);
+            FibonacciHeapNode<Point> heapNode = unSettledNodes.removeMin();
+            settledNodes.add(heapNode.getData());
+            findMinimalDistances(heapNode.getData());
         }
     }
 
     private void findMinimalDistances(Point node) {
         List<Point> adjacentNodes = getNeighbors(node);
         for (Point target : adjacentNodes) {
-            double getShortestDistanceTarget = getShortestDistance(target);
-            double getShortestDistanceNode = getShortestDistance(node);
+            double getDistanceTarget = getDistance(target);
+            double getDistanceNode = getDistance(node);
             double getDistanceNodeTarget = getDistance(node, target);
-            if (getShortestDistanceTarget > getShortestDistanceNode
+            if (getDistanceTarget > getDistanceNode
                     + getDistanceNodeTarget) {
-                distance.put(target, getShortestDistanceNode
-                        + getDistanceNodeTarget);
+                distance.put(target, getDistanceNode + getDistanceNodeTarget);
                 predecessors.put(target, node);
-                unSettledNodes.add(new DistancePoint(target, getShortestDistanceNode
-                        + getDistanceNodeTarget));
+                unSettledNodes.insert(new FibonacciHeapNode<Point>(target),
+                        getDistanceNode + getDistanceNodeTarget);
             }
         }
 
@@ -72,40 +65,7 @@ public class DijkstraPathFind {
         return (Double)graph.getEdgeWeight(e);
     }
 
-    private List<Point> getNeighbors(Point node) {
-        List<Point> neighbors = new ArrayList<Point>();
-        Set<DefaultWeightedEdge> edges = graph.edgesOf(node);
-        for (DefaultWeightedEdge edge : edges) {
-            if (graph.getEdgeSource(edge).equals(node) && !isSettled(graph.getEdgeTarget(edge))) {
-                neighbors.add(graph.getEdgeTarget(edge));
-                continue;
-            }
-            if (graph.getEdgeTarget(edge).equals(node) && !isSettled(graph.getEdgeSource(edge))){
-                neighbors.add(graph.getEdgeSource(edge));
-            }
-        }
-        return neighbors;
-    }
-
-    private Point getMinimum(PriorityQueue<DistancePoint> vertexes) {
-        Point minimum = vertexes.poll().point;
-        /*for (Point vertex : vertexes) {
-            if (minimum == null) {
-                minimum = vertex;
-            } else {
-                if (getShortestDistance(vertex) < getShortestDistance(minimum)) {
-                    minimum = vertex;
-                }
-            }
-        }*/
-        return minimum;
-    }
-
-    private boolean isSettled(Point vertex) {
-        return settledNodes.contains(vertex);
-    }
-
-    private Double getShortestDistance(Point destination) {
+    private Double getDistance(Point destination) {
         Double d = distance.get(destination);
         if (d == null) {
             return Double.MAX_VALUE;
@@ -114,12 +74,29 @@ public class DijkstraPathFind {
         }
     }
 
-    /*
-     * This method returns the path from the source to the selected target and
-     * NULL if no path exists
-     */
+    private List<Point> getNeighbors(Point node) {
+        List<Point> neighbors = new ArrayList<Point>();
+        Set<DefaultWeightedEdge> edges = graph.edgesOf(node);
+        for (DefaultWeightedEdge edge : edges) {
+            Point source = graph.getEdgeSource(edge);
+            Point target = graph.getEdgeTarget(edge);
+            if (source.equals(node) && !isSettled(target)) {
+                neighbors.add(target);
+                continue;
+            }
+            if (target.equals(node) && !isSettled(source)) {
+                neighbors.add(source);
+            }
+        }
+        return neighbors;
+    }
+
+    private boolean isSettled(Point vertex) {
+        return settledNodes.contains(vertex);
+    }
+
     private List<Point> retrievalPath(Point target) {
-        List<Point> shortestPath = new LinkedList<Point>();
+        List<Point> shortestPath = new ArrayList<Point>();
         Point step = target;
         // check if a path exists
         if (predecessors.get(step) == null) {
