@@ -10,8 +10,7 @@ public class App {
 	public static void main(String[] args) {
 		//SerejaTest serejaTest = new SerejaTest();
 		//serejaTest.test();
-		YegorTest yegorTest = new YegorTest();
-		yegorTest.test();
+		YegorTest.partialTriangulationExample();
 	}
 
 }
