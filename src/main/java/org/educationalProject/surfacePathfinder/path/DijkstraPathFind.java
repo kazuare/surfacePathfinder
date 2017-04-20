@@ -9,7 +9,7 @@ import java.util.*;
 
 public class DijkstraPathFind {
 
-    private SimpleWeightedGraph<Point, DefaultWeightedEdge> g;
+    private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
     private Set<Point> settledNodes;
     private PriorityQueue<DistancePoint> unSettledNodes;
     private Map<Point, Point> predecessors;
@@ -24,7 +24,7 @@ public class DijkstraPathFind {
     }
 
     private void init(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Point source) {
-        g = graph;
+        this.graph = graph;
         settledNodes = new HashSet<Point>();
         unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
         distance = new HashMap<Point, Double>();
@@ -36,7 +36,7 @@ public class DijkstraPathFind {
     public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
         @Override
         public int compare(DistancePoint a, DistancePoint b) {
-            return (int)(a.distance - b.distance);
+            return (int)Math.signum(a.distance - b.distance);
         }
     };
 
@@ -68,19 +68,20 @@ public class DijkstraPathFind {
     }
 
     private Double getDistance(Point node, Point target) {
-        DefaultWeightedEdge e = g.getEdge(node, target);
-        return (Double)g.getEdgeWeight(e);
+        DefaultWeightedEdge e = graph.getEdge(node, target);
+        return (Double)graph.getEdgeWeight(e);
     }
 
     private List<Point> getNeighbors(Point node) {
         List<Point> neighbors = new ArrayList<Point>();
-        Set<DefaultWeightedEdge> edges = g.edgesOf(node);
+        Set<DefaultWeightedEdge> edges = graph.edgesOf(node);
         for (DefaultWeightedEdge edge : edges) {
-            if (g.getEdgeSource(edge).equals(node) && !isSettled(g.getEdgeTarget(edge))) {
-                neighbors.add(g.getEdgeTarget(edge));
+            if (graph.getEdgeSource(edge).equals(node) && !isSettled(graph.getEdgeTarget(edge))) {
+                neighbors.add(graph.getEdgeTarget(edge));
+                continue;
             }
-            if (g.getEdgeTarget(edge).equals(node) && !isSettled(g.getEdgeSource(edge))){
-                neighbors.add(g.getEdgeSource(edge));
+            if (graph.getEdgeTarget(edge).equals(node) && !isSettled(graph.getEdgeSource(edge))){
+                neighbors.add(graph.getEdgeSource(edge));
             }
         }
         return neighbors;
