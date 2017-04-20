@@ -3,6 +3,7 @@ package org.educationalProject.surfacePathfinder.test;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -25,15 +26,19 @@ import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.Dijkstra.OnlineNormalDijkstra;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.GreedyTriangulator;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 
 public class YegorTest {
 
     //addition punishment in our distances
     static final double ALTITUDE_MULTIPLIER = 16;
-    //is used to determene whether the edge is "bad" and should not be included
+    //is used to determine whether the edge is "bad" and should not be included
     static final double COS_THRESHOLD = 0.7;
-
+    static final double TRIANGULATION_RADIUS = 0.3;
+    
+    
     public static void partialTriangulationExample(){
 		try{
 			double resultingTime;
@@ -42,20 +47,15 @@ public class YegorTest {
 			
 			// Obj file reading
 			clock.tic();
-			Vector<Vector2D> points = ObjFileParser.getPoints("C:\\digdes\\map.obj");
+			Vector<Point> realPoints = ObjFileParser.getPoints2("C:\\digdes\\map.obj");
 			resultingTime = clock.tocd();
 			System.out.println("Reading is finished, phase duration is: " + resultingTime);
 			
-			clock.tic();
-			Vector<Point> realPoints = new Vector<Point>();
-			for(int i = 0; i < points.size(); i++)
-				realPoints.add((Point)points.get(i));
+			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints);
+			GraphProxy graph2 = new GraphProxy(TRIANGULATION_RADIUS, realPoints);
 			
-			GraphProxy graph = new GraphProxy(0.3, realPoints);
-			GraphProxy graph2 = new GraphProxy(0.3, realPoints);
-			
-			Point a = (Point)points.get((int)(Math.random()*points.size()));
-			Point b = (Point)points.get((int)(Math.random()*points.size()));
+			Point a = realPoints.get((int)(Math.random()*realPoints.size()));
+			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
 			
 			showDijkstra(clock, graph, a, b);
 			showAStar(clock, graph2, a, b);
