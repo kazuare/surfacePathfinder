@@ -56,10 +56,10 @@ public abstract class OnlineDijkstra {
 		
 		Point currentNode = start;
 		routes.get(currentNode).append(currentNode);
-		int count = 0;
+		//int count = 0;
 		while(currentNode != null){
-			++count;
-			if(count%800 == 0)System.out.println(count);
+			//++count;
+			//if(count%800 == 0)System.out.println(count);
 			
 			for (DefaultWeightedEdge y: g.edgesOf(currentNode)){	
 				if(g.getEdgeTarget(y) != currentNode)
@@ -95,10 +95,10 @@ public HashMap<Point, Route> run(Point start, Point end, WeightedGraph<Point, De
 		
 		Point currentNode = start;
 		routes.get(currentNode).append(currentNode);
-		int count = 0;
+		//int count = 0;
 		while(currentNode != null && !currentNode.equals(end)){
-			++count;
-			if(count%800 == 0)System.out.println(count);
+			//++count;
+			//if(count%800 == 0)System.out.println(count);
 			
 			for (DefaultWeightedEdge y: g.edgesOf(currentNode)){	
 				if(g.getEdgeTarget(y) != currentNode)
