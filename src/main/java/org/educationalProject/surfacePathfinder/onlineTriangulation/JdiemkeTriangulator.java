@@ -66,7 +66,7 @@ public class JdiemkeTriangulator implements OnlineTriangulator{
 				manageEdgeAddition((Point)t.c, (Point)t.b, edges, hull);
 				manageEdgeAddition((Point)t.a, (Point)t.c, edges, hull);
 			}			
-			
+			setProcessedPoints(neighbours,hull);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -75,10 +75,20 @@ public class JdiemkeTriangulator implements OnlineTriangulator{
 		
 		return graph;
 	}
-	
-	public void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull){
+	private void setProcessedPoints(Vector<Point> neighbours, Vector<Point> hull ){
+		HashSet<Point> touchesHull = new HashSet<Point>();
+		for( Point x: hull )
+			for(DefaultWeightedEdge y: graph.edgesOf(x)){
+				touchesHull.add(graph.getEdgeSource(y));
+				touchesHull.add(graph.getEdgeTarget(y));
+			}
+		for( Point x : neighbours )
+			if(!touchesHull.contains(x))
+				processedPoints.add(x);
+	}
+	private void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull){
 		EdgeWithDistance e = new EdgeWithDistance(a,b,TrianglesToGraphConverter.edgeWeight(a, b));
-		//e.hull = e.isInHull(hull);	
+		e.hull = e.isInHull(hull);	
 		
 		EdgeWithDistance hullIntersection = null;
 		for(EdgeWithDistance oldEdge : nearbyEdges)
@@ -129,6 +139,7 @@ public class JdiemkeTriangulator implements OnlineTriangulator{
 				manageEdgeAddition((Point)t.c, (Point)t.b, nearbyEdges, hull);
 				manageEdgeAddition((Point)t.a, (Point)t.c, nearbyEdges, hull);
 			}
+			setProcessedPoints(neighbours,hull);
 		} catch (Exception e3) {
 			e3.printStackTrace();
 		}
