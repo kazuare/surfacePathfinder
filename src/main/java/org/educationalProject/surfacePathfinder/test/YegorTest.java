@@ -36,7 +36,7 @@ public class YegorTest {
     static final double ALTITUDE_MULTIPLIER = 16;
     //is used to determine whether the edge is "bad" and should not be included
     static final double COS_THRESHOLD = 0.7;
-    static final double TRIANGULATION_RADIUS = 0.25;
+    static final double TRIANGULATION_RADIUS = 0.75; //this value seems to work good.
     
     
     public static void partialTriangulationExample(){
@@ -53,13 +53,13 @@ public class YegorTest {
 			System.out.println("N is: " + realPoints.size());
 			
 			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
-			GraphProxy graph2 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
+			GraphProxy graph1 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
 			
 			Point a = realPoints.get((int)(Math.random()*realPoints.size()));
 			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
 
-			showAStar(clock, graph2, a, b);
-			showDijkstra(clock, graph, a, b);
+			showAStar(clock, graph, a, b);
+			showDijkstra(clock, graph1, a, b);
 			
 			System.out.println("end");			
 		}catch(IOException e){
