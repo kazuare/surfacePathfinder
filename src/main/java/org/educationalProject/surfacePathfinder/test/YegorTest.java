@@ -36,7 +36,7 @@ public class YegorTest {
     static final double ALTITUDE_MULTIPLIER = 16;
     //is used to determine whether the edge is "bad" and should not be included
     static final double COS_THRESHOLD = 0.7;
-    static final double TRIANGULATION_RADIUS = 0.3;
+    static final double TRIANGULATION_RADIUS = 0.25;
     
     
     public static void partialTriangulationExample(){
@@ -50,15 +50,16 @@ public class YegorTest {
 			Vector<Point> realPoints = ObjFileParser.getPoints2("C:\\digdes\\map.obj");
 			resultingTime = clock.tocd();
 			System.out.println("Reading is finished, phase duration is: " + resultingTime);
+			System.out.println("N is: " + realPoints.size());
 			
-			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints);
-			GraphProxy graph2 = new GraphProxy(TRIANGULATION_RADIUS, realPoints);
+			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
+			GraphProxy graph2 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
 			
 			Point a = realPoints.get((int)(Math.random()*realPoints.size()));
 			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
-			
-			showDijkstra(clock, graph, a, b);
+
 			showAStar(clock, graph2, a, b);
+			showDijkstra(clock, graph, a, b);
 			
 			System.out.println("end");			
 		}catch(IOException e){
@@ -101,7 +102,7 @@ public class YegorTest {
 		//Visualizing
 		DecolorizedMapVisualizer vis2 = new DecolorizedMapVisualizer();
 		vis2.setData(graph, r);
-		SwingWindow.start(vis2, 700, 700, "map");
+		SwingWindow.start(vis2, 700, 700, "Dijkstra");
     }
     
     public static void fullTriangulationExample(){
