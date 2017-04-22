@@ -53,7 +53,7 @@ public class SerejaTest {
             System.out.println("Graph building is finished, phase duration is: " + resultingTime);
 
 
-          /*  //Finding the shortest path
+            //Finding the shortest path
             clock.tic();
             AStarShortestPath<Point,DefaultWeightedEdge> astar =
                     new AStarShortestPath<Point,DefaultWeightedEdge>(
@@ -63,107 +63,76 @@ public class SerejaTest {
             resultingTime = clock.tocd();
             System.out.println("Euristic building is finished, phase duration is: " + resultingTime);
 
-            clock.tic();
-            Point a = (Point)points.get((int)(Math.random()*points.size()));
-            Point b = (Point)points.get((int)(Math.random()*points.size()));
-            List<Point> nodes = astar.getPath(a, b).getVertexList();
-            resultingTime = clock.tocd();
-            System.out.println("A* from jgrapht is finished, phase duration is: " + resultingTime);*/
-
-
+            double jgraphtResult;
+            double serejaResult;
             double middle = 0.0;
-            double middleJgrapht = 0.0;
-            double middleSereja = 0.0;
+            double jgraphtMiddle = 0.0;
+            double serejaMiddle = 0.0;
             int errors = 0;
             int incorrect = 0;
             double jgraphtLength = 0.0;
             double serejaLength = 0.0;
-            List<Point> dijkstraNodes;
-            List<Point> dijkstraNodes1;
-            Point a = (Point) points.get((int) (Math.random() * points.size()));
-            Point b = (Point) points.get((int) (Math.random() * points.size()));
-
-            DijkstraShortestPath<Point, DefaultWeightedEdge> alternative = new DijkstraShortestPath<Point, DefaultWeightedEdge>(graph);
-            dijkstraNodes = alternative.getPath(a, b).getVertexList();
-
-            //  System.out.println("\nJgrapht: " + jgraphtResult);
-
-
-            DijkstraPathFind dijkstraPathFind = new DijkstraPathFind();
-            dijkstraNodes1 = dijkstraPathFind.getShortestPath(graph, a, b);
-
             for (int i = 0; i < 1000; i++) {
-                double jgraphtResult;
-                double serejaResult;
+
                 try {
-                    a = (Point) points.get((int) (Math.random() * points.size()));
-                    b = (Point) points.get((int) (Math.random() * points.size()));
                     clock.tic();
-                    dijkstraNodes = alternative.getPath(a, b).getVertexList();
+
+                    Point a = (Point) points.get((int) (Math.random() * points.size()));
+                    Point b = (Point) points.get((int) (Math.random() * points.size()));
+                    List<Point> nodes = astar.getPath(a, b).getVertexList();
                     jgraphtResult = clock.tocd();
-                    //  System.out.println("\nJgrapht: " + jgraphtResult);
+                    //System.out.println("\nJgrapht A*: " + jgraphtResult);
+                    jgraphtMiddle += jgraphtResult;
 
                     clock.tic();
-                    dijkstraNodes1 = dijkstraPathFind.getShortestPath(graph, a, b);
+                    AStarPathFind aStarPathFind = new AStarPathFind();
+                    List<Point> aStarNodes = aStarPathFind.getShortestPath(graph, a, b);
                     serejaResult = clock.tocd();
-                    //    System.out.println("Sereja:  " + serejaResult);
-                    middle += serejaResult - jgraphtResult;
-                    middleJgrapht += jgraphtResult;
-                    middleSereja += serejaResult;
-                    boolean equal = true;
-                    if (dijkstraNodes1.size() == dijkstraNodes.size()) {
-                        for (int j = 0; j < dijkstraNodes.size(); j++)
-                            if (!dijkstraNodes.get(j).equals(dijkstraNodes1.get(j)))
-                                equal = false;
-                    } else {
-                        equal = false;
-                    }
-                    if (!equal)
-                        errors++;
+                   // System.out.println("Sereja  A*: " + serejaResult);
+                    serejaMiddle += serejaResult;
 
-                } catch (NullPointerException e) {
-                    incorrect++;
+                    for (int j = 0; j < nodes.size() - 1; j++) {
+                        DefaultWeightedEdge e = graph.getEdge(nodes.get(j), nodes.get(j + 1));
+                        jgraphtLength += (double) graph.getEdgeWeight(e);
+                    }
+
+                    for (int j = 0; j < aStarNodes.size() - 1; j++) {
+                        DefaultWeightedEdge e = graph.getEdge(aStarNodes.get(j), aStarNodes.get(j + 1));
+                        serejaLength += (double) graph.getEdgeWeight(e);
+                    }
+                    if (serejaLength - jgraphtLength < 0.5)
+                        incorrect++;
+
+                } catch (NullPointerException e){
+                    errors++;
                     continue;
                 }
-                /*clock.tic();
-                AStarPathFind aStarPathFind = new AStarPathFind();
-                List<Point> aStarNodes = aStarPathFind.getShortestPath(graph, a, b);
-                resultingTime = clock.tocd();
-                System.out.println("Sereja`s A* is finished, phase duration is: " + resultingTime);*/
             }
 
-            for (int i = 0; i < dijkstraNodes.size() - 1; i++){
-                DefaultWeightedEdge e = graph.getEdge(dijkstraNodes.get(i), dijkstraNodes.get(i + 1));
-                jgraphtLength += (double)graph.getEdgeWeight(e);
-            }
-
-            for (int i = 0; i < dijkstraNodes1.size() - 1; i++){
-                DefaultWeightedEdge e = graph.getEdge(dijkstraNodes1.get(i), dijkstraNodes1.get(i + 1));
-                serejaLength += (double)graph.getEdgeWeight(e);
-            }
-            System.out.println("Error in seconds: " + middle / 1000.0);
-            System.out.println("Incorrect input: " + incorrect + " / 1000");
+            //System.out.println("Error in seconds: " + middle / 1000.0);
+            System.out.println("Correct length: " + incorrect + " / 1000");
             System.out.println("Errors in path: " + errors);
-            System.out.println("Jgrapht middle: " + middleJgrapht / 1000.0);
-            System.out.println("Sereja  middle: " + middleSereja / 1000.0);
-
-            /*//Visualizing
+            System.out.println("Sereja  middle: " + serejaMiddle / 1000.0);
+            System.out.println("Jgrapht middle: " + jgraphtMiddle / 1000.0);
+            //System.out.println("Jgrapht length: " + jgraphtLength);
+            //System.out.println("Sereja  length: " + serejaLength);
+          /*  //Visualizing
             ColorizedMapVisualizer vis1 = new ColorizedMapVisualizer();
-            vis1.setData(triangles, dijkstraNodes, graph);
-            SwingWindow.start(vis1, 800, 600, "Jgrapht`s Dijkstra map");
+            vis1.setData(triangles, nodes, graph);
+            SwingWindow.start(vis1, 800, 600, "Jgrapht`s A* map");
 
             //Visualizing
             ColorizedMapVisualizer vis2 = new ColorizedMapVisualizer();
-            vis2.setData(triangles, dijkstraNodes1, graph);
-            SwingWindow.start(vis2, 800, 600, "Sereja`s Dijkstra map");
+            vis2.setData(triangles, aStarNodes, graph);
+            SwingWindow.start(vis2, 800, 600, "Sereja`s A* map");
 
             PathVisualizer vis3 = new PathVisualizer();
-            vis3.setData(dijkstraNodes, points);
-            SwingWindow.start(vis3, 800, vis3.calculateWindowHeight(800), "Jgrapht`s Dijkstra");
+            vis3.setData(nodes, points);
+            SwingWindow.start(vis3, 800, vis3.calculateWindowHeight(800), "Jgrapht`s A*");
 
             PathVisualizer vis4 = new PathVisualizer();
-            vis4.setData(dijkstraNodes1, points);
-            SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s Dijkstra");*/
+            vis4.setData(aStarNodes, points);
+            SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s A*");*/
 
             System.out.println("end");
         }catch(IOException e){
