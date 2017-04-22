@@ -25,6 +25,7 @@ import io.github.jdiemke.triangulation.NotEnoughPointsException;
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.Dijkstra.OnlineNormalDijkstra;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.DomainBasedJdiemkeTriangulator;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GreedyTriangulator;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
@@ -52,14 +53,17 @@ public class YegorTest {
 			System.out.println("Reading is finished, phase duration is: " + resultingTime);
 			System.out.println("N is: " + realPoints.size());
 			
-			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
-			GraphProxy graph1 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "JdiemkeTriangulator");
+			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "UnsafeJdiemkeTriangulator");
+			GraphProxy graph1 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "DomainBasedJdiemkeTriangulator");
+			GraphProxy graph2 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "GreedyTriangulator");
 			
 			Point a = realPoints.get((int)(Math.random()*realPoints.size()));
 			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
 
-			showAStar(clock, graph, a, b);
-			showDijkstra(clock, graph1, a, b);
+			//showAStar(clock, graph, a, b);
+			//graph.visualizeDebug();
+			showAStar(clock, graph, a, b, "unsafe");
+			//showDijkstra(clock, graph1, a, b);
 			
 			System.out.println("end");			
 		}catch(IOException e){
@@ -71,6 +75,10 @@ public class YegorTest {
 	}
     
     public static void showAStar(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
+    	showAStar(clock, graph, a, b, "Astar");
+    }
+    
+    public static void showAStar(NanoClock clock, GraphProxy graph, Point a, Point b, String windowName) throws TicTocException{
     	double resultingTime;
     	clock.tic();
 		AStarShortestPath<Point,DefaultWeightedEdge> alternative = 
@@ -85,7 +93,7 @@ public class YegorTest {
 		//Visualizing
 		DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
 		vis.setData(graph, dijkstraNodes);
-		SwingWindow.start(vis, 700, 700, "Astar");
+		SwingWindow.start(vis, 700, 700, windowName);
     }
     
     public static void showDijkstra(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
