@@ -3,6 +3,8 @@ package org.educationalProject.surfacePathfinder.path;
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.util.FibonacciHeap;
+import org.jgrapht.util.FibonacciHeapNode;
 
 import java.util.*;
 
@@ -11,9 +13,10 @@ public class AStarPathFind {
 
     private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
     private Set<Point> settledNodes;
-    private Set<Point> unSettledNodes;
+    private PriorityQueue<DistancePoint> unSettledNodes;
     private Map<Point, Point> predecessors;
-    private Map<Point, Double> distance;
+    private Map<Point, Double> gScore;
+    private Map<Point, Double> fScore;
     private Point source;
     private Point destination;
 
@@ -28,21 +31,24 @@ public class AStarPathFind {
         this.source = source;
         this.destination = destination;
         settledNodes = new HashSet<Point>();
-        unSettledNodes = new HashSet<Point>();
-        distance = new HashMap<Point, Double>();
+        unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
+        gScore = new HashMap<Point, Double>();
+        fScore = new HashMap<Point, Double>();
         predecessors = new HashMap<Point, Point>();
 
-        distance.put(source, getHeuristic(this.source, this.source));
-        unSettledNodes.add(source);
+        gScore.put(this.source, 0.0);
+        fScore.put(this.source, getHeuristic(this.source, this.source));
+        unSettledNodes.add(new DistancePoint(this.source, fScore.get(this.source)));
     }
 
     private void findPath() {
         while (unSettledNodes.size() > 0) {
-            Point current = getMinimum();
+            Point current = unSettledNodes.poll().point;
+            if (isSettled(current))
+                continue;
             if (current.equals(destination))
                 return;
             settledNodes.add(current);
-            unSettledNodes.remove(current);
             findMinimalDistances(current);
         }
     }
@@ -51,30 +57,31 @@ public class AStarPathFind {
         List<Point> adjacentNodes = getNeighbors(node);
 
         for (Point neighbor : adjacentNodes) {
+            double tentativeScore = getDistance(node) + getDistance(node, neighbor);
             if (isSettled(neighbor))
                 continue;
-            if (!isUnSettled(neighbor)) {
-                unSettledNodes.add(neighbor);
-                distance.put(neighbor, getHeuristic(node, neighbor));
-                predecessors.put(neighbor, node);
+            if(tentativeScore > getDistance(neighbor))
                 continue;
-            } else if(getDistance(node) + getDistance(node, neighbor) > distance.get(neighbor)) {
-                continue;
-            } else {
+
+            if (isUnSettled(neighbor)) {
                 predecessors.remove(neighbor);
-                predecessors.put(neighbor, node);
-                distance.remove(neighbor);
-                distance.put(neighbor, getHeuristic(node, neighbor));
+                gScore.remove(neighbor);
+                fScore.remove(neighbor);
             }
+            gScore.put(neighbor, tentativeScore);
+            fScore.put(neighbor, getHeuristic(node, neighbor));
+            unSettledNodes.add(new DistancePoint(neighbor, fScore.get(neighbor)));
+            predecessors.put(neighbor, node);
         }
     }
 
     private Double getHeuristic(Point current, Point next) {
-        Double g = getDistance(current, next) + getDistance(current);
-        Double h = /*Math.abs(next.alt - destination.alt) +*/
-                Math.sqrt((next.x - destination.x) * (next.x - destination.x)
+        Double g = gScore.get(current);
+        Double h = (Double)Math.sqrt((next.x - destination.x) * (next.x - destination.x)
                         + (next.y - destination.y) * (next.y - destination.y)
-                        + (next.alt - destination.alt)*(next.alt - destination.alt));
+                        + (next.alt - destination.alt) * (next.alt - destination.alt))
+                        + Math.abs(next.alt - destination.alt);
+
         return g + h;
     }
     private Double getDistance(Point node, Point target) {
@@ -84,11 +91,11 @@ public class AStarPathFind {
         return (Double)graph.getEdgeWeight(e);
     }
     private Double getDistance(Point node) {
-        Double d = distance.get(node);
-        if (d == null) {
+        Double g = gScore.get(node);
+        if (g == null) {
             return Double.MAX_VALUE;
         } else {
-            return d;
+            return g;
         }
     }
 
@@ -96,39 +103,37 @@ public class AStarPathFind {
         List<Point> neighbors = new ArrayList<Point>();
         Set<DefaultWeightedEdge> edges = graph.edgesOf(node);
         for (DefaultWeightedEdge edge : edges) {
-            if (graph.getEdgeSource(edge).equals(node) && !isSettled(graph.getEdgeTarget(edge))) {
-                neighbors.add(graph.getEdgeTarget(edge));
-            }
-            if (graph.getEdgeTarget(edge).equals(node) && !isSettled(graph.getEdgeSource(edge))){
-                neighbors.add(graph.getEdgeSource(edge));
+            Point source = graph.getEdgeSource(edge);
+            Point target = graph.getEdgeTarget(edge);
+            if (source.equals(node) && !isSettled(target)) {
+                neighbors.add(target);
+            }else if (target.equals(node) && !isSettled(source)){
+                neighbors.add(source);
             }
         }
         return neighbors;
     }
 
-    private Point getMinimum() {
-        Point minimum = null;
-        for (Point node : unSettledNodes) {
-            if (minimum == null) {
-                minimum = node;
-            } else {
-                if (getDistance(node) < getDistance(minimum)) {
-                    minimum = node;
-                }
-            }
+    public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
+        @Override
+        public int compare(DistancePoint a, DistancePoint b) {
+            return (int)Math.signum(a.distance - b.distance);
         }
+    };
+
+    private Point getMinimum() {
+        Point minimum = unSettledNodes.peek().point;
         return minimum;
     }
 
     private boolean isSettled(Point node) {
         return settledNodes.contains(node);
     }
-    private boolean isUnSettled(Point node) { return  unSettledNodes.contains(node); }
+    private boolean isUnSettled(Point node) {return fScore.containsKey(node); }
 
     private List<Point> retrievalPath() {
         List<Point> shortestPath = new LinkedList<Point>();
         Point step = this.destination;
-        // check if a path exists
         if (predecessors.get(step) == null) {
             return null;
         }
@@ -137,7 +142,6 @@ public class AStarPathFind {
             step = predecessors.get(step);
             shortestPath.add(step);
         }
-        // Put it into the correct order
         Collections.reverse(shortestPath);
         return shortestPath;
     }
