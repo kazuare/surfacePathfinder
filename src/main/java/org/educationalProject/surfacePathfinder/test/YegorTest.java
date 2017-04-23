@@ -34,11 +34,14 @@ import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 public class YegorTest {
 
     //addition punishment in our distances
-    static final double ALTITUDE_MULTIPLIER = 16;
+    static final double ALTITUDE_MULTIPLIER = 4;
     //is used to determine whether the edge is "bad" and should not be included
-    static final double COS_THRESHOLD = 0.7;
+    static final double COS_THRESHOLD = 0.5;
     static final double TRIANGULATION_RADIUS = 0.75; //this value seems to work good.
     
+    public static void setup(){
+    	EdgeWeighter.setParams(ALTITUDE_MULTIPLIER);
+    }
     
     public static void partialTriangulationExample(){
 		try{
@@ -60,9 +63,8 @@ public class YegorTest {
 			Point a = realPoints.get((int)(Math.random()*realPoints.size()));
 			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
 
-			//showAStar(clock, graph, a, b);
-			//graph.visualizeDebug();
-			showAStar(clock, graph, a, b, "unsafe");
+			showAStar(clock, graph, a, b, "Unsafe triangulation");
+			graph.visualizeDebug();
 			//showDijkstra(clock, graph1, a, b);
 			
 			System.out.println("end");			

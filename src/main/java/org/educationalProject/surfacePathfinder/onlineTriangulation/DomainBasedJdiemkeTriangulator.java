@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.TrianglesToGraphConverter;
 import org.educationalProject.surfacePathfinder.Triangulator;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.JdiemkeTriangulator.EdgeWithDistance;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.TrianglesToGraphConverter;
 import org.educationalProject.surfacePathfinder.Triangulator;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -79,7 +78,7 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 	} 
 	
 	protected void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull){
-		EdgeWithDistance e = new EdgeWithDistance(a,b,TrianglesToGraphConverter.edgeWeight(a, b));
+		EdgeWithDistance e = new EdgeWithDistance(a,b, EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
 		EdgeWithDistance hullIntersection = null;
 		for(EdgeWithDistance oldEdge : nearbyEdges)
@@ -106,7 +105,7 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 	} 
 	
 	protected void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull, Vector<Point> affectedPoints){
-		EdgeWithDistance e = new EdgeWithDistance(a,b,TrianglesToGraphConverter.edgeWeight(a, b));
+		EdgeWithDistance e = new EdgeWithDistance(a,b,EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
 		EdgeWithDistance hullIntersection = null;
 		for(EdgeWithDistance oldEdge : nearbyEdges)
@@ -158,7 +157,6 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 			
 			List<Triangle2D> soup = Triangulator.triangulate(neighboursVector);
 			
-			TrianglesToGraphConverter.setParams(0.5, 16);
 			for(Triangle2D t : soup){
 				manageEdgeAddition((Point)t.a, (Point)t.b, edges, hull);
 				manageEdgeAddition((Point)t.c, (Point)t.b, edges, hull);
@@ -194,7 +192,6 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 					nearbyEdges.add(e);
 			
 			Vector<Point> affectedPoints = new Vector<Point>();
-			TrianglesToGraphConverter.setParams(0.5, 16);
 			for(Triangle2D t : soup){
 				manageEdgeAddition((Point)t.a, (Point)t.b, nearbyEdges, hull, affectedPoints);
 				manageEdgeAddition((Point)t.c, (Point)t.b, nearbyEdges, hull, affectedPoints);

@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
+import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.TrianglesToGraphConverter;
 import org.educationalProject.surfacePathfinder.Triangulator;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -23,7 +23,7 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 
 	
 	protected void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull){
-		EdgeWithDistance e = new EdgeWithDistance(a,b,TrianglesToGraphConverter.edgeWeight(a, b));
+		EdgeWithDistance e = new EdgeWithDistance(a,b,EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
 		EdgeWithDistance hullIntersection = null;
 		for(EdgeWithDistance oldEdge : nearbyEdges)
@@ -64,7 +64,6 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 			
 			List<Triangle2D> soup = Triangulator.triangulate(neighboursVector);
 			
-			TrianglesToGraphConverter.setParams(0.5, 16);
 			for(Triangle2D t : soup){
 				manageEdgeAddition((Point)t.a, (Point)t.b, edges, hull);
 				manageEdgeAddition((Point)t.c, (Point)t.b, edges, hull);
@@ -99,7 +98,6 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 				if(neighbours.contains(e.a) || neighbours.contains(e.b))
 					nearbyEdges.add(e);
 			
-			TrianglesToGraphConverter.setParams(0.5, 16);
 			for(Triangle2D t : soup){
 				manageEdgeAddition((Point)t.a, (Point)t.b, nearbyEdges, hull);
 				manageEdgeAddition((Point)t.c, (Point)t.b, nearbyEdges, hull);

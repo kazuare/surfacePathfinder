@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.TrianglesToGraphConverter;
 import org.educationalProject.surfacePathfinder.Triangulator;
 import org.educationalProject.surfacePathfinder.visualization.PathVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
