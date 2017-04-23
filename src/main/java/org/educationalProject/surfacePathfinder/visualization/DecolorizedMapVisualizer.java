@@ -29,7 +29,7 @@ public class DecolorizedMapVisualizer extends MapVisualizer{
 		}		
 	}
 	protected void drawContent( GL2 gl2 ){
-		gl2.glLineWidth(2f);
+		gl2.glLineWidth(1f);
 		gl2.glBegin(GL.GL_LINES);
         
 		for(DefaultWeightedEdge edge : graph.edgeSet()){			

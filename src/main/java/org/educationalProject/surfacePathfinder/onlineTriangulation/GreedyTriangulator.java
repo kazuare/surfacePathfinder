@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.TrianglesToGraphConverter;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -80,14 +80,13 @@ public class GreedyTriangulator implements OnlineTriangulator{
 			for(EdgeWithDistance e : edges)
 				e.fixed = true;
 
-			TrianglesToGraphConverter.setParams(0.5, 16);
 			int edgesSize = edges.size();
 			for(int i = 0; i < edgesSize; i++){
 				Point a = edges.get(i).a;
 				Point b = edges.get(i).b;
 				
 				DefaultWeightedEdge e = graph.addEdge(a, b);
-				graph.setEdgeWeight(e, TrianglesToGraphConverter.edgeWeight(a, b));
+				graph.setEdgeWeight(e, EdgeWeighter.edgeWeight(a, b));
 			}			
 			
 			setProcessedPoints(neighbours,hull);
@@ -136,7 +135,7 @@ public class GreedyTriangulator implements OnlineTriangulator{
 					Point b = edge.b;		
 					
 					DefaultWeightedEdge e = graph.addEdge(a, b);
-					graph.setEdgeWeight(e, TrianglesToGraphConverter.edgeWeight(a, b));
+					graph.setEdgeWeight(e, EdgeWeighter.edgeWeight(a, b));
 				}
 			}
 			
