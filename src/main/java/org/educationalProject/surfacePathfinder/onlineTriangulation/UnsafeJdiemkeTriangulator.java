@@ -2,7 +2,7 @@ package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
@@ -15,14 +15,14 @@ import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 
 public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements OnlineTriangulator{
-	UnsafeJdiemkeTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Vector<Point> points,
+	UnsafeJdiemkeTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, ArrayList<Point> points,
 			HashSet<Point> processedPoints, double radius) {
 		super(graph, points, processedPoints, radius);
 	}
 	
 
 	
-	protected void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull){
+	protected void manageEdgeAddition(Point a, Point b, ArrayList<EdgeWithDistance> nearbyEdges, ArrayList<Point> hull){
 		EdgeWithDistance e = new EdgeWithDistance(a,b,EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
 		EdgeWithDistance hullIntersection = null;
@@ -53,14 +53,14 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 	public SimpleWeightedGraph<Point, DefaultWeightedEdge> init(Point center) {	
 		
 		try {						
-			Vector<Point> neighbours = getNearbyPoints(center);
-			Vector<Point> hull = QuickHull.findHull(neighbours);
+			ArrayList<Point> neighbours = getNearbyPoints(center);
+			ArrayList<Point> hull = QuickHull.findHull(neighbours);
 			
 			//this is equivalent to (at least I hope so):
-			//Vector<Vector2D> neighboursVector = new Vector<Vector2D>(neighbours.size());
+			//ArrayList<Vector2D> neighboursVector = new ArrayList<Vector2D>(neighbours.size());
 			//for(Point x : neighbours)
 			//	neighboursVector.add(x);
-			Vector<Vector2D> neighboursVector = (Vector<Vector2D>)(Vector<? extends Vector2D>)neighbours;
+			ArrayList<Vector2D> neighboursVector = (ArrayList<Vector2D>)(ArrayList<? extends Vector2D>)neighbours;
 			
 			List<Triangle2D> soup = Triangulator.triangulate(neighboursVector);
 			
@@ -82,18 +82,18 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 	@Override
 	public SimpleWeightedGraph<Point, DefaultWeightedEdge> update(Point center) {
 		try {
-			Vector<Point> neighbours = getNearbyPoints(center);
-			Vector<Point> hull = QuickHull.findHull(neighbours);
+			ArrayList<Point> neighbours = getNearbyPoints(center);
+			ArrayList<Point> hull = QuickHull.findHull(neighbours);
 			
 			//this is equivalent to (at least I hope so):
-			//Vector<Vector2D> neighboursVector = new Vector<Vector2D>(neighbours.size());
+			//ArrayList<Vector2D> neighboursVector = new ArrayList<Vector2D>(neighbours.size());
 			//for(Point x : neighbours)
 			//	neighboursVector.add(x);
-			Vector<Vector2D> neighboursVector = (Vector<Vector2D>)(Vector<? extends Vector2D>)neighbours;
+			ArrayList<Vector2D> neighboursVector = (ArrayList<Vector2D>)(ArrayList<? extends Vector2D>)neighbours;
 			
 			List<Triangle2D> soup = Triangulator.triangulate(neighboursVector);
 			
-			Vector<EdgeWithDistance> nearbyEdges = new Vector<EdgeWithDistance>();
+			ArrayList<EdgeWithDistance> nearbyEdges = new ArrayList<EdgeWithDistance>();
 			for(EdgeWithDistance e : edges)
 				if(neighbours.contains(e.a) || neighbours.contains(e.b))
 					nearbyEdges.add(e);

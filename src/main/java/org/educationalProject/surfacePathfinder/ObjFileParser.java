@@ -4,56 +4,55 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Vector;
-
+import java.util.ArrayList;
 import io.github.jdiemke.triangulation.Vector2D;
 /**
 * Parses obj file and returns found vertices
 */
 public class ObjFileParser {
-	public static Vector<Vector2D> getPoints(String address) throws IOException{
+	
+	private static BufferedReader getReader(String address) throws IOException{
 		FileInputStream stream =  new FileInputStream(address);
-		BufferedReader reader = new BufferedReader(
+		return new BufferedReader(
 			new InputStreamReader(stream, "UTF-8")
 		);		
-		
-		Vector<Vector2D> points = new Vector<Vector2D>();
-		
+	}
+	
+	private static void fillListWithPoints(BufferedReader reader, ArrayList<Vector2D> list) throws NumberFormatException, IOException{
 		String a;
-		int currentId = 0;
 		while((a = reader.readLine()) != null)
 			if(a.charAt(0) == 'v'){
 				String[] components = a.split(" ");
-				points.add( new Point(
+				list.add( new Point(
 					Double.valueOf(components[1]),
 					Double.valueOf(components[2]),
 					Double.valueOf(components[3])
 				));
 			}
+	}
+	
+	public static ArrayList<Vector2D> getPoints(String address) throws IOException{
+		
+		BufferedReader reader = getReader(address);
+		
+		ArrayList<Vector2D> points = new ArrayList<Vector2D>();
+		
+		fillListWithPoints(reader, points);
+		
 		reader.close();
 		return points;
 	}
-	public static Vector<Point> getPoints2(String address) throws IOException{
-		FileInputStream stream =  new FileInputStream(address);
-		BufferedReader reader = new BufferedReader(
-			new InputStreamReader(stream, "UTF-8")
-		);		
+	
+	public static ArrayList<Point> getPoints2(String address) throws IOException{
 		
-		Vector<Point> points = new Vector<Point>();
+		BufferedReader reader = getReader(address);
 		
-		String a;
-		int currentId = 0;
-		while((a = reader.readLine()) != null)
-			if(a.charAt(0) == 'v'){
-				String[] components = a.split(" ");
-				points.add( new Point(
-					Double.valueOf(components[1]),
-					Double.valueOf(components[2]),
-					Double.valueOf(components[3])
-				));
-			}
+		ArrayList<Vector2D> points = new ArrayList<Vector2D>();
+		
+		fillListWithPoints(reader, points);
+		
 		reader.close();
-		return points;
+		return (ArrayList<Point>)(ArrayList<? extends Vector2D>)points;
 	}
 	
 }

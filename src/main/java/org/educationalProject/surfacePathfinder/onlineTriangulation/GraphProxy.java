@@ -1,18 +1,15 @@
 package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,UndirectedGraph<Point, DefaultWeightedEdge>{
@@ -22,7 +19,7 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 	private HashSet<Point> processedPoints;
 	private boolean firstUpdate = true;
 	
-	public GraphProxy(double radius, Vector<Point> points, String className){
+	public GraphProxy(double radius, ArrayList<Point> points, String className){
 		processedPoints = new HashSet<Point>();
 		this.radius = radius;
 		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);

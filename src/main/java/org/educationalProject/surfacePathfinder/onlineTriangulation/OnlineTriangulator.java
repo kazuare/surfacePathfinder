@@ -1,11 +1,7 @@
 package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
-import java.util.HashSet;
-import java.util.Vector;
-
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 public interface OnlineTriangulator {

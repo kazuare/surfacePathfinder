@@ -1,11 +1,4 @@
 package org.educationalProject.surfacePathfinder;
-
-import java.util.List;
-
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
-import io.github.jdiemke.triangulation.Triangle2D;
 /**
 * takes in some triangles, adds all the satisfactory triangle edges to the graph
 */

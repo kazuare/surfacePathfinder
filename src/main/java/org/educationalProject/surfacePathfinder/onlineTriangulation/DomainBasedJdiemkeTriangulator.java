@@ -1,27 +1,10 @@
 package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
-import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.Triangulator;
-import org.educationalProject.surfacePathfinder.onlineTriangulation.JdiemkeTriangulator.EdgeWithDistance;
-import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
-import io.github.jdiemke.triangulation.Triangle2D;
-import io.github.jdiemke.triangulation.Vector2D;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
 import org.educationalProject.surfacePathfinder.Point;
 import org.educationalProject.surfacePathfinder.Triangulator;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
@@ -32,25 +15,25 @@ import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 
 public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implements OnlineTriangulator{
-	DomainBasedJdiemkeTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Vector<Point> points,
+	DomainBasedJdiemkeTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, ArrayList<Point> points,
 			HashSet<Point> processedPoints, double radius) {
 		super(graph, points, processedPoints, radius);
 	}
 	private int domainNumber;
 	
-	protected Vector<Point> setDomain(Point center){
+	protected ArrayList<Point> setDomain(Point center){
 		//delete later, debug stuff
 		centers.add(center);
 		
 		domainNumber++;
-		Vector<Point> result = new Vector<Point>();
+		ArrayList<Point> result = new ArrayList<Point>();
 		int size = points.size();
 		for(int i = 0 ; i < size; i++){
 			double dx = center.x - points.get(i).x;
 			double dy = center.y - points.get(i).y;
 			if(dx*dx + dy*dy < r2){
 				if(points.get(i).domains == null)
-					points.get(i).domains = new Vector<Integer>();
+					points.get(i).domains = new ArrayList<Integer>();
 				points.get(i).domains.add(domainNumber);
 				result.add(points.get(i));
 			}
@@ -58,7 +41,7 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 		return result;
 	}
 	
-	protected void manageEdgeAddition(EdgeWithDistance e, Vector<EdgeWithDistance> nearbyEdges){
+	protected void manageEdgeAddition(EdgeWithDistance e, ArrayList<EdgeWithDistance> nearbyEdges){
 		for(EdgeWithDistance oldEdge : nearbyEdges)
 			if(oldEdge.badlyIntersects(e))				
 				if(e.hull || !oldEdge.hull){	
@@ -77,7 +60,7 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 		}		
 	} 
 	
-	protected void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull){
+	protected void manageEdgeAddition(Point a, Point b, ArrayList<EdgeWithDistance> nearbyEdges, ArrayList<Point> hull){
 		EdgeWithDistance e = new EdgeWithDistance(a,b, EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
 		EdgeWithDistance hullIntersection = null;
@@ -104,7 +87,7 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 		}		
 	} 
 	
-	protected void manageEdgeAddition(Point a, Point b, Vector<EdgeWithDistance> nearbyEdges, Vector<Point> hull, Vector<Point> affectedPoints){
+	protected void manageEdgeAddition(Point a, Point b, ArrayList<EdgeWithDistance> nearbyEdges, ArrayList<Point> hull, ArrayList<Point> affectedPoints){
 		EdgeWithDistance e = new EdgeWithDistance(a,b,EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
 		EdgeWithDistance hullIntersection = null;
@@ -146,14 +129,14 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 	public SimpleWeightedGraph<Point, DefaultWeightedEdge> init(Point center) {	
 		
 		try {						
-			Vector<Point> neighbours = setDomain(center);
-			Vector<Point> hull = QuickHull.findHull(neighbours);
+			ArrayList<Point> neighbours = setDomain(center);
+			ArrayList<Point> hull = QuickHull.findHull(neighbours);
 			
 			//this is equivalent to (at least I hope so):
-			//Vector<Vector2D> neighboursVector = new Vector<Vector2D>(neighbours.size());
+			//ArrayList<Vector2D> neighboursVector = new ArrayList<Vector2D>(neighbours.size());
 			//for(Point x : neighbours)
 			//	neighboursVector.add(x);
-			Vector<Vector2D> neighboursVector = (Vector<Vector2D>)(Vector<? extends Vector2D>)neighbours;
+			ArrayList<Vector2D> neighboursVector = (ArrayList<Vector2D>)(ArrayList<? extends Vector2D>)neighbours;
 			
 			List<Triangle2D> soup = Triangulator.triangulate(neighboursVector);
 			
@@ -175,23 +158,23 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 	@Override
 	public SimpleWeightedGraph<Point, DefaultWeightedEdge> update(Point center) {
 		try {
-			Vector<Point> neighbours = setDomain(center);
-			Vector<Point> hull = QuickHull.findHull(neighbours);
+			ArrayList<Point> neighbours = setDomain(center);
+			ArrayList<Point> hull = QuickHull.findHull(neighbours);
 			
 			//this is equivalent to (at least I hope so):
-			//Vector<Vector2D> neighboursVector = new Vector<Vector2D>(neighbours.size());
+			//ArrayList<Vector2D> neighboursVector = new ArrayList<Vector2D>(neighbours.size());
 			//for(Point x : neighbours)
 			//	neighboursVector.add(x);
-			Vector<Vector2D> neighboursVector = (Vector<Vector2D>)(Vector<? extends Vector2D>)neighbours;
+			ArrayList<Vector2D> neighboursVector = (ArrayList<Vector2D>)(ArrayList<? extends Vector2D>)neighbours;
 			
 			List<Triangle2D> soup = Triangulator.triangulate(neighboursVector);
 			
-			Vector<EdgeWithDistance> nearbyEdges = new Vector<EdgeWithDistance>();
+			ArrayList<EdgeWithDistance> nearbyEdges = new ArrayList<EdgeWithDistance>();
 			for(EdgeWithDistance e : edges)
 				if(neighbours.contains(e.a) || neighbours.contains(e.b))
 					nearbyEdges.add(e);
 			
-			Vector<Point> affectedPoints = new Vector<Point>();
+			ArrayList<Point> affectedPoints = new ArrayList<Point>();
 			for(Triangle2D t : soup){
 				manageEdgeAddition((Point)t.a, (Point)t.b, nearbyEdges, hull, affectedPoints);
 				manageEdgeAddition((Point)t.c, (Point)t.b, nearbyEdges, hull, affectedPoints);
@@ -199,7 +182,7 @@ public class DomainBasedJdiemkeTriangulator extends JdiemkeTriangulator implemen
 			}
 			
 			int size = affectedPoints.size();
-			Vector<EdgeWithDistance> possibleEdges = new Vector<EdgeWithDistance>();
+			ArrayList<EdgeWithDistance> possibleEdges = new ArrayList<EdgeWithDistance>();
 			for(int i = 1; i < size; i++)
 				for(int j = 0; j < i; j++)
 					if(domainIntersection(affectedPoints.get(i),affectedPoints.get(j)))

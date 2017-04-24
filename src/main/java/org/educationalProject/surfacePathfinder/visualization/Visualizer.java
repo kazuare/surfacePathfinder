@@ -1,8 +1,4 @@
 package org.educationalProject.surfacePathfinder.visualization;
-import java.awt.Frame;
-
-import javax.swing.JFrame;
-
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 /**
