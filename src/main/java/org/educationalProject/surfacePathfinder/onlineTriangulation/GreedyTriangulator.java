@@ -2,7 +2,6 @@ package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class GreedyTriangulator implements OnlineTriangulator{

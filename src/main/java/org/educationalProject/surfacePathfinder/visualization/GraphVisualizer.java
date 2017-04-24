@@ -1,17 +1,10 @@
 package org.educationalProject.surfacePathfinder.visualization;
 
-import java.util.List;
-
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-
-import io.github.jdiemke.triangulation.Triangle2D;
-import io.github.jdiemke.triangulation.Vector2D;
 /**
 * Visualizes top down map image.
 * Subclasses can draw either filled triangles or not filled

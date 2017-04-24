@@ -1,18 +1,12 @@
 package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
-import java.util.List;
 import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
 import org.educationalProject.surfacePathfinder.visualization.Visualizer;
-import org.jgrapht.WeightedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
-import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 /**
 * visualizator for internal use in JdiemkeTriangulator
@@ -147,8 +141,6 @@ public class JdiemkeTriangulatorVisualizer extends Visualizer {
 		}
 			
 	}
-	
-	
 	
 	public void display( GL2 gl2 ){
 		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );

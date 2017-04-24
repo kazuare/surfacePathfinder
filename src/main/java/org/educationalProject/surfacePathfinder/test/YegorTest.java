@@ -3,11 +3,7 @@ package org.educationalProject.surfacePathfinder.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
-
 import org.educationalProject.surfacePathfinder.*;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
@@ -22,11 +18,8 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.NotEnoughPointsException;
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
-import org.educationalProject.surfacePathfinder.onlineTriangulation.DomainBasedJdiemkeTriangulator;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
-import org.educationalProject.surfacePathfinder.onlineTriangulation.GreedyTriangulator;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 
 public class YegorTest {
 

@@ -9,8 +9,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
-import io.github.jdiemke.triangulation.Triangle2D;
-
 public class DecolorizedMapVisualizer extends MapVisualizer{
 
 	public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph, List<Point> pathCoords){
