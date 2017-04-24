@@ -26,7 +26,8 @@ public class YegorTest {
     //addition punishment in our distances
     static final double ALTITUDE_MULTIPLIER = 4;
     //is used to determine whether the edge is "bad" and should not be included
-    static final double COS_THRESHOLD = 0.5;
+    // 0 == no exclusion at all
+    static final double COS_THRESHOLD = 0;
     static final double TRIANGULATION_RADIUS = 0.75; //this value seems to work good.
     
     public static void setup(){
@@ -47,15 +48,14 @@ public class YegorTest {
 			System.out.println("N is: " + realPoints.size());
 			
 			GraphProxy graph = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "UnsafeJdiemkeTriangulator");
-			GraphProxy graph1 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "DomainBasedJdiemkeTriangulator");
-			GraphProxy graph2 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "GreedyTriangulator");
+			GraphProxy graph1 = new GraphProxy(TRIANGULATION_RADIUS, realPoints, "UnsafeJdiemkeTriangulator");
 			
 			Point a = realPoints.get((int)(Math.random()*realPoints.size()));
 			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
 
-			showAStar(clock, graph, a, b, "Unsafe triangulation");
+			showAStar(clock, graph, a, b);
 			graph.visualizeDebug();
-			//showDijkstra(clock, graph1, a, b);
+			showDijkstra(clock, graph1, a, b);
 			
 			System.out.println("end");			
 		}catch(IOException e){
@@ -70,7 +70,7 @@ public class YegorTest {
     	showAStar(clock, graph, a, b, "Astar");
     }
     public static void showDijkstra(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
-    	showAStar(clock, graph, a, b, "Dijkstra");
+    	showDijkstra(clock, graph, a, b, "Dijkstra");
     }
     
     public static void showAStar(NanoClock clock, GraphProxy graph, Point a, Point b, String windowName) throws TicTocException{
