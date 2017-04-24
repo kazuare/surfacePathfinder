@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
@@ -18,10 +18,10 @@ public class GreedyTriangulator implements OnlineTriangulator{
 	private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
 	private double radius;
 	private double r2;
-	private Vector<Point> points;
-	private Vector<EdgeWithDistance> edges;
+	private ArrayList<Point> points;
+	private ArrayList<EdgeWithDistance> edges;
 	private HashSet<Point> processedPoints;
-	GreedyTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Vector<Point> points, HashSet<Point> processedPoints, double radius){
+	GreedyTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, ArrayList<Point> points, HashSet<Point> processedPoints, double radius){
 		this.processedPoints = processedPoints;
 		this.points = points;
 		this.graph = graph;
@@ -31,8 +31,8 @@ public class GreedyTriangulator implements OnlineTriangulator{
 		r2 = radius * radius;
 	}
 	
-	private Vector<Point> getNearbyPoints(Point center){
-		Vector<Point> result = new Vector<Point>();
+	private ArrayList<Point> getNearbyPoints(Point center){
+		ArrayList<Point> result = new ArrayList<Point>();
 		int size = points.size();
 		for(int i = 0 ; i < size; i++){
 			double dx = center.x - points.get(i).x;
@@ -55,8 +55,8 @@ public class GreedyTriangulator implements OnlineTriangulator{
 	public SimpleWeightedGraph<Point, DefaultWeightedEdge> init(Point center) {		
 		try {
 			
-			Vector<Point> neighbours = getNearbyPoints(center);
-			Vector<Point> hull = QuickHull.findHull(neighbours);
+			ArrayList<Point> neighbours = getNearbyPoints(center);
+			ArrayList<Point> hull = QuickHull.findHull(neighbours);
 			
 			int size = neighbours.size();
 			
@@ -102,8 +102,8 @@ public class GreedyTriangulator implements OnlineTriangulator{
 	@Override
 	public SimpleWeightedGraph<Point, DefaultWeightedEdge> update(Point center) {
 		try {
-			Vector<Point> neighbours = getNearbyPoints(center);
-			Vector<Point> hull = QuickHull.findHull(neighbours);
+			ArrayList<Point> neighbours = getNearbyPoints(center);
+			ArrayList<Point> hull = QuickHull.findHull(neighbours);
 			
 			Comparator<EdgeWithDistance> cmp = getEdgeComparator();
 			TreeSet<EdgeWithDistance> sortedEdges = new TreeSet<EdgeWithDistance>(cmp);
@@ -125,7 +125,7 @@ public class GreedyTriangulator implements OnlineTriangulator{
 						sortedEdges.add(current);
 				}
 					
-			Vector<EdgeWithDistance> goodEdges = removeBadEdges(sortedEdges, hull);
+			ArrayList<EdgeWithDistance> goodEdges = removeBadEdges(sortedEdges, hull);
 			for(EdgeWithDistance edge : goodEdges){
 				if(!edge.fixed){
 					edge.fixed = true;
@@ -149,9 +149,9 @@ public class GreedyTriangulator implements OnlineTriangulator{
 		return graph;
 	}
 	
-	private Vector<EdgeWithDistance> removeBadEdges(TreeSet<EdgeWithDistance> tree, Vector<Point> hull ){
+	private ArrayList<EdgeWithDistance> removeBadEdges(TreeSet<EdgeWithDistance> tree, ArrayList<Point> hull ){
 		
-		Vector<EdgeWithDistance> edges = new Vector<EdgeWithDistance>(tree.size());
+		ArrayList<EdgeWithDistance> edges = new ArrayList<EdgeWithDistance>(tree.size());
 		
 		Iterator<EdgeWithDistance> it = tree.descendingIterator();
 
@@ -177,7 +177,7 @@ public class GreedyTriangulator implements OnlineTriangulator{
 		return edges;
 	}
 	
-	private void setProcessedPoints(Vector<Point> neighbours, Vector<Point> hull ){
+	private void setProcessedPoints(ArrayList<Point> neighbours, ArrayList<Point> hull ){
 		HashSet<Point> touchesHull = new HashSet<Point>();
 		for( Point x: hull )
 			for(DefaultWeightedEdge y: graph.edgesOf(x)){
@@ -215,7 +215,7 @@ public class GreedyTriangulator implements OnlineTriangulator{
 		public boolean equals(EdgeWithDistance e){
 			return a.equals(e.a)&&b.equals(e.b) || b.equals(e.a)&&a.equals(e.b);
 		}
-		public boolean isInHull(Vector<Point> hull){
+		public boolean isInHull(ArrayList<Point> hull){
 			boolean inHull = false;
 			
 			for(int i = 0; i < hull.size()-1; i++){

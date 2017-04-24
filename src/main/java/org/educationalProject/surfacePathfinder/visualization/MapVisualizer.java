@@ -68,36 +68,15 @@ public abstract class MapVisualizer extends Visualizer {
 		return (float) ((data - minAlt)/(maxAlt - minAlt));
 	}
 
-	protected void findExtremes(){
-		for(Triangle2D triangle : triangles){
-			Point a = (Point)triangle.a;
-			Point b = (Point)triangle.b;
-			Point c = (Point)triangle.c;
-			
-			minX = Math.min(minX, a.x);
-			minX = Math.min(minX, b.x);
-			minX = Math.min(minX, c.x);
-			
+	protected void findExtremes(){		
+		for(Point a : graph.vertexSet()){			
+			minX = Math.min(minX, a.x);			
 			minY = Math.min(minY, a.y);
-			minY = Math.min(minY, b.y);
-			minY = Math.min(minY, c.y);
-			
-			minAlt = Math.min(minAlt, a.alt);
-			minAlt = Math.min(minAlt, b.alt);
-			minAlt = Math.min(minAlt, c.alt);
-			
-			maxX = Math.max(maxX, a.x);
-			maxX = Math.max(maxX, b.x);
-			maxX = Math.max(maxX, c.x);
-			
-			maxY = Math.max(maxY, a.y);
-			maxY = Math.max(maxY, b.y);
-			maxY = Math.max(maxY, c.y);
-			
+			minAlt = Math.min(minAlt, a.alt);			
+			maxX = Math.max(maxX, a.x);			
+			maxY = Math.max(maxY, a.y);			
 			maxAlt = Math.max(maxAlt, a.alt);
-			maxAlt = Math.max(maxAlt, b.alt);
-			maxAlt = Math.max(maxAlt, c.alt);
-		}
+		}		
 	}
 	
 	protected void drawPath( GL2 gl2 ){

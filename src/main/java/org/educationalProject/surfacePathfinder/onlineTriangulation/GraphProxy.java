@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.DirectedGraph;
@@ -22,7 +22,7 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 	private HashSet<Point> processedPoints;
 	private boolean firstUpdate = true;
 	
-	public GraphProxy(double radius, Vector<Point> points, String className){
+	public GraphProxy(double radius, ArrayList<Point> points, String className){
 		processedPoints = new HashSet<Point>();
 		this.radius = radius;
 		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);

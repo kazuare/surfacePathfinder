@@ -85,38 +85,5 @@ public class TrianglesToGraphConverter {
 		return graph;
 	}
 	
-	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convertWithoutAltitudePenalty(List<Triangle2D> triangles, double threshold){
-		
-		setParams(threshold,0);
-		
-		SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = new SimpleWeightedGraph<Point,DefaultWeightedEdge>(DefaultWeightedEdge.class);
-		
-		for(Triangle2D triangle : triangles){
-			Point a = (Point)triangle.a;
-			Point b = (Point)triangle.b;
-			Point c = (Point)triangle.c;
-			
-			if(!graph.containsVertex(a))
-				graph.addVertex(a);
-			if(!graph.containsVertex(b))
-				graph.addVertex(b);
-			if(!graph.containsVertex(c))
-				graph.addVertex(c);
-			
-			if(judgeEdge(a, b, graph)){
-				DefaultWeightedEdge e = graph.addEdge(a, b);
-				graph.setEdgeWeight(e, edgeWeight(a, b));
-			}
-			if(judgeEdge(a, c, graph)){
-				DefaultWeightedEdge e = graph.addEdge(a, c);
-				graph.setEdgeWeight(e, edgeWeight(a, c));
-			}
-			if(judgeEdge(c, b, graph)){
-				DefaultWeightedEdge e = graph.addEdge(c, b);
-				graph.setEdgeWeight(e, edgeWeight(c, b));
-			}
-		}
-		
-		return graph;
-	}
+
 }

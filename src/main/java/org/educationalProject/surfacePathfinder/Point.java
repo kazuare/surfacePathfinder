@@ -1,14 +1,13 @@
 package org.educationalProject.surfacePathfinder;
 
-import java.util.Vector;
-
+import java.util.ArrayList;
 import io.github.jdiemke.triangulation.Vector2D;
 /**
 * extends Vector2D in order to use altitude
 */
 public class Point extends Vector2D {
 	public double alt;
-	public Vector<Integer> domains;
+	public ArrayList<Integer> domains;
 	
 	public Point(double x, double y, double alt){
 		super(x, y);

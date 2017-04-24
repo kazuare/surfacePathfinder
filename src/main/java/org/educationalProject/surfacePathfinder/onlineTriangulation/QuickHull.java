@@ -1,13 +1,13 @@
 package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
 
 public class QuickHull{
-	public static Vector<Point> findHull(Vector<Point> points) throws Exception{
+	public static ArrayList<Point> findHull(ArrayList<Point> points) throws Exception{
 		
-		Vector<Point> hull = new Vector<Point>();
+		ArrayList<Point> hull = new ArrayList<Point>();
 		if (points.size() < 3)
             	throw new Exception("Not enough points!");
 		
@@ -28,8 +28,8 @@ public class QuickHull{
 		hull.add(min);
 		hull.add(max);
 		
-        Vector<Point> right = new Vector<Point>();
-        Vector<Point> left = new Vector<Point>();
+        ArrayList<Point> right = new ArrayList<Point>();
+        ArrayList<Point> left = new ArrayList<Point>();
 
         for(Point a : points){
         	if(a.equals(min) || a.equals(max))
@@ -54,7 +54,7 @@ public class QuickHull{
         return (int)Math.signum( (b.x-a.x)*(p.y-a.y) - (p.x-a.x)*(b.y-a.y) );
     }
 
-    private static void hullRec(Point a, Point b, Vector<Point> points, Vector<Point> hull){
+    private static void hullRec(Point a, Point b, ArrayList<Point> points, ArrayList<Point> hull){
 
         if (points.size() == 0)
             return;
@@ -80,12 +80,12 @@ public class QuickHull{
         points.remove(target);
         hull.add(pos, target);
 
-        Vector<Point> l1 = new Vector<Point>();
+        ArrayList<Point> l1 = new ArrayList<Point>();
         for(Point p : points)
         	if (allocation(a, target, p) == 1)
                 l1.add(p);
         
-        Vector<Point> l2 = new Vector<Point>();
+        ArrayList<Point> l2 = new ArrayList<Point>();
         for(Point p : points)
         	if (allocation(target, b, p) == 1)
                 l2.add(p);        

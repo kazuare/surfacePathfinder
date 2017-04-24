@@ -2,27 +2,21 @@ package org.educationalProject.surfacePathfinder.onlineTriangulation;
 
 import java.awt.geom.Line2D;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.Triangulator;
-import org.educationalProject.surfacePathfinder.visualization.PathVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
-
-import io.github.jdiemke.triangulation.Triangle2D;
-import io.github.jdiemke.triangulation.Vector2D;
 
 public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 	protected SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
 	protected double radius;
 	protected double r2;
-	protected Vector<Point> points;
-	protected Vector<Point> centers;
-	protected Vector<EdgeWithDistance> removedEdges;
-	protected Vector<EdgeWithDistance> edges;
+	protected ArrayList<Point> points;
+	protected ArrayList<Point> centers;
+	protected ArrayList<EdgeWithDistance> removedEdges;
+	protected ArrayList<EdgeWithDistance> edges;
 	protected HashSet<Point> processedPoints;
 
 	@Override
@@ -30,8 +24,8 @@ public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 	@Override
 	public abstract SimpleWeightedGraph<Point, DefaultWeightedEdge> update(Point center);
 	
-	JdiemkeTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Vector<Point> points, HashSet<Point> processedPoints, double radius){
-		this.edges = new Vector<EdgeWithDistance>();
+	JdiemkeTriangulator(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, ArrayList<Point> points, HashSet<Point> processedPoints, double radius){
+		this.edges = new ArrayList<EdgeWithDistance>();
 		this.processedPoints = processedPoints;
 		this.points = points;
 		this.graph = graph;
@@ -40,15 +34,15 @@ public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 		this.radius = radius;
 		r2 = radius * radius;
 		//delete later, debug stuff
-		centers = new Vector<Point>();
-		removedEdges = new Vector<EdgeWithDistance>();
+		centers = new ArrayList<Point>();
+		removedEdges = new ArrayList<EdgeWithDistance>();
 	}
 	
-	protected Vector<Point> getNearbyPoints(Point center){
+	protected ArrayList<Point> getNearbyPoints(Point center){
 		//delete later, debug stuff
 		centers.add(center);
 		
-		Vector<Point> result = new Vector<Point>();
+		ArrayList<Point> result = new ArrayList<Point>();
 		int size = points.size();
 		for(int i = 0 ; i < size; i++){
 			//not sure if correct
@@ -63,7 +57,7 @@ public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 		return result;
 	}
 	
-	protected void setProcessedPoints(Vector<Point> neighbours, Vector<Point> hull ){
+	protected void setProcessedPoints(ArrayList<Point> neighbours, ArrayList<Point> hull ){
 		HashSet<Point> touchesHull = new HashSet<Point>();
 		for( Point x: hull )
 			for(DefaultWeightedEdge y: graph.edgesOf(x)){
@@ -106,7 +100,7 @@ public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 		public boolean equals(EdgeWithDistance e){
 			return a.equals(e.a)&&b.equals(e.b) || b.equals(e.a)&&a.equals(e.b);
 		}
-		public boolean isInHull(Vector<Point> hull){
+		public boolean isInHull(ArrayList<Point> hull){
 			boolean inHull = false;
 			
 			for(int i = 0; i < hull.size()-1; i++){
