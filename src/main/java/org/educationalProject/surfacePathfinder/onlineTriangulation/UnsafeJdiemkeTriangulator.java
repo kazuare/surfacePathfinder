@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
 import org.educationalProject.surfacePathfinder.Triangulator;
+import org.educationalProject.surfacePathfinder.visualization.JdiemkeTriangulatorVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -20,7 +21,24 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 		super(graph, points, processedPoints, radius);
 	}
 	
-
+	protected ArrayList<Point> getNearbyPoints(Point center){
+		//delete later, debug stuff
+		centers.add(center);
+		
+		ArrayList<Point> result = new ArrayList<Point>();
+		int size = points.size();
+		for(int i = 0 ; i < size; i++){
+			//not sure if correct
+			//if(processedPoints.contains(points.get(i)))
+			//	continue;
+			
+			double dx = center.x - points.get(i).x;
+			double dy = center.y - points.get(i).y;
+			if(dx*dx + dy*dy < r2)
+				result.add(points.get(i));
+		}
+		return result;
+	}
 	
 	protected void manageEdgeAddition(Point a, Point b, ArrayList<EdgeWithDistance> nearbyEdges, ArrayList<Point> hull){
 		EdgeWithDistance e = new EdgeWithDistance(a,b,EdgeWeighter.edgeWeight(a, b));
