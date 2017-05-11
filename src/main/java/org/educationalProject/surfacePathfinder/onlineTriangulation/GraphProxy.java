@@ -23,19 +23,12 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 		processedPoints = new HashSet<Point>();
 		this.radius = radius;
 		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);
-		if(className.equals("GreedyTriangulator"))
-			triangulator = new GreedyTriangulator(graph, points, processedPoints, radius);
-		else if(className.equals("UnsafeJdiemkeTriangulator"))
+		if(className.equals("UnsafeJdiemkeTriangulator"))
 			triangulator = new UnsafeJdiemkeTriangulator(graph, points, processedPoints, radius);
-		else if(className.equals("DomainBasedJdiemkeTriangulator"))
-			triangulator = new DomainBasedJdiemkeTriangulator(graph, points, processedPoints, radius);
 		else if(className.equals("ModifiedJdiemke"))
 			triangulator = new ModifiedJdiemke(graph, points, processedPoints, radius);
 	}
-	public void visualizeDebug(){
-		if(triangulator instanceof JdiemkeTriangulator)
-			((JdiemkeTriangulator)triangulator).visualizeDebug();	
-	}
+	
 	private boolean notProcessed(Point p){
 		return !processedPoints.contains(p);
 	}

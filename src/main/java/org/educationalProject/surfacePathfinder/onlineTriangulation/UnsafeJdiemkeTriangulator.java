@@ -111,11 +111,4 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 	}
 	
 
-
-	public void visualizeDebug(){
-		JdiemkeTriangulatorVisualizer vis = new JdiemkeTriangulatorVisualizer();
-        vis.setData(points,edges,removedEdges,centers,radius);
-        SwingWindow.start(vis, 700, 700, "internal graph");	
-	}
-	
 }
