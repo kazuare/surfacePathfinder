@@ -20,7 +20,7 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 			HashSet<Point> processedPoints, double radius) {
 		super(graph, points, processedPoints, radius);
 	}
-	
+
 	protected ArrayList<Point> getNearbyPoints(Point center){
 		//delete later, debug stuff
 		centers.add(center);

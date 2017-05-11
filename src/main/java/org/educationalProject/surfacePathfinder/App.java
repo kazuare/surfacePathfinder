@@ -11,7 +11,7 @@ public class App {
 		//SerejaTest serejaTest = new SerejaTest();
 		//serejaTest.test();
 		YegorTest.setup();
-		YegorTest.partialTriangulationExample();
+		YegorTest.fullTriangulationExample();
 	}
 
 }
