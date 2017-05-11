@@ -1,6 +1,7 @@
 package org.educationalProject.surfacePathfinder.path;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -9,136 +10,147 @@ import java.util.*;
 
 public class AStarPathFind {
 
-    private SimpleWeightedGraph<Point, DefaultWeightedEdge> graph;
+    private WeightedGraph<Point, DefaultWeightedEdge> graph;
+    private PriorityQueue<DistancePoint> unSettledNodes;
     private Set<Point> settledNodes;
-    private Set<Point> unSettledNodes;
+    private Map<Point, Double> gScore;
+    private Map<Point, Double> hScore;
+    private Map<Point, Double> fScore;
     private Map<Point, Point> predecessors;
-    private Map<Point, Double> distance;
+    private List<Point> shortestPath;
     private Point source;
     private Point destination;
 
-    public List<Point> getShortestPath(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination) {
-        this.init(graph, source, destination);
-        this.findPath();
-        return this.retrievalPath();
-    }
+    public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
+        @Override
+        public int compare(DistancePoint a, DistancePoint b) {
+            return (int)Math.signum(a.distance - b.distance);
+        }
+    };
 
-    private void init(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination) {
+    public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination){
+        initialize(graph, source, destination);
+        findPath();
+        retrievePath();
+        return shortestPath;
+    }
+    private void initialize(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination){
         this.graph = graph;
         this.source = source;
         this.destination = destination;
+
         settledNodes = new HashSet<Point>();
-        unSettledNodes = new HashSet<Point>();
-        distance = new HashMap<Point, Double>();
+        unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
+        gScore = new HashMap<Point, Double>();
+        hScore = new HashMap<Point, Double>();
+        fScore = new HashMap<Point, Double>();
         predecessors = new HashMap<Point, Point>();
 
-        distance.put(source, getHeuristic(this.source, this.source));
-        unSettledNodes.add(source);
+        gScore.put(this.source, 0.0);
+        hScore.put(this.source, getHScore(this.source));
+        fScore.put(this.source, getGScore(this.source) + getHScore(this.source));
+        unSettledNodes.add(new DistancePoint(this.source, getFScore(this.source)));
     }
 
-    private void findPath() {
-        while (unSettledNodes.size() > 0) {
-            Point current = getMinimum();
+    private void findPath(){
+        while (!unSettledNodes.isEmpty()){
+            Point current = unSettledNodes.poll().point;
             if (current.equals(destination))
                 return;
             settledNodes.add(current);
-            unSettledNodes.remove(current);
-            findMinimalDistances(current);
-        }
-    }
-
-    private void findMinimalDistances(Point node) {
-        List<Point> adjacentNodes = getNeighbors(node);
-
-        for (Point neighbor : adjacentNodes) {
-            if (isSettled(neighbor))
-                continue;
-            if (!isUnSettled(neighbor)) {
-                unSettledNodes.add(neighbor);
-                distance.put(neighbor, getHeuristic(node, neighbor));
-                predecessors.put(neighbor, node);
-                continue;
-            } else if(getDistance(node) + getDistance(node, neighbor) > distance.get(neighbor)) {
-                continue;
-            } else {
-                predecessors.remove(neighbor);
-                predecessors.put(neighbor, node);
-                distance.remove(neighbor);
-                distance.put(neighbor, getHeuristic(node, neighbor));
+            List<Point> neighbors = getNeighbors(current);
+            for (Point neighbor : neighbors) {
+                if (settledNodes.contains(neighbor))
+                    continue;
+                Double tentativeScore = getGScore(current) + getDistance(current, neighbor);
+                if (tentativeScore >= getGScore(neighbor))
+                    continue;
+                if(isUnSettled(neighbor)){
+                    unSettledNodes.remove(new DistancePoint(neighbor, getFScore(neighbor)));
+                    predecessors.remove(neighbor);
+                    gScore.remove(neighbor);
+                    hScore.remove(neighbor);
+                    fScore.remove(neighbor);
+                }
+                gScore.put(neighbor, tentativeScore);
+                hScore.put(neighbor, getHScore(neighbor));
+                fScore.put(neighbor, getGScore(neighbor) + getHScore(neighbor));
+                predecessors.put(neighbor, current);
+                unSettledNodes.add(new DistancePoint(neighbor, getFScore(neighbor)));
             }
         }
     }
-
-    private Double getHeuristic(Point current, Point next) {
-        Double g = getDistance(current, next) + getDistance(current);
-        Double h = /*Math.abs(next.alt - destination.alt) +*/
-                Math.sqrt((next.x - destination.x) * (next.x - destination.x)
-                        + (next.y - destination.y) * (next.y - destination.y)
-                        + (next.alt - destination.alt)*(next.alt - destination.alt));
-        return g + h;
-    }
-    private Double getDistance(Point node, Point target) {
-        if (node.equals(target))
+    private Double getDistance(Point src, Point target) {
+        if (src.equals(target))
             return 0.0;
-        DefaultWeightedEdge e = graph.getEdge(node, target);
-        return (Double)graph.getEdgeWeight(e);
-    }
-    private Double getDistance(Point node) {
-        Double d = distance.get(node);
-        if (d == null) {
+        DefaultWeightedEdge e = graph.getEdge(src, target);
+        if (e == null)
             return Double.MAX_VALUE;
-        } else {
-            return d;
-        }
+        else
+            return graph.getEdgeWeight(e);
     }
 
-    private List<Point> getNeighbors(Point node) {
+    private List<Point> getNeighbors(Point current) {
         List<Point> neighbors = new ArrayList<Point>();
-        Set<DefaultWeightedEdge> edges = graph.edgesOf(node);
-        for (DefaultWeightedEdge edge : edges) {
-            if (graph.getEdgeSource(edge).equals(node) && !isSettled(graph.getEdgeTarget(edge))) {
-                neighbors.add(graph.getEdgeTarget(edge));
-            }
-            if (graph.getEdgeTarget(edge).equals(node) && !isSettled(graph.getEdgeSource(edge))){
-                neighbors.add(graph.getEdgeSource(edge));
-            }
+        Set<DefaultWeightedEdge> edges = graph.edgesOf(current);
+        for (DefaultWeightedEdge e : edges) {
+            Point src = graph.getEdgeSource(e);
+            Point target = graph.getEdgeTarget(e);
+            if (src.equals(current))
+                neighbors.add(target);
+            else
+                neighbors.add(src);
         }
         return neighbors;
     }
 
-    private Point getMinimum() {
-        Point minimum = null;
-        for (Point node : unSettledNodes) {
-            if (minimum == null) {
-                minimum = node;
-            } else {
-                if (getDistance(node) < getDistance(minimum)) {
-                    minimum = node;
-                }
-            }
-        }
-        return minimum;
+    private boolean isUnSettled(Point current) { return fScore.containsKey(current); }
+    private Double getGScore(Point current) {
+        Double g = gScore.get(current);
+        if (g == null)
+            return Double.MAX_VALUE;
+        else
+            return  g;
     }
-
-    private boolean isSettled(Point node) {
-        return settledNodes.contains(node);
+    private Double getFScore(Point current) {
+        Double f = fScore.get(current);
+        if (f == null)
+            return Double.MAX_VALUE;
+        else
+            return f;
     }
-    private boolean isUnSettled(Point node) { return  unSettledNodes.contains(node); }
+    private Double getHScore(Point current){
+        Double h = hScore.get(current);
+        if (h == null)
+            return Math.sqrt((destination.x - current.x) * (destination.x - current.x)
+                    + (destination.y - current.y) * (destination.y - current.y)
+                    + (destination.alt - current.alt) * (destination.alt - current.alt));
 
-    private List<Point> retrievalPath() {
-        List<Point> shortestPath = new LinkedList<Point>();
+        return h;
+    }
+    private void retrievePath() {
+        shortestPath = new LinkedList<Point>();
         Point step = this.destination;
-        // check if a path exists
         if (predecessors.get(step) == null) {
-            return null;
+            shortestPath = null;
+            return;
         }
         shortestPath.add(step);
         while (predecessors.get(step) != null) {
             step = predecessors.get(step);
             shortestPath.add(step);
         }
-        // Put it into the correct order
         Collections.reverse(shortestPath);
-        return shortestPath;
+    }
+    public Double getLengthOfPath() {
+        Double length = 0.0;
+        if (shortestPath == null)
+            return 0.0;
+
+        for (int j = 0; j < shortestPath.size() - 1; j++) {
+            DefaultWeightedEdge e = graph.getEdge(shortestPath.get(j), shortestPath.get(j + 1));
+            length += (double) graph.getEdgeWeight(e);
+        }
+        return length;
     }
 }
