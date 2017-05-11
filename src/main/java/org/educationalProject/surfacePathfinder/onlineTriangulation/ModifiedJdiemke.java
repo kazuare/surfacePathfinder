@@ -111,6 +111,12 @@ public class ModifiedJdiemke extends DelaunayTriangulator implements OnlineTrian
 			
 		}
 		
+		try {
+			setProcessedPoints(neighbours, QuickHull.findHull(neighbours));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		return graph;
 	};
 	
@@ -127,59 +133,7 @@ public class ModifiedJdiemke extends DelaunayTriangulator implements OnlineTrian
 				processedPoints.add(x);
 	}
 	
-	public class EdgeWithDistance{
-		public Point a;
-		public Point b;
-		public double length;
-		public boolean hull = false;
-		@Override
-		public int hashCode(){
-			return (int)(10000*(a.x*a.y+b.x*b.y));
-			
-		}
-		public EdgeWithDistance(Point a, Point b, double d){
-			this.a = a; 
-			this.b = b;
-			this.length = d;
-		}
-		public boolean badlyIntersects(EdgeWithDistance e){
-			if(this.equals(e))
-				return true;
-			if(
-				a.equals(e.a)||
-				a.equals(e.b)||
-				b.equals(e.a)||
-				b.equals(e.b)
-			)return false;
-				
-			return Line2D.linesIntersect(a.x, a.y, b.x, b.y, e.a.x, e.a.y, e.b.x, e.b.y);
-			
-		}		
-		public boolean equals(EdgeWithDistance e){
-			return a.equals(e.a)&&b.equals(e.b) || b.equals(e.a)&&a.equals(e.b);
-		}
-		public boolean isInHull(ArrayList<Point> hull){
-			boolean inHull = false;
-			
-			for(int i = 0; i < hull.size()-1; i++){
-				if( hull.get(i).equals(a) && hull.get(i+1).equals(b) ){
-					inHull = true;
-					break;
-				}
-				if( hull.get(i).equals(b) && hull.get(i+1).equals(a) ){
-					inHull = true;
-					break;
-				}
-			}
-			
-			if( hull.get(0).equals(a) && hull.get(hull.size()-1).equals(b) )
-				inHull = true;
-			if( hull.get(0).equals(b) && hull.get(hull.size()-1).equals(a) )
-				inHull = true;
-			
-			return inHull;
-		}
-	}
+
 	
 	public void initTriangulation(){
 		Vector2D p1 = new Vector2D(0d, maxOfAnyCoordinate);

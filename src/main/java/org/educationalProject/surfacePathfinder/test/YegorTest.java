@@ -58,7 +58,6 @@ public class YegorTest {
 			Point b = realPoints.get((int)(Math.random()*realPoints.size()));
 
 			showAStar(clock, graph, a, b);
-			graph.visualizeDebug();
 			//showDijkstra(clock, graph1, a, b);
 			
 			System.out.println("end");			
