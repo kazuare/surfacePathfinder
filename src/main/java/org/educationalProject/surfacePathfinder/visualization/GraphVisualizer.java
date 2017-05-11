@@ -10,7 +10,6 @@ import com.jogamp.opengl.GL2;
 * Subclasses can draw either filled triangles or not filled
 */
 public class GraphVisualizer extends MapVisualizer {
-	protected WeightedGraph<Point, DefaultWeightedEdge> graph;
 	
 	/**
 	* Sets data that needs to be visualized

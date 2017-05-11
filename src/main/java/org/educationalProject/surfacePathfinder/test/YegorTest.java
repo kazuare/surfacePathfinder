@@ -19,7 +19,9 @@ import io.github.jdiemke.triangulation.NotEnoughPointsException;
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.ModifiedJdiemke;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 
 public class YegorTest {
 
@@ -55,7 +57,7 @@ public class YegorTest {
 
 			showAStar(clock, graph, a, b);
 			graph.visualizeDebug();
-			showDijkstra(clock, graph1, a, b);
+			//showDijkstra(clock, graph1, a, b);
 			
 			System.out.println("end");			
 		}catch(IOException e){
@@ -154,10 +156,32 @@ public class YegorTest {
             vis1.setData(triangles, nodes, graph);
             SwingWindow.start(vis1, 800, 600, "А* map");
 
-            PathVisualizer vis2 = new PathVisualizer();
-            vis2.setData(nodes, points);
-            SwingWindow.start(vis2, 800, vis2.calculateWindowHeight(800), "А*");
+            //PathVisualizer vis2 = new PathVisualizer();
+            //vis2.setData(nodes, points);
+            //SwingWindow.start(vis2, 800, vis2.calculateWindowHeight(800), "А*");
 
+            clock.tic();
+            
+            GraphProxy graph2 = new GraphProxy(
+            	1.5*TRIANGULATION_RADIUS, 
+            	(ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
+            	"ModifiedJdiemke"
+            );
+            AStarShortestPath<Point,DefaultWeightedEdge> astar2 =
+            		new AStarShortestPath<Point,DefaultWeightedEdge>(
+                            graph2,
+                            new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
+                    );
+            List<Point> nodes2 = astar2.getPath(a, b).getVertexList();
+            
+            resultingTime = clock.tocd();
+            System.out.println("partial triangulation is finished, phase duration is: " + resultingTime);
+          
+            DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
+            vis.setData(graph2, nodes2);
+            SwingWindow.start(vis, 700, 700, "modified jdiemke");
+            
+            
             System.out.println("end");
         }catch(IOException e){
             System.out.println("Problem with file reading accured!");

@@ -20,8 +20,6 @@ public class UnsafeJdiemkeTriangulator extends JdiemkeTriangulator implements On
 		super(graph, points, processedPoints, radius);
 	}
 	
-
-	
 	protected void manageEdgeAddition(Point a, Point b, ArrayList<EdgeWithDistance> nearbyEdges, ArrayList<Point> hull){
 		EdgeWithDistance e = new EdgeWithDistance(a,b,EdgeWeighter.edgeWeight(a, b));
 		e.hull = e.isInHull(hull);	
