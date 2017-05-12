@@ -72,53 +72,25 @@ public class AStarThread  implements Runnable {
 
             Point current = unSettledNodes.poll().point;
             settledNodes.add(current);
-            if(stop.get()) {
-                Point tmp = settledNodes.get(stopPoint.get());
-                System.out.println("Get stopped. stoppoint: " + tmp.x + " " + tmp.y + " " + tmp.alt);
-                /*if (!settledNodes.contains(stopPoint))
-                    System.out.println("No stoppoint in settled nodes");*/
-                return tmp;
-            }
+
 
             if (anotherThreadSettledNodes.contains(current) || destination.equals(current)) {
                 int index = anotherThreadSettledNodes.indexOf(current);
-                System.out.println("index " + index);
-                System.out.println("currentpoint: " + current.x + " " + current.y + " " + current.alt);
                 if (!stop.getAndSet(true)) {
                     stopPoint.set(index);
                     return current;
                 }
             }
-            /*if (destination.equals(current)) {
-                /*if (anotherThreadSettledNodes.contains(current)) {
-                    //System.out.println("source: " + source.x + " " + source.y + " " + source.alt);
-                    //System.out.println("destination: " + destination.x + " " + destination.y + " " + destination.alt);
-                    //System.out.println("currentpoint: " + current.x + " " + current.y + " " + current.alt);
-                    System.out.println("stoppoint: " + stopPoint.x + " " + stopPoint.y + " " + stopPoint.alt);
-                    System.out.println("Contains current. Size1 " + anotherThreadSettledNodes.size() + ". Size2 " + settledNodes.size());
-                    if (predecessors.get(current) == null) {
-                        System.out.println("Null-path current");
-                    }
-                }*/
-                //if(destination.equals(current))
-                  //  System.out.println("Found destination. Size1 " + anotherThreadSettledNodes.size() + ". Size2 " + settledNodes.size());
-                  /*  stop.set(true);
-                    stopPoint.x = current.x;
-                    stopPoint.y = current.y;
-                    stopPoint.alt = current.alt;
-                    System.out.println("stoppoint: " + stopPoint.x + " " + stopPoint.y + " " + stopPoint.alt);
-                    return current;
-            }*/
+
+            if(stop.get() && stopPoint.get() != -1) {
+                Point tmp = settledNodes.get(stopPoint.get());
+                return tmp;
+            }
 
             List<Point> neighbors = getNeighbors(current);
             for (Point neighbor : neighbors) {
-                if(stop.get()) {
+                if(stop.get() && stopPoint.get() != -1) {
                     Point tmp = settledNodes.get(stopPoint.get());
-                    System.out.println("Get stopped. stoppoint: " + tmp.x + " " + tmp.y + " " + tmp.alt);
-                    /*if (predecessors.get(stopPoint) == null)
-                        System.out.println("Null-path stoppoint");
-                    if (!settledNodes.contains(stopPoint))
-                        System.out.println("No stoppoint in settled nodes");*/
                     return tmp;
                 }
 
@@ -193,14 +165,10 @@ public class AStarThread  implements Runnable {
         return h;
     }
     public void retrievePath(Point target) {
-        System.out.println("Start retrieve path");
         Point step = target;
         if (predecessors.get(step) == null) {
-            System.out.println("Null-path");
             shortestPath = null;
             return;
-        } else {
-            System.out.println("We have path-start");
         }
         shortestPath.add(step);
         while (predecessors.get(step) != null) {
