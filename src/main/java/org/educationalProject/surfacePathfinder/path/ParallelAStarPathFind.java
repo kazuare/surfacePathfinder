@@ -45,17 +45,9 @@ public class ParallelAStarPathFind {
                 settledNodes2, settledNodes1, path2, stopPoint, stop);
         Thread thread1 = new Thread(part1);
         Thread thread2 = new Thread(part2);
-        System.out.println("SOURCE: " + source.x + " " + source.y + " " + source.alt);
-        System.out.println("DESTINATION: " + destination.x + " " + destination.y + " " + destination.alt);
         thread1.start();
         thread2.start();
-        System.out.println("#####1");
-        System.out.println(settledNodes1.size());
-        System.out.println(settledNodes2.size());
         while (thread1.isAlive() || thread2.isAlive());
-        System.out.println("#####2");
-        System.out.println(settledNodes1.size());
-        System.out.println(settledNodes2.size());
 
         Collections.reverse(path2);
         System.out.println("length path1: " + path1.size());
