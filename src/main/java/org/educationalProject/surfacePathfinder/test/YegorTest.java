@@ -182,12 +182,11 @@ public class YegorTest {
             SwingWindow.start(vis, 700, 700, "modified jdiemke map");
             
             clock.tic();
-            TwoTierAStar twotier = new TwoTierAStar(points, (int)(points.size()*0.2), COS_THRESHOLD, ALTITUDE_MULTIPLIER, TRIANGULATION_RADIUS);
+            TwoTierAStar twotier = new TwoTierAStar(points, (int)(points.size()*0.2), 30, COS_THRESHOLD, ALTITUDE_MULTIPLIER, TRIANGULATION_RADIUS);
             List<Point> nodes3 = twotier.findPath(a,b);
             resultingTime = clock.tocd();
             System.out.println("two tier A* is finished, phase duration is: " + resultingTime);
             TwoTierAStar.analyzeResult(nodes3, graph, a, b);
-            
             
             
             System.out.println("end");

@@ -27,13 +27,15 @@ public class TwoTierAStar {
 	double TRIANGULATION_RADIUS;
 	ArrayList<Vector2D> points;
 	ArrayList<Vector2D> roughPoints;
-	public TwoTierAStar(ArrayList<Vector2D> p, int pointsInRough, double COS_THRESHOLD, double ALTITUDE_MULTIPLIER, double TRIANGULATION_RADIUS){
+	int step;
+	public TwoTierAStar(ArrayList<Vector2D> p, int pointsInRough, int roughPathStep, double COS_THRESHOLD, double ALTITUDE_MULTIPLIER, double TRIANGULATION_RADIUS){
 		this.COS_THRESHOLD = COS_THRESHOLD;
 		this.ALTITUDE_MULTIPLIER = ALTITUDE_MULTIPLIER;
 		this.TRIANGULATION_RADIUS = TRIANGULATION_RADIUS;
 		points = (ArrayList<Vector2D>) p.clone();
 		Collections.shuffle(points);
 		roughPoints = new ArrayList<Vector2D>(points.subList(0, pointsInRough));
+		step = roughPathStep;
 	}
 	public ArrayList<Point> findPath(Point a, Point b) throws NotEnoughPointsException{
 		if(!roughPoints.contains((Vector2D)a))
@@ -57,12 +59,17 @@ public class TwoTierAStar {
         //vis.setData(roughGraph, roughNodes);
         //SwingWindow.start(vis, 700, 700, "rough map");
         
+        List<Point> filteredNodes = new ArrayList<Point>();
+        for(int i = 0; i < roughNodes.size() - 1; i += step)
+        	filteredNodes.add(roughNodes.get(i));
+        filteredNodes.add(roughNodes.get(roughNodes.size()-1));
+        
         ArrayList<Point> finalNodes = new ArrayList<Point>();
         
         GraphProxy partialGraph;
         AStarShortestPath<Point,DefaultWeightedEdge> partialAStar; 
         
-        for(int i = 0; i + 2 < roughNodes.size(); i+=2){
+        for(int i = 0; i < filteredNodes.size() - 1; i++){
         	
             partialGraph= new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 
@@ -75,29 +82,12 @@ public class TwoTierAStar {
             	new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
             ); 
             
-            List<Point> partialNodes = partialAStar.getPath(roughNodes.get(i), roughNodes.get(i+2)).getVertexList();
+            List<Point> partialNodes = partialAStar.getPath(filteredNodes.get(i), filteredNodes.get(i+1)).getVertexList();
             
             for(int j = 0; j < partialNodes.size(); j++)
             	finalNodes.add(partialNodes.get(j));
         	
         }
-        if(roughNodes.size()%2==0){
-        	partialGraph= new GraphProxy(
-                	1.5*TRIANGULATION_RADIUS, 
-                    (ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
-                    "ModifiedJdiemke"
-                );
-                
-                partialAStar = new AStarShortestPath<Point,DefaultWeightedEdge>(
-                	partialGraph,
-                	new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
-                ); 
-                
-                List<Point> partialNodes = partialAStar.getPath(roughNodes.get(roughNodes.size()-2), roughNodes.get(roughNodes.size()-1)).getVertexList();
-                
-                for(int j = 0; j < partialNodes.size(); j++)
-                	finalNodes.add(partialNodes.get(j));
-        } 
         
         DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
         vis.setData(roughGraph, finalNodes);
