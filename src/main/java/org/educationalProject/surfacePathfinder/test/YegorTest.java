@@ -7,6 +7,7 @@ import java.util.List;
 import org.educationalProject.surfacePathfinder.*;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
+import org.educationalProject.surfacePathfinder.twoTierAStar.TwoTierAStar;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.PathVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
@@ -121,43 +122,35 @@ public class YegorTest {
             resultingTime = clock.tocd();
             System.out.println("Reading is finished, phase duration is: " + resultingTime);
 
+            clock.tic();
+            
             // Points triangulating
-            clock.tic();
-            List<Triangle2D> triangles = Triangulator.triangulate(points);
-            resultingTime = clock.tocd();
-            System.out.println("Triangulation is finished, phase duration is: " + resultingTime);
-
+            List<Triangle2D> triangles = Triangulator.triangulate(points);       
             // Triangles -> graph convertion. Some edges are deleted if they have high altitude delta
-            clock.tic();
             SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles, COS_THRESHOLD, ALTITUDE_MULTIPLIER);
+            
             resultingTime = clock.tocd();
             System.out.println("Graph building is finished, phase duration is: " + resultingTime);
 
-            //Finding the shortest path
             clock.tic();
+            //Finding the shortest path
             AStarShortestPath<Point,DefaultWeightedEdge> astar =
                     new AStarShortestPath<Point,DefaultWeightedEdge>(
                             graph,
-                            new EuclidianEuristic<Point>()
-                    );
-            resultingTime = clock.tocd();
-            System.out.println("Euristic building is finished, phase duration is: " + resultingTime);
-
-            clock.tic();
+                            new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
+                    );  
+                     
             Point a = (Point)points.get((int)(Math.random()*points.size()));
             Point b = (Point)points.get((int)(Math.random()*points.size()));
+            
             List<Point> nodes = astar.getPath(a, b).getVertexList();
             resultingTime = clock.tocd();
             System.out.println("Pathfinding is finished, phase duration is: " + resultingTime);
-
+            System.out.println("Path length is: " + astar.getPath(a, b).getWeight());
             //Visualizing
-            ColorizedMapVisualizer vis1 = new ColorizedMapVisualizer();
-            vis1.setData(triangles, nodes, graph);
-            SwingWindow.start(vis1, 800, 600, "А* map");
-
-            //PathVisualizer vis2 = new PathVisualizer();
-            //vis2.setData(nodes, points);
-            //SwingWindow.start(vis2, 800, vis2.calculateWindowHeight(800), "А*");
+            DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
+            vis1.setData(graph, nodes);
+            SwingWindow.start(vis1, 700, 700, "full triangulation map");
 
             clock.tic();
             
@@ -174,11 +167,19 @@ public class YegorTest {
             List<Point> nodes2 = astar2.getPath(a, b).getVertexList();
             
             resultingTime = clock.tocd();
-            System.out.println("partial triangulation is finished, phase duration is: " + resultingTime);
-          
+            System.out.println("partial triangulation A* is finished, phase duration is: " + resultingTime);
+            System.out.println("Path length is: " + astar2.getPath(a, b).getWeight());
             DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
             vis.setData(graph2, nodes2);
-            SwingWindow.start(vis, 700, 700, "modified jdiemke");
+            SwingWindow.start(vis, 700, 700, "modified jdiemke map");
+            
+            clock.tic();
+            TwoTierAStar twotier = new TwoTierAStar(points, (int)(points.size()*0.2), COS_THRESHOLD, ALTITUDE_MULTIPLIER, TRIANGULATION_RADIUS);
+            List<Point> nodes3 = twotier.findPath(a,b);
+            resultingTime = clock.tocd();
+            System.out.println("two tier A* is finished, phase duration is: " + resultingTime);
+            TwoTierAStar.analyzeResult(nodes3, graph, a, b);
+            
             
             
             System.out.println("end");
