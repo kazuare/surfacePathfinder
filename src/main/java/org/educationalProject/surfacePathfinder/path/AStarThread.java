@@ -3,23 +3,48 @@ package org.educationalProject.surfacePathfinder.path;
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
+import java.lang.reflect.WildcardType;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class AStarPathFind {
-
-    private WeightedGraph<Point, DefaultWeightedEdge> graph;
+public class AStarThread  implements Runnable {
+    private static WeightedGraph<Point, DefaultWeightedEdge> graph;
+    private volatile ArrayList<Point> settledNodes;
+    private volatile ArrayList<Point> anotherThreadSettledNodes;
     private PriorityQueue<DistancePoint> unSettledNodes;
-    private Set<Point> settledNodes;
     private Map<Point, Double> gScore;
     private Map<Point, Double> hScore;
     private Map<Point, Double> fScore;
     private Map<Point, Point> predecessors;
     private List<Point> shortestPath;
-    private Point source;
-    private Point destination;
+    private final Point source;
+    private final Point destination;
+    private AtomicBoolean stop;
+    private AtomicInteger stopPoint;
+
+    AStarThread(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination,
+                ArrayList<Point> settledNodes, ArrayList<Point> anotherThreadSettledNodes,
+                ArrayList<Point> shortestPath, AtomicInteger stopPoint, AtomicBoolean stop){
+        this.graph = graph;
+        this.source = source;
+        this.destination = destination;
+        this.settledNodes = settledNodes;
+        this.anotherThreadSettledNodes = anotherThreadSettledNodes;
+        this.shortestPath = shortestPath;
+        this.stop = stop;
+        this.stopPoint = stopPoint;
+    }
+
+    @Override
+    public void run(){
+        initialize();
+        Point target = findPath();
+        retrievePath(target);
+    }
+
 
     public static Comparator<DistancePoint> comparator = new Comparator<DistancePoint>() {
         @Override
@@ -28,18 +53,8 @@ public class AStarPathFind {
         }
     };
 
-    public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination){
-        initialize(graph, source, destination);
-        findPath();
-        retrievePath();
-        return shortestPath;
-    }
-    private void initialize(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination){
-        this.graph = graph;
-        this.source = source;
-        this.destination = destination;
+    private void initialize(){
 
-        settledNodes = new HashSet<Point>();
         unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
         gScore = new HashMap<Point, Double>();
         hScore = new HashMap<Point, Double>();
@@ -52,14 +67,33 @@ public class AStarPathFind {
         unSettledNodes.add(new DistancePoint(this.source, getFScore(this.source)));
     }
 
-    private void findPath(){
+    private Point findPath(){
         while (!unSettledNodes.isEmpty()){
+
             Point current = unSettledNodes.poll().point;
-            if (current.equals(destination))
-                return;
             settledNodes.add(current);
+
+
+            if (anotherThreadSettledNodes.contains(current) || destination.equals(current)) {
+                int index = anotherThreadSettledNodes.indexOf(current);
+                if (!stop.getAndSet(true)) {
+                    stopPoint.set(index);
+                    return current;
+                }
+            }
+
+            if(stop.get() && stopPoint.get() != -1) {
+                Point tmp = settledNodes.get(stopPoint.get());
+                return tmp;
+            }
+
             List<Point> neighbors = getNeighbors(current);
             for (Point neighbor : neighbors) {
+                if(stop.get() && stopPoint.get() != -1) {
+                    Point tmp = settledNodes.get(stopPoint.get());
+                    return tmp;
+                }
+
                 if (settledNodes.contains(neighbor))
                     continue;
                 Double tentativeScore = getGScore(current) + getDistance(current, neighbor);
@@ -67,7 +101,7 @@ public class AStarPathFind {
                     continue;
                 if(isUnSettled(neighbor)){
                     unSettledNodes.remove(new DistancePoint(neighbor, getFScore(neighbor)));
-                    predecessors.remove(neighbor);
+                    //predecessors.remove(neighbor);
                     gScore.remove(neighbor);
                     hScore.remove(neighbor);
                     fScore.remove(neighbor);
@@ -79,6 +113,7 @@ public class AStarPathFind {
                 unSettledNodes.add(new DistancePoint(neighbor, getFScore(neighbor)));
             }
         }
+        return source;
     }
     private Double getDistance(Point src, Point target) {
         if (src.equals(target))
@@ -91,6 +126,7 @@ public class AStarPathFind {
     }
 
     private List<Point> getNeighbors(Point current) {
+
         List<Point> neighbors = new ArrayList<Point>();
         Set<DefaultWeightedEdge> edges = graph.edgesOf(current);
         for (DefaultWeightedEdge e : edges) {
@@ -128,9 +164,8 @@ public class AStarPathFind {
 
         return h;
     }
-    private void retrievePath() {
-        shortestPath = new LinkedList<Point>();
-        Point step = this.destination;
+    public void retrievePath(Point target) {
+        Point step = target;
         if (predecessors.get(step) == null) {
             shortestPath = null;
             return;
@@ -141,16 +176,5 @@ public class AStarPathFind {
             shortestPath.add(step);
         }
         Collections.reverse(shortestPath);
-    }
-    public Double getLengthOfPath() {
-        Double length = 0.0;
-        if (shortestPath == null)
-            return 0.0;
-
-        for (int j = 0; j < shortestPath.size() - 1; j++) {
-            DefaultWeightedEdge e = graph.getEdge(shortestPath.get(j), shortestPath.get(j + 1));
-            length += (double) graph.getEdgeWeight(e);
-        }
-        return length;
     }
 }

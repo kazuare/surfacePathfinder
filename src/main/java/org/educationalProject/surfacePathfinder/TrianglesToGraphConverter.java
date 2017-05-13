@@ -10,45 +10,22 @@ import io.github.jdiemke.triangulation.Triangle2D;
 * takes in some triangles, adds all the satisfactory triangle edges to the graph
 */
 public class TrianglesToGraphConverter {
-	private static double COS_THRESHOLD;
-	private static double COST_MULTIPLIER;
-	
 	public static void setParams(double threshold, double multiplier){
-		COS_THRESHOLD = threshold;
-		COST_MULTIPLIER = multiplier;
+		EdgeValidator.setParams(threshold);
+		EdgeWeighter.setParams(multiplier);
 	}
 	
-	public static double edgeWeight(Point a, Point b){
-		return Math.abs(a.alt-b.alt) * COST_MULTIPLIER +
-				Math.sqrt(
-					(a.x-b.x)*(a.x-b.x)+
-					(a.y-b.y)*(a.y-b.y)+
-					(a.alt-b.alt)*(a.alt-b.alt)
-				);
+	private static double edgeWeight(Point a, Point b){
+		return EdgeWeighter.edgeWeight(a, b);
 	}
 	
 	/**
 	* determines if the edge is satisfactory (also returns false is the edge is already in graph)
 	*/
-	public static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
+	private static boolean judgeEdge(Point a, Point b, SimpleWeightedGraph<Point,DefaultWeightedEdge> graph){
 		if(graph.containsEdge(a, b))
 			return false;
-		if(
-			Math.sqrt(
-				(a.x-b.x)*(a.x-b.x)+
-				(a.y-b.y)*(a.y-b.y)
-			)
-			/
-			Math.sqrt(
-				(a.x-b.x)*(a.x-b.x)+
-				(a.y-b.y)*(a.y-b.y)+
-				(a.alt-b.alt)*(a.alt-b.alt)
-			)
-			<= 
-			COS_THRESHOLD
-		)
-			return false;
-		return true;
+		return EdgeValidator.judge(a,b);
 	}
 	public static SimpleWeightedGraph<Point,DefaultWeightedEdge> convert(List<Triangle2D> triangles, double threshold, double multiplier){
 		

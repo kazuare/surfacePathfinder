@@ -11,6 +11,7 @@ import org.educationalProject.surfacePathfinder.twoTierAStar.TwoTierAStar;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.PathVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
+import org.jgrapht.WeightedGraph;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -35,6 +36,7 @@ public class YegorTest {
     
     public static void setup(){
     	EdgeWeighter.setParams(ALTITUDE_MULTIPLIER);
+    	EdgeValidator.setParams(COS_THRESHOLD);
     }
     
     public static void partialTriangulationExample(){
@@ -67,15 +69,21 @@ public class YegorTest {
 		}
 		
 	}
+    public static void defaultResultVisualizing(WeightedGraph<Point, DefaultWeightedEdge> graph, List<Point> nodes, String windowName){
+    	DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
+		vis.setData(graph, nodes);
+		SwingWindow.start(vis, 700, 700, windowName);
+    }
     
-    public static void showAStar(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
+    public static void showAStar(NanoClock clock, WeightedGraph<Point, DefaultWeightedEdge> graph, Point a, Point b) throws TicTocException{
     	showAStar(clock, graph, a, b, "Astar");
     }
-    public static void showDijkstra(NanoClock clock, GraphProxy graph, Point a, Point b) throws TicTocException{
+    
+    public static void showDijkstra(NanoClock clock, WeightedGraph<Point, DefaultWeightedEdge> graph, Point a, Point b) throws TicTocException{
     	showDijkstra(clock, graph, a, b, "Dijkstra");
     }
     
-    public static void showAStar(NanoClock clock, GraphProxy graph, Point a, Point b, String windowName) throws TicTocException{
+    public static void showAStar(NanoClock clock, WeightedGraph<Point, DefaultWeightedEdge> graph, Point a, Point b, String windowName) throws TicTocException{
     	double resultingTime;
     	clock.tic();
 		AStarShortestPath<Point,DefaultWeightedEdge> astar = 
@@ -87,13 +95,11 @@ public class YegorTest {
 		resultingTime = clock.tocd();
 		System.out.println("Astar algo is finished, phase duration is: " + resultingTime);
 		System.out.println("Path length is: " + astar.getPath(a, b).getWeight());
-		//Visualizing
-		DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
-		vis.setData(graph, nodes);
-		SwingWindow.start(vis, 700, 700, windowName);
+		
+		defaultResultVisualizing(graph, nodes, windowName);
     }
     
-    public static void showDijkstra(NanoClock clock, GraphProxy graph, Point a, Point b, String windowName) throws TicTocException{
+    public static void showDijkstra(NanoClock clock, WeightedGraph<Point, DefaultWeightedEdge> graph, Point a, Point b, String windowName) throws TicTocException{
     	double resultingTime;
     	clock.tic();
     	DijkstraShortestPath<Point,DefaultWeightedEdge> dijkstra = 
@@ -103,10 +109,7 @@ public class YegorTest {
 		System.out.println("Dijkstra algo is finished, phase duration is: " + resultingTime);
 		System.out.println("Path length is: " + dijkstra.getPath(a, b).getWeight());
 		
-		//Visualizing
-		DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
-		vis.setData(graph, nodes);
-		SwingWindow.start(vis, 700, 700, windowName);
+		defaultResultVisualizing(graph, nodes, windowName);
     }
     
     
@@ -146,11 +149,16 @@ public class YegorTest {
             List<Point> nodes = astar.getPath(a, b).getVertexList();
             resultingTime = clock.tocd();
             System.out.println("Pathfinding is finished, phase duration is: " + resultingTime);
+
             System.out.println("Path length is: " + astar.getPath(a, b).getWeight());
             //Visualizing
             DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
             vis1.setData(graph, nodes);
             SwingWindow.start(vis1, 700, 700, "full triangulation map");
+
+            //PathVisualizer vis2 = new PathVisualizer();
+            //vis2.setData(nodes, points);
+            //SwingWindow.start(vis2, 800, vis2.calculateWindowHeight(800), "А*");
 
             clock.tic();
             

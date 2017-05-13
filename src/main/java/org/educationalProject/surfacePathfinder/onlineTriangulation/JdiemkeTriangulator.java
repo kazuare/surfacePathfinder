@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.educationalProject.surfacePathfinder.visualization.JdiemkeTriangulatorVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -38,25 +39,6 @@ public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 		removedEdges = new ArrayList<EdgeWithDistance>();
 	}
 	
-	protected ArrayList<Point> getNearbyPoints(Point center){
-		//delete later, debug stuff
-		centers.add(center);
-		
-		ArrayList<Point> result = new ArrayList<Point>();
-		int size = points.size();
-		for(int i = 0 ; i < size; i++){
-			//not sure if correct
-			//if(processedPoints.contains(points.get(i)))
-			//	continue;
-			
-			double dx = center.x - points.get(i).x;
-			double dy = center.y - points.get(i).y;
-			if(dx*dx + dy*dy < r2)
-				result.add(points.get(i));
-		}
-		return result;
-	}
-	
 	protected void setProcessedPoints(ArrayList<Point> neighbours, ArrayList<Point> hull ){
 		HashSet<Point> touchesHull = new HashSet<Point>();
 		for( Point x: hull )
@@ -69,7 +51,7 @@ public abstract class JdiemkeTriangulator implements OnlineTriangulator{
 				processedPoints.add(x);
 	}
 	
-	protected class EdgeWithDistance{
+	public class EdgeWithDistance{
 		public Point a;
 		public Point b;
 		public double length;

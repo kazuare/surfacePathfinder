@@ -1,9 +1,13 @@
-package org.educationalProject.surfacePathfinder.onlineTriangulation;
+package org.educationalProject.surfacePathfinder.visualization;
 
 import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.visualization.Visualizer;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.JdiemkeTriangulator;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.JdiemkeTriangulator.EdgeWithDistance;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
@@ -11,7 +15,7 @@ import io.github.jdiemke.triangulation.Vector2D;
 /**
 * visualizator for internal use in JdiemkeTriangulator
 */
-public class JdiemkeTriangulatorVisualizer extends Visualizer {
+public class JdiemkeTriangulatorVisualizer extends GraphVisualizer {
 	protected ArrayList<JdiemkeTriangulator.EdgeWithDistance> graph;
 	protected ArrayList<JdiemkeTriangulator.EdgeWithDistance> removedEdges;
 	protected ArrayList<Point> centers;
@@ -29,6 +33,12 @@ public class JdiemkeTriangulatorVisualizer extends Visualizer {
 		dataSet = true;
 	}
 	
+	@Override
+	public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph){
+		dataSet = false;
+	}
+	
+	@Override
 	protected void drawContent( GL2 gl2 ){
 		
 		gl2.glLineWidth(2f);		
@@ -93,42 +103,8 @@ public class JdiemkeTriangulatorVisualizer extends Visualizer {
 			}
 		gl2.glEnd();
 	}
-	
-	protected double maxX = Double.NEGATIVE_INFINITY;
-	protected double minX = Double.POSITIVE_INFINITY;
-	protected double maxY = Double.NEGATIVE_INFINITY;
-	protected double minY = Double.POSITIVE_INFINITY;
-	protected double maxAlt = Double.NEGATIVE_INFINITY;
-	protected double minAlt = Double.POSITIVE_INFINITY;
-	
-	/**
-	* translates map width into screen width
-	*/
-	protected float normalizeWidth(double data){
-		return (float) (width * (data - minX)/(maxX - minX));
-	}
-	/**
-	* translates map height into screen height
-	*/
-	protected float normalizeHeight(double data){
-		return (float) (height * (data - minY)/(maxY - minY));
-	}
-	
-	protected void drawPoint(GL2 gl2, Vector2D a){
-		gl2.glVertex2f(
-			normalizeWidth(a.x), 
-			normalizeHeight(a.y)
-		); 
-	}
-	protected void drawColoredPoint(GL2 gl2, Point a){
-		gl2.glColor3f(1, normalizeColor(a.alt), 0);	
-		drawPoint(gl2, a);
-	}
-	
-	protected float normalizeColor(double data){
-		return (float) ((data - minAlt)/(maxAlt - minAlt));
-	}
 
+	@Override
 	protected void findExtremes(){		
 		for(Point a : points){
 			minX = Math.min(minX, a.x);			
@@ -139,16 +115,6 @@ public class JdiemkeTriangulatorVisualizer extends Visualizer {
 			maxAlt = Math.max(maxAlt, a.alt);
 			
 		}
-			
-	}
-	
-	public void display( GL2 gl2 ){
-		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
-	    gl2.glLoadIdentity();
-	        
-		findExtremes();				
-			
-		drawContent(gl2);
 			
 	}
 }
