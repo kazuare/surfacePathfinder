@@ -118,7 +118,7 @@ public class YegorTest {
             double resultingTime;
             // We will used this clock to measure time through all the phases
             NanoClock clock = new NanoClock();
-
+            
             // Obj file reading
             clock.tic();
             ArrayList<Vector2D> points = ObjFileParser.getPoints("C:\\digdes\\map.obj");
@@ -142,7 +142,7 @@ public class YegorTest {
                             graph,
                             new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
                     );  
-                     
+                    
             Point a = (Point)points.get((int)(Math.random()*points.size()));
             Point b = (Point)points.get((int)(Math.random()*points.size()));
             
@@ -186,8 +186,8 @@ public class YegorTest {
             List<Point> nodes3 = twotier.findPath(a,b);
             resultingTime = clock.tocd();
             System.out.println("two tier A* is finished, phase duration is: " + resultingTime);
-            TwoTierAStar.analyzeResult(nodes3, graph, a, b);
-            
+            //TwoTierAStar.analyzeResult(nodes3, graph, a, b);
+            TwoTierAStar.printPathWeight(nodes3);
             
             System.out.println("end");
         }catch(IOException e){

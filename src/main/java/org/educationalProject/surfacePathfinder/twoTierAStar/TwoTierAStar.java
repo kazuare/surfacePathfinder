@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.EuclidianEuristic;
 import org.educationalProject.surfacePathfinder.EuclidianEuristicWithAltitude;
 import org.educationalProject.surfacePathfinder.Point;
@@ -43,11 +44,13 @@ public class TwoTierAStar {
 		
 		if(!roughPoints.contains((Vector2D)b))
 			roughPoints.add((Vector2D)b);
+             
+        GraphProxy roughGraph = new GraphProxy(
+            	1.5*TRIANGULATION_RADIUS, 
+                (ArrayList<Point>)(ArrayList<? extends Vector2D>)roughPoints, 
+                "ModifiedJdiemke"
+            );
         
-        List<Triangle2D> roughTriangles = Triangulator.triangulate(roughPoints);        
-        
-        SimpleWeightedGraph<Point,DefaultWeightedEdge> roughGraph = TrianglesToGraphConverter.convert(roughTriangles, COS_THRESHOLD, ALTITUDE_MULTIPLIER);
-       
         AStarShortestPath<Point,DefaultWeightedEdge> roughAStar =
         	new AStarShortestPath<Point,DefaultWeightedEdge>(
         		roughGraph,
@@ -71,7 +74,7 @@ public class TwoTierAStar {
         
         for(int i = 0; i < filteredNodes.size() - 1; i++){
         	
-            partialGraph= new GraphProxy(
+            partialGraph = new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 
                 (ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
                 "ModifiedJdiemke"
@@ -133,5 +136,13 @@ public class TwoTierAStar {
 			System.out.println("weight is " + weight);
 		}
 		
+	}
+	
+	public static void printPathWeight(List<Point> path){
+		double weight = 0;
+		for(int i = 0; i < path.size()-1; i++){
+			weight += EdgeWeighter.edgeWeight(path.get(i),path.get(i+1));
+		}
+		System.out.println("weight is " + weight);
 	}
 }
