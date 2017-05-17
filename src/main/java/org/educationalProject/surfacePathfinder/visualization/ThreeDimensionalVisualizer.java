@@ -1,5 +1,7 @@
 package org.educationalProject.surfacePathfinder.visualization;
 
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -31,6 +33,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	   List<Triangle2D> triangles;
 	   List<Point> nodes = null;
 	   private float seenWidth = 2;
+	   private float staticRotation = 0;
 	   @Override
 	   public void display( GLAutoDrawable drawable ) {
 	      final GL2 gl2 = drawable.getGL().getGL2();
@@ -44,6 +47,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      gl2.glLoadIdentity();  
 	      gl2.glTranslatef( 0f, -0.5f,-3.0f ); 
 	      gl2.glRotatef( rotation, 0.0f, 1.0f, 0.0f );
+	      gl2.glRotatef( staticRotation, 0.0f, 0.0f, 1.0f );
 	      gl2.glBegin( GL2.GL_TRIANGLES );   
 	      				
 		  
@@ -117,6 +121,14 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 		      GLCapabilities capabilities = new GLCapabilities( profile );
 		      final GLCanvas glcanvas = new GLCanvas( capabilities );
 		      glcanvas.addGLEventListener( this );
+		      glcanvas.addMouseWheelListener(new MouseWheelListener(){
+
+				@Override
+				public void mouseWheelMoved(MouseWheelEvent e) {
+					staticRotation += e.getPreciseWheelRotation();				
+				}
+		    	  
+		      });
 		      glcanvas.setSize( 700, 700 );
 		      final JFrame frame = new JFrame ( "3D" );
 		      frame.getContentPane().add(glcanvas);
