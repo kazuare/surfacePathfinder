@@ -83,10 +83,7 @@ public class Demo {
             List<Triangle2D> triangles = Triangulator.triangulate(points);       
             // Triangles -> graph convertion. Some edges are deleted if they have high altitude delta
             SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles, COS_THRESHOLD, ALTITUDE_MULTIPLIER);
-            
-            ThreeDimensionalVisualizer vis3d = new ThreeDimensionalVisualizer();
-            vis3d.show3DMap(triangles);
-            
+       
             resultingTime = clock.tocd();
             System.out.println("Graph building is finished, phase duration is: " + resultingTime);
            
@@ -100,6 +97,9 @@ public class Demo {
                     
             List<Point> nodes = astar.getPath(a, b).getVertexList();
            
+            ThreeDimensionalVisualizer vis3d = new ThreeDimensionalVisualizer();
+            vis3d.show3DMap(triangles, nodes);
+            
             resultingTime = clock.tocd();
             System.out.println("Pathfinding is finished, phase duration is: " + resultingTime);
             System.out.println("Path length is: " + astar.getPath(a, b).getWeight());

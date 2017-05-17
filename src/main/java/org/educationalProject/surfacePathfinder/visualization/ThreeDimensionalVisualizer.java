@@ -29,6 +29,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	   private GLU glu = new GLU();
 	   private float rotation =0f;
 	   List<Triangle2D> triangles;
+	   List<Point> nodes = null;
 	   private float seenWidth = 2;
 	   @Override
 	   public void display( GLAutoDrawable drawable ) {
@@ -50,41 +51,22 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	    	  drawColoredPoint(gl2, (Point) t.a);
 	    	  drawColoredPoint(gl2, (Point) t.b);
 	    	  drawColoredPoint(gl2, (Point) t.c);
-		  }
-	      /*
-	      //drawing triangle in all dimentions
-	      //front
-	      gl2.glColor3f( 1.0f, 0.0f, 0.0f ); // Red
-	      gl2.glVertex3f( 1.0f, 2.0f, 0.0f ); // Top
-	      gl2.glColor3f( 0.0f, 1.0f, 0.0f ); // Green
-	      gl2.glVertex3f( -1.0f, -1.0f, 1.0f ); // Left
-	      gl2.glColor3f( 0.0f, 0.0f, 1.0f ); // Blue
-	      gl2.glVertex3f( 1.0f, -1.0f, 1.0f ); // Right)
-	      //right
-	      gl2.glColor3f( 1.0f, 0.0f, 0.0f ); 
-	      gl2.glVertex3f( 1.0f, 2.0f, 0.0f ); // Top 
-	      gl2.glColor3f( 0.0f, 0.0f, 1.0f ); 
-	      gl2.glVertex3f( 1.0f, -1.0f, 1.0f ); // Left 
-	      gl2.glColor3f( 0.0f, 1.0f, 0.0f ); 
-	      gl2.glVertex3f( 1.0f, -1.0f, -1.0f ); // Right
-	      //left
-	      gl2.glColor3f( 1.0f, 0.0f, 0.0f ); 
-	      gl2.glVertex3f( 1.0f, 2.0f, 0.0f ); // Top 
-	      gl2.glColor3f( 0.0f, 1.0f, 0.0f ); 
-	      gl2.glVertex3f( 1.0f, -1.0f, -1.0f ); // Left 
-	      gl2.glColor3f( 0.0f, 0.0f, 1.0f ); 
-	      gl2.glVertex3f( -1.0f, -1.0f, -1.0f ); // Right 
-	      //top
-	      gl2.glColor3f( 0.0f, 1.0f, 0.0f ); 
-	      gl2.glVertex3f( 1.0f, 2.0f, 0.0f ); // Top 
-	      gl2.glColor3f( 0.0f, 0.0f, 1.0f ); 
-	      gl2.glVertex3f( -1.0f, -1.0f, -1.0f ); // Left 
-	      gl2.glColor3f( 0.0f, 1.0f, 0.0f ); 
-	      gl2.glVertex3f( -1.0f, -1.0f, 1.0f ); // Right 
-	      */
+		  }	      
 	      
+	      gl2.glEnd(); 
 	      
-	      gl2.glEnd();          
+	      if(nodes!=null){
+	    	  gl2.glLineWidth(10);
+		      gl2.glBegin( GL2.GL_LINES ); 
+		      
+		      gl2.glColor3f(1, 1, 1);	
+		      for(int i = 0; i < nodes.size()-1; i++){
+		    	  drawPoint(gl2, nodes.get(i));
+		    	  drawPoint(gl2, nodes.get(i+1));
+		      }
+		      gl2.glEnd(); 
+	      }
+	      
 	      gl2.glFlush();
 	      rotation +=0.2f;
 	   }
@@ -127,6 +109,23 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      animator.start();
 	   }
 	   
+	   public void show3DMap(List<Triangle2D> triangles, List<Point> nodes) {
+			  this.triangles = triangles;
+			  this.nodes = nodes;
+		      findExtremes();
+		      final GLProfile profile = GLProfile.get( GLProfile.GL2 );
+		      GLCapabilities capabilities = new GLCapabilities( profile );
+		      final GLCanvas glcanvas = new GLCanvas( capabilities );
+		      glcanvas.addGLEventListener( this );
+		      glcanvas.setSize( 700, 700 );
+		      final JFrame frame = new JFrame ( "3D" );
+		      frame.getContentPane().add(glcanvas);
+		      frame.setSize( frame.getContentPane().getPreferredSize() );
+		      frame.setVisible( true );
+		      final FPSAnimator animator = new FPSAnimator( glcanvas, 60,true );
+		      animator.start();
+		   }
+	   
 		
 		/**
 		* translates map width into screen width
@@ -146,7 +145,14 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 		protected float normalizeAlt(double data){
 			return (float) ((data - minAlt)/(maxAlt - minAlt));
 		}
-		
+		protected void drawPoint(GL2 gl2, Point a){
+			gl2.glVertex3f(
+				normalizeX(a.x)-seenWidth/2 , 
+				normalizeAlt(a.alt),
+				normalizeY(a.y)-seenWidth/2 
+				
+			); 
+		}
 		protected void drawPoint(GL2 gl2, Vector2D p){
 			Point a = (Point)p;
 			gl2.glVertex3f(
