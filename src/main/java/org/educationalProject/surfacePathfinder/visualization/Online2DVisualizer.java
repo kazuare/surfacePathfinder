@@ -7,6 +7,7 @@ import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,10 +28,12 @@ public class Online2DVisualizer extends MapVisualizer {
     protected void drawContent( GL2 gl2 ){
         gl2.glLineWidth(2f);
         gl2.glBegin(GL.GL_LINES);
-
-        for(DefaultWeightedEdge edge : graph.edgeSet()){
-            drawColoredPoint(gl2, graph.getEdgeSource(edge));
-            drawColoredPoint(gl2, graph.getEdgeTarget(edge));
+        
+        SimpleWeightedGraph<Point, DefaultWeightedEdge> graphToDraw = (SimpleWeightedGraph<Point, DefaultWeightedEdge>) ((SimpleWeightedGraph<Point, DefaultWeightedEdge>)graph).clone();
+        
+        for(DefaultWeightedEdge edge : graphToDraw.edgeSet()){
+            drawColoredPoint(gl2, graphToDraw.getEdgeSource(edge));
+            drawColoredPoint(gl2, graphToDraw.getEdgeTarget(edge));
         }
 
         gl2.glEnd();
