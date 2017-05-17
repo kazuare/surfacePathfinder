@@ -96,10 +96,6 @@ public class Demo {
                     
             List<Point> nodes = astar.getPath(a, b).getVertexList();
            
-            for(int i = 0; i < nodes.size();i++)
-            	System.out.println(nodes.get(i).x + " " + nodes.get(i).y);
-            
-            
             resultingTime = clock.tocd();
             System.out.println("Pathfinding is finished, phase duration is: " + resultingTime);
             System.out.println("Path length is: " + astar.getPath(a, b).getWeight());

@@ -49,8 +49,8 @@ public class PointSelectionWindow {
 			public void mouseClicked(MouseEvent e) {
           		if(a==null || b==null){
           			System.out.println("Point selected");
-          	  		double x = ((double)e.getX())/width*maxX;
-          	  		double y = (height - (double)e.getY())/height*maxY;
+          	  		double x = ((double)e.getX())/glcanvas.getWidth()*maxX;
+          	  		double y = (glcanvas.getHeight() - (double)e.getY())/glcanvas.getHeight()*maxY;
           	  		System.out.println(x);
           	  		double minDist = Double.POSITIVE_INFINITY;
           	  		Point minPoint = null;
@@ -88,5 +88,7 @@ public class PointSelectionWindow {
         jframe.getContentPane().add( glcanvas, BorderLayout.CENTER );
         jframe.setSize( width, height );
         jframe.setVisible( true );
+        
+        
     }
 }
