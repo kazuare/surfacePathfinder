@@ -28,7 +28,7 @@ import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 public class YegorTest {
 
     //addition punishment in our distances
-    static final double ALTITUDE_MULTIPLIER = 4;
+    static final double ALTITUDE_MULTIPLIER = 0;
     //is used to determine whether the edge is "bad" and should not be included
     // 0 == no exclusion at all
     static final double COS_THRESHOLD = 0;
@@ -125,6 +125,12 @@ public class YegorTest {
             resultingTime = clock.tocd();
             System.out.println("Reading is finished, phase duration is: " + resultingTime);
 
+            Point a = new Point(0,0,0);
+            Point b = new Point(10,10,0);
+            
+            points.add(a);
+            points.add(b);
+            
             clock.tic();
             
             // Points triangulating
@@ -143,8 +149,8 @@ public class YegorTest {
                             new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
                     );  
                     
-            Point a = (Point)points.get((int)(Math.random()*points.size()));
-            Point b = (Point)points.get((int)(Math.random()*points.size()));
+            //Point a = (Point)points.get((int)(Math.random()*points.size()));
+            //Point b = (Point)points.get((int)(Math.random()*points.size()));
             
             List<Point> nodes = astar.getPath(a, b).getVertexList();
             resultingTime = clock.tocd();

@@ -8,10 +8,8 @@ import org.educationalProject.surfacePathfinder.test.YegorTest;
  * */
 public class App {
 	public static void main(String[] args) {
-		//SerejaTest serejaTest = new SerejaTest();
-		//serejaTest.test();
-		YegorTest.setup();
-		YegorTest.fullTriangulationExample();
+		String addr = "C:\\digdes\\map.obj";
+		Demo.start(addr);
 	}
 
 }
