@@ -14,6 +14,7 @@ import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisu
 import org.educationalProject.surfacePathfinder.visualization.DemonstrationVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.PointSelectionWindow;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
+import org.educationalProject.surfacePathfinder.visualization.ThreeDimensionalVisualizer;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -83,9 +84,12 @@ public class Demo {
             // Triangles -> graph convertion. Some edges are deleted if they have high altitude delta
             SimpleWeightedGraph<Point,DefaultWeightedEdge> graph = TrianglesToGraphConverter.convert(triangles, COS_THRESHOLD, ALTITUDE_MULTIPLIER);
             
+            ThreeDimensionalVisualizer vis3d = new ThreeDimensionalVisualizer();
+            vis3d.show3DMap(triangles);
+            
             resultingTime = clock.tocd();
             System.out.println("Graph building is finished, phase duration is: " + resultingTime);
-
+           
             clock.tic();
             //Finding the shortest path
             AStarShortestPath<Point,DefaultWeightedEdge> astar =
