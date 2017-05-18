@@ -11,8 +11,7 @@ import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
 import org.educationalProject.surfacePathfinder.twoTierAStar.TwoTierAStar;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.DemonstrationVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.PointSelectionWindow;
+import org.educationalProject.surfacePathfinder.visualization.MainDemoWindow;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.educationalProject.surfacePathfinder.visualization.ThreeDimensionalVisualizer;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
@@ -56,11 +55,14 @@ public class Demo {
             resultingTime = clock.tocd();
             System.out.println("Reading is finished, phase duration is: " + resultingTime);
 
-            DemonstrationVisualizer demoVis = new DemonstrationVisualizer();
-            demoVis.setData((List<Point>)(List<? extends Vector2D>)points);
-            PointSelectionWindow.start(demoVis, (List<Point>)(List<? extends Vector2D>)points, 700, 700, "DEMO");
+            //DemonstrationVisualizer demoVis = new DemonstrationVisualizer();
+            //demoVis.setData((List<Point>)(List<? extends Vector2D>)points);
+            //PointSelectionWindow.start(demoVis, (List<Point>)(List<? extends Vector2D>)points, 700, 700, "DEMO");
+           
+    		MainDemoWindow demo = new MainDemoWindow();
+    		demo.start((List<Point>)(List<? extends Vector2D>)points, 680, 680, "MAIN DEMO");
             
-            while(PointSelectionWindow.a == null || PointSelectionWindow.b == null){
+            while(demo.a == null || demo.b == null){
             	try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -73,8 +75,8 @@ public class Demo {
             Point b = null;
             
             for(Point p : (List<Point>)(List<? extends Vector2D>)points){
-            	if(p.equals(PointSelectionWindow.a))a=p;
-            	if(p.equals(PointSelectionWindow.b))b=p;
+            	if(p.equals(demo.a))a=p;
+            	if(p.equals(demo.b))b=p;
             }
             
             clock.tic();
@@ -113,7 +115,7 @@ public class Demo {
             GraphProxy graph2 = new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 
             	(ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
-            	"ModifiedJdiemke"
+            	"ModifiedJdiemkeWithVisualization"
             );
             AStarShortestPath<Point,DefaultWeightedEdge> astar2 =
             		new AStarShortestPath<Point,DefaultWeightedEdge>(

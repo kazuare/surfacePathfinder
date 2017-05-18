@@ -15,6 +15,8 @@ public class Point extends Vector2D {
 	}
 
 	public boolean equals(Point b){
+		if(b == null)
+			return false;
 		if (this == b)
 			return true;
 		return (x == b.x) && (y == b.y);
