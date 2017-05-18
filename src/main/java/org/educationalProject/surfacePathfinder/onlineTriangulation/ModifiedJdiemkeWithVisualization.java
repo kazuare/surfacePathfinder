@@ -27,15 +27,13 @@ public class ModifiedJdiemkeWithVisualization extends ModifiedJdiemke implements
 
     private double maxOfAnyCoordinate = 0;
     private Triangle2D superTriangle;
-    private Online2DVisualizer vis2D;
     private SwingWithUpdate swingWindow;
-
+    private Online2DVisualizer vis2D;
 
     public ModifiedJdiemkeWithVisualization(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph,ArrayList<Point> points,
                            HashSet<Point> processedPoints, double radius) {
         super(graph, points, processedPoints, radius);
         vis2D = new Online2DVisualizer();
-        vis2D.setData(graph, null);
         swingWindow = new SwingWithUpdate(vis2D, 700, 700, "test");
     }
 
@@ -115,6 +113,13 @@ public class ModifiedJdiemkeWithVisualization extends ModifiedJdiemke implements
 
 
     public void displayGraph() {
+        ArrayList<Point> list = new ArrayList<Point>();
+        for(DefaultWeightedEdge edge : graph.edgeSet()){
+            list.add(graph.getEdgeSource(edge));
+            list.add(graph.getEdgeTarget(edge));
+        }
+
+        vis2D.setData(graph, list, null);
         swingWindow.display();
         double start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < 100);
