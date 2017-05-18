@@ -43,8 +43,6 @@ public class SwingWithUpdate {
             jFrame.getContentPane().add( glcanvas, BorderLayout.CENTER );
             jFrame.repaint();
             jFrame.validate();
-            double start = System.currentTimeMillis();
-            while (System.currentTimeMillis() - start < 42);
             return;
         }
         jFrame = new JFrame(title);
