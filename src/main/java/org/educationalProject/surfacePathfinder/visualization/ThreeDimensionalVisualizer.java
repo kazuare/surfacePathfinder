@@ -1,5 +1,7 @@
 package org.educationalProject.surfacePathfinder.visualization;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
@@ -34,6 +36,8 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	   List<Point> nodes = null;
 	   private float seenWidth = 2;
 	   private float staticRotation = 0;
+	   private float rotationDeltaDesired = 0.25f;
+	   private float rotationDelta = rotationDeltaDesired;
 	   @Override
 	   public void display( GLAutoDrawable drawable ) {
 	      final GL2 gl2 = drawable.getGL().getGL2();
@@ -72,7 +76,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      }
 	      
 	      gl2.glFlush();
-	      rotation +=0.2f;
+	      rotation += rotationDelta;
 	   }
 	   @Override
 	   public void dispose( GLAutoDrawable drawable ) {}
@@ -122,12 +126,27 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 		      final GLCanvas glcanvas = new GLCanvas( capabilities );
 		      glcanvas.addGLEventListener( this );
 		      glcanvas.addMouseWheelListener(new MouseWheelListener(){
-
 				@Override
 				public void mouseWheelMoved(MouseWheelEvent e) {
 					staticRotation += e.getPreciseWheelRotation();				
+				}		    	  
+		      });
+		      glcanvas.addMouseListener(new MouseListener(){
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					if(rotationDelta == rotationDeltaDesired)
+						rotationDelta = 0;
+					else
+						rotationDelta = rotationDeltaDesired;
 				}
-		    	  
+				@Override
+				public void mouseEntered(MouseEvent e) {}
+				@Override
+				public void mouseExited(MouseEvent e) {}
+				@Override
+				public void mousePressed(MouseEvent e) {}
+				@Override
+				public void mouseReleased(MouseEvent e) {}		    	  
 		      });
 		      glcanvas.setSize( 700, 700 );
 		      final JFrame frame = new JFrame ( "3D" );
