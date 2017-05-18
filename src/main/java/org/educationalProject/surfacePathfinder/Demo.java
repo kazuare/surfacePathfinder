@@ -10,10 +10,7 @@ import org.educationalProject.surfacePathfinder.test.YegorTest;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
 import org.educationalProject.surfacePathfinder.twoTierAStar.TwoTierAStar;
-import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.MainDemoWindow;
-import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
-import org.educationalProject.surfacePathfinder.visualization.ThreeDimensionalVisualizer;
+import org.educationalProject.surfacePathfinder.visualization.*;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -21,6 +18,8 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.NotEnoughPointsException;
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
+
+import javax.swing.*;
 
 /*
  * Main class that uses other classes to get job done. 
@@ -45,6 +44,8 @@ public class Demo {
 		setup();
 		
 		try{
+            addr = FileChooser.getFilePath();
+
             double resultingTime;
             // We will used this clock to measure time through all the phases
             NanoClock clock = new NanoClock();
@@ -115,7 +116,7 @@ public class Demo {
             GraphProxy graph2 = new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 
             	(ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
-            	"ModifiedJdiemke"
+            	"ModifiedJdiemke", demo
             );
             AStarShortestPath<Point,DefaultWeightedEdge> astar2 =
             		new AStarShortestPath<Point,DefaultWeightedEdge>(
