@@ -9,13 +9,17 @@ import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 public class Online2DVisualizer extends MapVisualizer {
 
-    public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph, List<Point> pathCoords){
+    private ArrayList<Point> list;
+    public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph, ArrayList<Point> list, List<Point> pathCoords){
         this.graph = graph;
+        this.list = list;
         this.path = pathCoords;
         dataSet = true;
     }
@@ -28,12 +32,11 @@ public class Online2DVisualizer extends MapVisualizer {
     protected void drawContent( GL2 gl2 ){
         gl2.glLineWidth(2f);
         gl2.glBegin(GL.GL_LINES);
-        
-        SimpleWeightedGraph<Point, DefaultWeightedEdge> graphToDraw = (SimpleWeightedGraph<Point, DefaultWeightedEdge>) ((SimpleWeightedGraph<Point, DefaultWeightedEdge>)graph).clone();
-        
-        for(DefaultWeightedEdge edge : graphToDraw.edgeSet()){
-            drawColoredPoint(gl2, graphToDraw.getEdgeSource(edge));
-            drawColoredPoint(gl2, graphToDraw.getEdgeTarget(edge));
+
+
+        for (int i = 0; i < list.size(); i += 2){
+            drawColoredPoint(gl2, list.get(i));
+            drawColoredPoint(gl2, list.get(i + 1));
         }
 
         gl2.glEnd();
