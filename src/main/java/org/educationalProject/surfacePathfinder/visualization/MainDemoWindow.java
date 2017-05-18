@@ -26,15 +26,14 @@ public class MainDemoWindow {
 	public Point a;
 	public Point b;
 	public List<Point> points;
-	private double maxX = 0;
-	private double maxY = 0;
-	private double minX = 0;
-	private double minY = 0;
-	private double maxAlt = 0;
-	private double minAlt = 0;
+	private double maxX = Double.NEGATIVE_INFINITY;
+	private double maxY = Double.NEGATIVE_INFINITY;
+	private double minX = Double.POSITIVE_INFINITY;
+	private double minY = Double.POSITIVE_INFINITY;
+	private double maxAlt = Double.NEGATIVE_INFINITY;
+	private double minAlt = Double.POSITIVE_INFINITY;
 	private double globalHeight = 0;
 	private double globalWidth = 0;
-	private double fixOffset = 0;
 	private WeightedGraph<Point, DefaultWeightedEdge> graphToDraw = null;
 	private List<Point> path = null;
 	
@@ -84,12 +83,11 @@ public class MainDemoWindow {
         window.addMouseListener(new MouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent e) {	
-				System.out.println("=> x: " + e.getX() + " y: " + e.getY());
-				currentClick = new Point(((double)e.getX())/globalWidth*maxX, (globalHeight - (double)e.getY()-fixOffset)/globalHeight*maxY, 0);
+				currentClick = new Point(((double)e.getX())/globalWidth*maxX, (globalHeight - (double)e.getY())/globalHeight*maxY, 0);
 				if(a==null || b==null){
           			System.out.println("Point selected");
           	  		double x = ((double)e.getX())/globalWidth*maxX;
-          	  		double y = (globalHeight - (double)e.getY()-fixOffset)/globalHeight*maxY;
+          	  		double y = (globalHeight - (double)e.getY())/globalHeight*maxY;
           	  		System.out.println(x);
           	  		double minDist = Double.POSITIVE_INFINITY;
           	  		Point minPoint = null;
