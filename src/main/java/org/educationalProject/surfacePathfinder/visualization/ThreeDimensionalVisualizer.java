@@ -63,6 +63,20 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      
 	      gl2.glEnd(); 
 	      
+	      gl2.glLineWidth(1);
+	      gl2.glBegin( GL2.GL_LINES );   	      				
+	      gl2.glColor3f(0, 0, 0);
+	      for(Triangle2D t : triangles){
+	    	  drawPoint(gl2, (Point) t.a);
+	    	  drawPoint(gl2, (Point) t.b);
+	    	  drawPoint(gl2, (Point) t.b);
+	    	  drawPoint(gl2, (Point) t.c);
+	    	  drawPoint(gl2, (Point) t.c);
+	    	  drawPoint(gl2, (Point) t.a);
+		  }	      
+	      
+	      gl2.glEnd(); 
+	      
 	      if(nodes!=null){
 	    	  gl2.glLineWidth(10);
 		      gl2.glBegin( GL2.GL_LINES ); 
