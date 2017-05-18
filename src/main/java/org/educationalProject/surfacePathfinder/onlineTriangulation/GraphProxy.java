@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.educationalProject.surfacePathfinder.visualization.MainDemoWindow;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.WeightedGraph;
@@ -27,13 +28,16 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 			triangulator = new UnsafeJdiemkeTriangulator(graph, points, processedPoints, radius);
 		else if(className.equals("ModifiedJdiemke"))
 			triangulator = new ModifiedJdiemke(graph, points, processedPoints, radius);
-		else if(className.equals("ModifiedJdiemkeWithVisualization"))
-			triangulator = new ModifiedJdiemkeWithVisualization(graph, points, processedPoints, radius);
 		else
 			System.out.println("Invalid triangulator name!");
 		
 	}
-	
+	public GraphProxy(double radius, ArrayList<Point> points, String className, MainDemoWindow demo){
+		processedPoints = new HashSet<Point>();
+		this.radius = radius;
+		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		triangulator = new ModifiedJdiemkeWithVisualization(graph, points, processedPoints, radius, demo);
+	}
 	private boolean notProcessed(Point p){
 		return !processedPoints.contains(p);
 	}
