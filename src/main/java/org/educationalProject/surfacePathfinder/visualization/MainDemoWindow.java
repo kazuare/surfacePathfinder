@@ -34,7 +34,7 @@ public class MainDemoWindow {
 	private double minAlt = 0;
 	private double globalHeight = 0;
 	private double globalWidth = 0;
-	private double fixOffset = 5;
+	private double fixOffset = 0;
 	private WeightedGraph<Point, DefaultWeightedEdge> graphToDraw = null;
 	private List<Point> path = null;
 	
@@ -177,9 +177,9 @@ public class MainDemoWindow {
         		for(Point p: points){
         			gl2.glColor3f(1, normalizeColor(p.alt), 0);	
         			gl2.glVertex2f(
-        					normalizeWidth(p.x),
-        					normalizeWidth(p.y)
-        				);     
+        				normalizeWidth(p.x),
+        				normalizeHeight(p.y)
+        			);     
         		}	
         	
         		gl2.glEnd();
@@ -191,14 +191,14 @@ public class MainDemoWindow {
             		gl2.glColor3f(1, 0.5f, 1);	
             		if(a!=null)
 	        			gl2.glVertex2f(
-	        					normalizeWidth(a.x),
-	        					normalizeWidth(a.y)
-	        				); 
+	        				normalizeWidth(a.x),
+	        				normalizeHeight(a.y)
+	        			); 
             		if(b!=null)
 	        			gl2.glVertex2f(
-	        					normalizeWidth(b.x),
-	        					normalizeWidth(b.y)
-	        				); 
+	        				normalizeWidth(b.x),
+	        				normalizeHeight(b.y)
+	        			); 
             		
             		gl2.glEnd();
             		
@@ -220,7 +220,7 @@ public class MainDemoWindow {
         	        gl2.glEnd();
         		}
                 	
-        		/*
+        		
         		if(currentClick!=null){
         			gl2.glPointSize(1f);
             		gl2.glBegin(GL.GL_POINTS);
@@ -228,11 +228,11 @@ public class MainDemoWindow {
             		gl2.glColor3f(1, 0.5f, 1);	
             		gl2.glVertex2f(
         					normalizeWidth(currentClick.x),
-        					normalizeWidth(currentClick.y)
+        					normalizeHeight(currentClick.y)
         				); 
             		gl2.glEnd();
         		}
-        		*/
+        		
         	}
         	
 			@Override
