@@ -48,8 +48,20 @@ public class MainDemoWindow {
 		this.path = path;
 	}
 	
+	protected void findExtremes(){		
+		for(Point a : points){			
+			minX = Math.min(minX, a.x);			
+			minY = Math.min(minY, a.y);
+			minAlt = Math.min(minAlt, a.alt);			
+			maxX = Math.max(maxX, a.x);			
+			maxY = Math.max(maxY, a.y);			
+			maxAlt = Math.max(maxAlt, a.alt);
+		}		
+	}
+	
     public void start(List<Point> pointsList, int width, int height, String title){
     	points = pointsList;
+		findExtremes();
     	globalHeight = height;
     	globalWidth = width;
         GLProfile profile = GLProfile.getDefault();
@@ -145,17 +157,6 @@ public class MainDemoWindow {
         		drawPoint(gl2, a);
         	}
         	
-        	protected void findExtremes(){		
-        		for(Point a : points){			
-        			minX = Math.min(minX, a.x);			
-        			minY = Math.min(minY, a.y);
-        			minAlt = Math.min(minAlt, a.alt);			
-        			maxX = Math.max(maxX, a.x);			
-        			maxY = Math.max(maxY, a.y);			
-        			maxAlt = Math.max(maxAlt, a.alt);
-        		}		
-        	}
-        	
         	protected void drawContent( GL2 gl2 ){
         		
         		if(graphToDraw != null){
@@ -220,7 +221,7 @@ public class MainDemoWindow {
         	        gl2.glEnd();
         		}
                 	
-        		
+        		/*
         		if(currentClick!=null){
         			gl2.glPointSize(1f);
             		gl2.glBegin(GL.GL_POINTS);
@@ -232,13 +233,11 @@ public class MainDemoWindow {
         				); 
             		gl2.glEnd();
         		}
-        		
+        		*/
         	}
         	
 			@Override
-			public void init(GLAutoDrawable drawable) {
-				findExtremes();
-			}
+			public void init(GLAutoDrawable drawable) {}
 
 			@Override
 			public void dispose(GLAutoDrawable drawable) {}
