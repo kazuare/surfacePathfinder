@@ -32,7 +32,7 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 			System.out.println("Invalid triangulator name!");
 		
 	}
-	public GraphProxy(double radius, ArrayList<Point> points, String className, MainDemoWindow demo){
+	public GraphProxy(double radius, ArrayList<Point> points, MainDemoWindow demo){
 		processedPoints = new HashSet<Point>();
 		this.radius = radius;
 		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);
