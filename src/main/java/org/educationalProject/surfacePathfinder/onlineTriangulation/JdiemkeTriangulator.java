@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.ArrayList;
 
 import org.educationalProject.surfacePathfinder.Point;
-import org.educationalProject.surfacePathfinder.visualization.JdiemkeTriangulatorVisualizer;
 import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;

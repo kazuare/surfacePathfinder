@@ -39,12 +39,12 @@ public class Demo {
 	/**
 	 * @param addr
 	 */
-	public static void start(String addr) {
+	public static void start() {
 		
 		setup();
 		
 		try{
-            addr = FileChooser.getFilePath();
+            String addr = FileChooser.getFilePath();
 
             double resultingTime;
             // We will used this clock to measure time through all the phases
@@ -56,6 +56,8 @@ public class Demo {
             resultingTime = clock.tocd();
             System.out.println("Reading is finished, phase duration is: " + resultingTime);
 
+            System.out.println("Number of points: " + points.size());
+            
     		MainDemoWindow demo = new MainDemoWindow();
     		demo.start((List<Point>)(List<? extends Vector2D>)points, 680, 680, "MAIN DEMO");
             
@@ -135,7 +137,7 @@ public class Demo {
             GraphProxy graph3 = new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 
             	(ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
-            	"ModifiedJdiemke", demo
+            	"ModifiedJdiemke"
             );
             AStarShortestPath<Point,DefaultWeightedEdge> astar3 =
             		new AStarShortestPath<Point,DefaultWeightedEdge>(

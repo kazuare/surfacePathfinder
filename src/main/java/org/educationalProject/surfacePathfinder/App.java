@@ -8,8 +8,7 @@ import org.educationalProject.surfacePathfinder.test.YegorTest;
  * */
 public class App {
 	public static void main(String[] args) {
-		String addr = "C:\\digdes\\map.obj";
-		Demo.start(addr);
+		Demo.start();
 	}
 
 }

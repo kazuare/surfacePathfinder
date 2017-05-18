@@ -1,4 +1,4 @@
-package org.educationalProject.surfacePathfinder.visualization;
+package org.educationalProject.surfacePathfinder;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
