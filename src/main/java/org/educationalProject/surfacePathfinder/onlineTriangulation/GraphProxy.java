@@ -123,6 +123,9 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 		return graph.getAllEdges(sourceVertex, targetVertex);
 	}
 	
+	public SimpleWeightedGraph<Point, DefaultWeightedEdge> getGraphClone(){
+		return (SimpleWeightedGraph<Point, DefaultWeightedEdge>) graph.clone();
+	}
 	
 	@Override
 	public EdgeFactory getEdgeFactory() {return null;}

@@ -115,7 +115,7 @@ public class Demo {
             GraphProxy graph2 = new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 
             	(ArrayList<Point>)(ArrayList<? extends Vector2D>)points, 
-            	"ModifiedJdiemkeWithVisualization"
+            	"ModifiedJdiemke"
             );
             AStarShortestPath<Point,DefaultWeightedEdge> astar2 =
             		new AStarShortestPath<Point,DefaultWeightedEdge>(
@@ -123,6 +123,9 @@ public class Demo {
                             new EuclidianEuristicWithAltitude<Point>(ALTITUDE_MULTIPLIER)
                     );
             List<Point> nodes2 = astar2.getPath(a, b).getVertexList();
+            
+            demo.setGraph(graph2.getGraphClone());
+            demo.setPath(nodes2);
             
             resultingTime = clock.tocd();
             System.out.println("partial triangulation A* is finished, phase duration is: " + resultingTime);

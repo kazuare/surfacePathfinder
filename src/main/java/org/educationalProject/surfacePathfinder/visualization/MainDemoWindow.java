@@ -10,6 +10,8 @@ import com.jogamp.opengl.GLProfile;
 import java.util.List;
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
@@ -33,9 +35,18 @@ public class MainDemoWindow {
 	private double globalHeight = 0;
 	private double globalWidth = 0;
 	private double fixOffset = 5;
-	
+	private WeightedGraph<Point, DefaultWeightedEdge> graphToDraw = null;
+	private List<Point> path = null;
 	
 	Point currentClick = null;
+	
+	public void setGraph(WeightedGraph<Point, DefaultWeightedEdge> graph){
+		graphToDraw = graph;
+	}
+	
+	public void setPath(List<Point> path){
+		this.path = path;
+	}
 	
     public void start(List<Point> pointsList, int width, int height, String title){
     	points = pointsList;
@@ -129,6 +140,11 @@ public class MainDemoWindow {
         		return (float) ((data - minAlt)/(maxAlt - minAlt));
         	}
         	
+        	protected void drawColoredPoint(GL2 gl2, Point a){
+        		gl2.glColor3f(1, normalizeColor(a.alt), 0);	
+        		drawPoint(gl2, a);
+        	}
+        	
         	protected void findExtremes(){		
         		for(Point a : points){			
         			minX = Math.min(minX, a.x);			
@@ -141,6 +157,20 @@ public class MainDemoWindow {
         	}
         	
         	protected void drawContent( GL2 gl2 ){
+        		
+        		if(graphToDraw != null){
+        			gl2.glLineWidth(1f);
+        			gl2.glBegin(GL.GL_LINES);
+        	        
+        			for(DefaultWeightedEdge edge : graphToDraw.edgeSet()){			
+        		        drawColoredPoint(gl2, graphToDraw.getEdgeSource(edge));
+        		        drawColoredPoint(gl2, graphToDraw.getEdgeTarget(edge));	      	        
+        			}
+        			
+        			gl2.glEnd();
+        		}
+        		
+        		
         		gl2.glPointSize(1.5f);
         		gl2.glBegin(GL.GL_POINTS);
                 
@@ -173,6 +203,21 @@ public class MainDemoWindow {
             		gl2.glEnd();
             		
             		gl2.glPointSize(1.5f);
+        		}
+        		
+        		if(path!=null){
+        			gl2.glColor3f( 1, 1, 1 );
+
+        			gl2.glLineWidth(3);
+        			gl2.glBegin( GL.GL_LINES );
+        			
+        			int size = path.size();
+        	        for(int i = 0; i < size-1; i++){
+        	        	drawPoint(gl2, path.get(i));
+        	        	drawPoint(gl2, path.get(i+1));
+        	        }
+        	        
+        	        gl2.glEnd();
         		}
                 	
         		/*
