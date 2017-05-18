@@ -30,6 +30,7 @@ public class ModifiedJdiemkeWithVisualization extends ModifiedJdiemke implements
     private Online2DVisualizer vis2D;
     private SwingWithUpdate swingWindow;
 
+
     public ModifiedJdiemkeWithVisualization(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph,ArrayList<Point> points,
                            HashSet<Point> processedPoints, double radius) {
         super(graph, points, processedPoints, radius);
@@ -113,8 +114,9 @@ public class ModifiedJdiemkeWithVisualization extends ModifiedJdiemke implements
     }
 
 
-    public void displayGraph()
-    {
+    public void displayGraph() {
         swingWindow.display();
+        double start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < 100);
     }
 }
