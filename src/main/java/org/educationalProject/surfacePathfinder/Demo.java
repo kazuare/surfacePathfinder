@@ -130,9 +130,9 @@ public class Demo {
             resultingTime = clock.tocd();
             System.out.println("partial triangulation A* is finished, phase duration is: " + resultingTime);
             System.out.println("Path length is: " + astar2.getPath(a, b).getWeight());
-            DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
-            vis.setData(graph2, nodes2);
-            SwingWindow.start(vis, 700, 700, "modified jdiemke map");
+            //DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
+            //vis.setData(graph2, nodes2);
+            //SwingWindow.start(vis, 700, 700, "modified jdiemke map");
             
             clock.tic();
             TwoTierAStar twotier = new TwoTierAStar(points, (int)(points.size()*0.2), 30, COS_THRESHOLD, ALTITUDE_MULTIPLIER, TRIANGULATION_RADIUS);
