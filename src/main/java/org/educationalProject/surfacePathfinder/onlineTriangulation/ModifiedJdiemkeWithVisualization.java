@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
 import org.educationalProject.surfacePathfinder.Point;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.JdiemkeTriangulator.EdgeWithDistance;
-import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.Online2DVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.SwingWindow;
-import org.educationalProject.surfacePathfinder.visualization.SwingWithUpdate;
+import org.educationalProject.surfacePathfinder.visualization.*;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -27,14 +24,12 @@ public class ModifiedJdiemkeWithVisualization extends ModifiedJdiemke implements
 
     private double maxOfAnyCoordinate = 0;
     private Triangle2D superTriangle;
-    private SwingWithUpdate swingWindow;
-    private Online2DVisualizer vis2D;
+    private MainDemoWindow demo;
 
     public ModifiedJdiemkeWithVisualization(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph,ArrayList<Point> points,
-                           HashSet<Point> processedPoints, double radius) {
+                           HashSet<Point> processedPoints, double radius, MainDemoWindow demo) {
         super(graph, points, processedPoints, radius);
-        vis2D = new Online2DVisualizer();
-        swingWindow = new SwingWithUpdate(vis2D, 700, 700, "test");
+        this.demo = demo;
     }
 
     public void setMaxCoordinate(Set<Point> points){
@@ -113,14 +108,7 @@ public class ModifiedJdiemkeWithVisualization extends ModifiedJdiemke implements
 
 
     public void displayGraph() {
-        ArrayList<Point> list = new ArrayList<Point>();
-        for(DefaultWeightedEdge edge : graph.edgeSet()){
-            list.add(graph.getEdgeSource(edge));
-            list.add(graph.getEdgeTarget(edge));
-        }
-
-        vis2D.setData(graph, list, null);
-        swingWindow.display();
+        demo.setGraph((SimpleWeightedGraph<Point, DefaultWeightedEdge>) graph.clone());
         double start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < 100);
     }
