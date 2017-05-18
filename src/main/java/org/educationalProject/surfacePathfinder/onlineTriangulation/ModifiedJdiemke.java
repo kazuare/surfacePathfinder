@@ -29,8 +29,8 @@ public class ModifiedJdiemke extends DelaunayTriangulator implements OnlineTrian
 	protected ArrayList<EdgeWithDistance> edges;
 	protected HashSet<Point> processedPoints;
 	protected HashSet<Vector2D> addedPoints;
-	private double maxOfAnyCoordinate = 0;
-	private Triangle2D superTriangle;
+	protected double maxOfAnyCoordinate = 0;
+	protected Triangle2D superTriangle;
 	
 	public ModifiedJdiemke(SimpleWeightedGraph<Point, DefaultWeightedEdge> graph,ArrayList<Point> points,
 			HashSet<Point> processedPoints, double radius) {
