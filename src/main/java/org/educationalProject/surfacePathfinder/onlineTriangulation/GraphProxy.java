@@ -21,7 +21,7 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 	private boolean firstUpdate = true;
 	
 	public GraphProxy(double radius, ArrayList<Point> points, String className){
-		processedPoints = new HashSet<Point>();
+		processedPoints = new HashSet<Point>((int)(points.size()*1.5));
 		this.radius = radius;
 		this.graph = new SimpleWeightedGraph<Point, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		if(className.equals("UnsafeJdiemkeTriangulator"))
