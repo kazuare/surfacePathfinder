@@ -208,7 +208,9 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 			); 
 		}
 		protected void drawColoredPoint(GL2 gl2, Point a){
-			gl2.glColor3f(1, normalizeColor(a.alt), 0);	
+    		Point color = ColorLevels.getColor1(normalizeColor(a.alt));
+    		gl2.glColor3f((float)color.x, (float)color.y, (float)color.alt);
+			//gl2.glColor3f(1, normalizeColor(a.alt), 0);	
 			drawPoint(gl2, a);
 		}
 		
