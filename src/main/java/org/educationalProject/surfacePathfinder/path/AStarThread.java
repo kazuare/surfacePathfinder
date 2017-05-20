@@ -6,14 +6,14 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.lang.reflect.WildcardType;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class AStarThread  implements Runnable {
-    private static WeightedGraph<Point, DefaultWeightedEdge> graph;
-    private volatile ArrayList<Point> settledNodes;
-    private volatile ArrayList<Point> anotherThreadSettledNodes;
+    private WeightedGraph<Point, DefaultWeightedEdge> graph;
+    private CopyOnWriteArrayList<Point> settledNodes;
     private PriorityQueue<DistancePoint> unSettledNodes;
     private Map<Point, Double> gScore;
     private Map<Point, Double> hScore;
@@ -26,13 +26,13 @@ public class AStarThread  implements Runnable {
     private AtomicInteger stopPoint;
 
     AStarThread(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination,
-                ArrayList<Point> settledNodes, ArrayList<Point> anotherThreadSettledNodes,
-                ArrayList<Point> shortestPath, AtomicInteger stopPoint, AtomicBoolean stop){
+                CopyOnWriteArrayList<Point> settledNodes,
+                ArrayList<Point> shortestPath,
+                AtomicInteger stopPoint, AtomicBoolean stop){
         this.graph = graph;
         this.source = source;
         this.destination = destination;
         this.settledNodes = settledNodes;
-        this.anotherThreadSettledNodes = anotherThreadSettledNodes;
         this.shortestPath = shortestPath;
         this.stop = stop;
         this.stopPoint = stopPoint;
@@ -42,6 +42,7 @@ public class AStarThread  implements Runnable {
     public void run(){
         initialize();
         Point target = findPath();
+        System.out.println(target.toString());
         retrievePath(target);
     }
 
@@ -73,15 +74,6 @@ public class AStarThread  implements Runnable {
             Point current = unSettledNodes.poll().point;
             settledNodes.add(current);
 
-
-            if (anotherThreadSettledNodes.contains(current) || destination.equals(current)) {
-                int index = anotherThreadSettledNodes.indexOf(current);
-                if (!stop.getAndSet(true)) {
-                    stopPoint.set(index);
-                    return current;
-                }
-            }
-
             if(stop.get() && stopPoint.get() != -1) {
                 Point tmp = settledNodes.get(stopPoint.get());
                 return tmp;
@@ -93,7 +85,6 @@ public class AStarThread  implements Runnable {
                     Point tmp = settledNodes.get(stopPoint.get());
                     return tmp;
                 }
-
                 if (settledNodes.contains(neighbor))
                     continue;
                 Double tentativeScore = getGScore(current) + getDistance(current, neighbor);
@@ -101,7 +92,6 @@ public class AStarThread  implements Runnable {
                     continue;
                 if(isUnSettled(neighbor)){
                     unSettledNodes.remove(new DistancePoint(neighbor, getFScore(neighbor)));
-                    //predecessors.remove(neighbor);
                     gScore.remove(neighbor);
                     hScore.remove(neighbor);
                     fScore.remove(neighbor);
@@ -134,7 +124,7 @@ public class AStarThread  implements Runnable {
             Point target = graph.getEdgeTarget(e);
             if (src.equals(current))
                 neighbors.add(target);
-            else
+            if(target.equals(current))
                 neighbors.add(src);
         }
         return neighbors;
