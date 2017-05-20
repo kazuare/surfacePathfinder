@@ -17,6 +17,8 @@ public class SceneParams {
 	protected float height = 0;
 	protected float width = 0;
 	
+	protected boolean centerOffset = false;
+	
 	public void findExtremes(List<Triangle2D> triangles){
 		
 		for(Triangle2D t : triangles){
@@ -64,6 +66,16 @@ public class SceneParams {
 		this.height = height;
 	}
 	
+	public void setCenterOffset(boolean val){
+		centerOffset = val;
+	}
+	
+	public int getCenterOffsetCoef(){
+		if(centerOffset)
+			return 1;
+		return 0;
+	}
+	
 	public double getMinX(){
 		return minX;
 	}
@@ -88,4 +100,5 @@ public class SceneParams {
 	public float getWidth(){
 		return width;
 	}
+
 }

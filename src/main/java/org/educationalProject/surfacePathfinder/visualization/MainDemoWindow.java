@@ -45,7 +45,8 @@ public class MainDemoWindow {
     	
     	sceneParams = new SceneParams();
     	sceneParams.findExtremes(points);
-    	sceneParams.setWidthAndHeight(width, height);
+    	sceneParams.setWidthAndHeight(2, 2);
+    	sceneParams.setCenterOffset(true);
 
         GLProfile profile = GLProfile.getDefault();
         GLCapabilities capabilities = new GLCapabilities(profile);
@@ -70,8 +71,8 @@ public class MainDemoWindow {
 				currentClick = new Point(((double)e.getX())/sceneParams.getWidth()*sceneParams.getMaxX(), (sceneParams.getHeight() - (double)e.getY())/sceneParams.getHeight()*sceneParams.getMaxY(), 0);
 				if(a==null || b==null){
           			System.out.println("Point selected");
-          	  		double x = ((double)e.getX())/sceneParams.getWidth()*sceneParams.getMaxX();
-          	  		double y = (sceneParams.getHeight() - (double)e.getY())/sceneParams.getHeight()*sceneParams.getMaxY();
+          	  		double x = ((double)e.getX())/width*sceneParams.getMaxX();
+          	  		double y = (height - (double)e.getY())/height*sceneParams.getMaxY();
           	  		System.out.println(x);
           	  		double minDist = Double.POSITIVE_INFINITY;
           	  		Point minPoint = null;
@@ -114,13 +115,13 @@ public class MainDemoWindow {
         	* translates map width into screen width
         	*/
         	protected float normalizeWidth(double data){
-        		return (float) (2*(data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX())-1);
+        		return (float) (sceneParams.getWidth()*(data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX())-sceneParams.getWidth()/2*sceneParams.getCenterOffsetCoef());
         	}
         	/**
         	* translates map height into screen height
         	*/
         	protected float normalizeHeight(double data){
-        		return (float) (2*(data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY())-1);
+        		return (float) (sceneParams.getHeight()*(data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY())-sceneParams.getHeight()/2*sceneParams.getCenterOffsetCoef());
         	}
         	
         	protected void drawPoint(GL2 gl2, Vector2D a){
@@ -225,7 +226,7 @@ public class MainDemoWindow {
 			public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
         	
         });
-        window.setSize((int)sceneParams.getWidth(), (int)sceneParams.getHeight());
+        window.setSize((int)width, (int)height);
         window.setTitle(title);
         window.setVisible(true);
         animator.start(); 
