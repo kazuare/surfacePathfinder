@@ -41,6 +41,13 @@
       <version>1.0.1</version>
     </dependency>
     
+    <dependency>
+    <groupId>sample</groupId>
+    <artifactId>com.sample</artifactId>
+    <version>1.0</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/lib/delaunay-triangulator/delaunay-triangulator.jar</systemPath>
+</dependency>
   </dependencies>
   
 </project>
