@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
-import org.educationalProject.surfacePathfinder.test.SerejaTest;
-import org.educationalProject.surfacePathfinder.test.YegorTest;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
 import org.educationalProject.surfacePathfinder.twoTierAStar.TwoTierAStar;
@@ -18,8 +16,6 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import io.github.jdiemke.triangulation.NotEnoughPointsException;
 import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
-
-import javax.swing.*;
 
 /*
  * Main class that uses other classes to get job done. 
@@ -65,7 +61,6 @@ public class Demo {
             	try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
             }
@@ -130,9 +125,7 @@ public class Demo {
             vis1.setData(graph, nodes);
             SwingWindow.start(vis1, 700, 700, "full triangulation map");
 
-            
             clock.tic();
-            
             
             GraphProxy graph3 = new GraphProxy(
             	1.5*TRIANGULATION_RADIUS, 

@@ -9,7 +9,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 import io.github.jdiemke.triangulation.Triangle2D;
-import io.github.jdiemke.triangulation.Vector2D;
 /**
 * Visualizes top down map image.
 * Subclasses can draw either filled triangles or not filled

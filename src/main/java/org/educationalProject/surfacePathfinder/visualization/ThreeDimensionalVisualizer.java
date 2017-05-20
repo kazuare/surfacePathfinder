@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 
 import org.educationalProject.surfacePathfinder.Point;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -21,7 +20,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import io.github.jdiemke.triangulation.Triangle2D;
-import io.github.jdiemke.triangulation.Vector2D;
 
 public class ThreeDimensionalVisualizer implements GLEventListener{	   
 	   protected SceneParams sceneParams;
@@ -46,43 +44,14 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      gl2.glTranslatef( 0f, -0.5f,-3.0f ); 
 	      gl2.glRotatef( rotation, 0.0f, 1.0f, 0.0f );
 	      gl2.glRotatef( staticRotation, 0.0f, 0.0f, 1.0f );
-	      gl2.glBegin( GL2.GL_TRIANGLES );   
-	      				
-		  
-	      for(Triangle2D t : triangles){
-	    	  drawColoredPoint(gl2, (Point) t.a);
-	    	  drawColoredPoint(gl2, (Point) t.b);
-	    	  drawColoredPoint(gl2, (Point) t.c);
-		  }	      
+
+	      DrawingUtils.drawSurface(gl2, sceneParams, triangles);
 	      
-	      gl2.glEnd(); 
+	      DrawingUtils.drawSurfaceEdges(gl2, sceneParams, triangles, 1);
 	      
-	      gl2.glLineWidth(1);
-	      gl2.glBegin( GL2.GL_LINES );   	      				
-	      gl2.glColor3f(0, 0, 0);
-	      for(Triangle2D t : triangles){
-	    	  drawPoint(gl2, (Point) t.a);
-	    	  drawPoint(gl2, (Point) t.b);
-	    	  drawPoint(gl2, (Point) t.b);
-	    	  drawPoint(gl2, (Point) t.c);
-	    	  drawPoint(gl2, (Point) t.c);
-	    	  drawPoint(gl2, (Point) t.a);
-		  }	      
-	      
-	      gl2.glEnd(); 
-	      
-	      if(nodes!=null){
-	    	  gl2.glLineWidth(10);
-		      gl2.glBegin( GL2.GL_LINES ); 
-		      
-		      gl2.glColor3f(1, 1, 1);	
-		      for(int i = 0; i < nodes.size()-1; i++){
-		    	  drawPoint(gl2, nodes.get(i));
-		    	  drawPoint(gl2, nodes.get(i+1));
-		      }
-		      gl2.glEnd(); 
-	      }
-	      
+	      if(nodes!=null)
+	    	  DrawingUtils.drawPath(gl2, sceneParams, nodes, 10);
+	     
 	      gl2.glFlush();
 	      rotation += rotationDelta;
 	   }
@@ -121,6 +90,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 			  sceneParams.findExtremes(triangles);
 			  sceneParams.setWidthAndHeight(2, 2);
 			  sceneParams.setCenterOffset(true);
+			  sceneParams.setDimensions(3);
 			  
 		      final GLProfile profile = GLProfile.get( GLProfile.GL2 );
 		      GLCapabilities capabilities = new GLCapabilities( profile );
@@ -157,21 +127,5 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 		      final FPSAnimator animator = new FPSAnimator( glcanvas, 60,true );
 		      animator.start();
 		}
-	   
-		protected void drawPoint(GL2 gl2, Point a){
-			gl2.glVertex3f(
-				DrawingUtils.normalizeX(sceneParams, a.x), 
-				DrawingUtils.normalizeAlt(sceneParams, a.alt),
-				DrawingUtils.normalizeY(sceneParams, a.y) 
-				
-			); 
-		}
-		protected void drawColoredPoint(GL2 gl2, Point a){
-    		Point color = ColorLevels.getColor1(DrawingUtils.normalizeAlt(sceneParams, a.alt));
-    		gl2.glColor3f((float)color.x, (float)color.y, (float)color.alt);
-			drawPoint(gl2, a);
-		}
-		
-
 	   
 	}

@@ -20,8 +20,6 @@ import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.FPSAnimator;
 
-import io.github.jdiemke.triangulation.Vector2D;
-
 public class MainDemoWindow {
 	public Point a;
 	public Point b;
