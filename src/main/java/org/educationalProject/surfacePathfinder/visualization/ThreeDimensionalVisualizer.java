@@ -28,8 +28,9 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	   List<Triangle2D> triangles;
 	   List<Point> nodes = null;
 	   private float staticRotation = 0;
-	   private float rotationDeltaDesired = 0.25f;
+	   private float rotationDeltaDesired = 0.3f;
 	   private float rotationDelta = rotationDeltaDesired;
+	   
 	   @Override
 	   public void display( GLAutoDrawable drawable ) {
 	      final GL2 gl2 = drawable.getGL().getGL2();
@@ -40,10 +41,13 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      gl2.glDepthFunc( GL2.GL_LEQUAL );
 	      gl2.glHint( GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST );
 	      gl2.glClear( GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT );     
-	      gl2.glLoadIdentity();  
+	      gl2.glLoadIdentity();
+	      
 	      gl2.glTranslatef( 0f, -0.5f,-3.0f ); 
 	      gl2.glRotatef( rotation, 0.0f, 1.0f, 0.0f );
-	      gl2.glRotatef( staticRotation, 0.0f, 0.0f, 1.0f );
+	      
+	   
+	      gl2.glRotatef( staticRotation, 1f, 0f, 0f );
 
 	      DrawingUtils.drawSurface(gl2, sceneParams, triangles);
 	      
@@ -54,6 +58,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	     
 	      gl2.glFlush();
 	      rotation += rotationDelta;
+	      
 	   }
 	   @Override
 	   public void dispose( GLAutoDrawable drawable ) {}
