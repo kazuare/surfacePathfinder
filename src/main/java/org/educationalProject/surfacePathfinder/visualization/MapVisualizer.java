@@ -31,50 +31,6 @@ public abstract class MapVisualizer extends Visualizer {
 	
 	protected abstract void drawContent( GL2 gl2 );
 	
-	/**
-	* translates map width into screen width
-	*/
-	protected float normalizeWidth(double data){
-		return (float) (width * (data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX()));
-	}
-	/**
-	* translates map height into screen height
-	*/
-	protected float normalizeHeight(double data){
-		return (float) (height * (data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY()));
-	}
-	
-	protected void drawPoint(GL2 gl2, Vector2D a){
-		gl2.glVertex2f(
-			normalizeWidth(a.x), 
-			normalizeHeight(a.y)
-		); 
-	}
-	protected void drawColoredPoint(GL2 gl2, Point a){
-		gl2.glColor3f(1, normalizeColor(a.alt), 0);	
-		drawPoint(gl2, a);
-	}
-	
-	protected float normalizeColor(double data){
-		return (float) ((data - sceneParams.getMinAlt())/(sceneParams.getMaxAlt() - sceneParams.getMinAlt()));
-	}
-	
-	protected void drawPath( GL2 gl2 ){
-		
-        gl2.glColor3f( 1, 1, 1 );
-
-		gl2.glLineWidth(3);
-		gl2.glBegin( GL.GL_LINES );
-		
-		int size = path.size();
-        for(int i = 0; i < size-1; i++){
-        	drawPoint(gl2, path.get(i));
-        	drawPoint(gl2, path.get(i+1));
-        }
-        
-        gl2.glEnd();
-	}
-	
 	public void display( GL2 gl2 ){
 		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
 	    gl2.glLoadIdentity();
@@ -86,6 +42,6 @@ public abstract class MapVisualizer extends Visualizer {
 		drawContent(gl2);
 		
 		if(path != null)	
-			drawPath(gl2);
+			DrawingUtils.drawPath(gl2, sceneParams, path, 3);
 	}
 }

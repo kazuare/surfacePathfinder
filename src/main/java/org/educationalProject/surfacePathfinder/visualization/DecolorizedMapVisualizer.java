@@ -23,14 +23,6 @@ public class DecolorizedMapVisualizer extends MapVisualizer{
 	}
 	
 	protected void drawContent( GL2 gl2 ){
-		gl2.glLineWidth(1f);
-		gl2.glBegin(GL.GL_LINES);
-        
-		for(DefaultWeightedEdge edge : graph.edgeSet()){			
-	        drawColoredPoint(gl2, graph.getEdgeSource(edge));
-	        drawColoredPoint(gl2, graph.getEdgeTarget(edge));	      	        
-		}
-		
-		gl2.glEnd();
+		DrawingUtils.drawGraph(gl2, sceneParams, graph, 1);
 	}
 }

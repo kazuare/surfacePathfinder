@@ -111,58 +111,19 @@ public class MainDemoWindow {
         });
         window.addGLEventListener(new GLEventListener(){
         	
-        	/**
-        	* translates map width into screen width
-        	*/
-        	protected float normalizeWidth(double data){
-        		return (float) (sceneParams.getWidth()*(data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX())-sceneParams.getWidth()/2*sceneParams.getCenterOffsetCoef());
-        	}
-        	/**
-        	* translates map height into screen height
-        	*/
-        	protected float normalizeHeight(double data){
-        		return (float) (sceneParams.getHeight()*(data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY())-sceneParams.getHeight()/2*sceneParams.getCenterOffsetCoef());
-        	}
-        	
-        	protected void drawPoint(GL2 gl2, Vector2D a){
-        		gl2.glVertex2f(
-        			normalizeWidth(a.x), 
-        			normalizeHeight(a.y)
-        		); 
-        	}
-        	
-        	protected float normalizeColor(double data){
-        		return (float) ((data - sceneParams.getMinAlt())/(sceneParams.getMaxAlt() - sceneParams.getMinAlt()));
-        	}
-        	
-        	protected void drawColoredPoint(GL2 gl2, Point a){
-        		gl2.glColor3f(1, normalizeColor(a.alt), 0);	
-        		drawPoint(gl2, a);
-        	}
-        	
         	protected void drawContent( GL2 gl2 ){
         		
-        		if(graphToDraw != null){
-        			gl2.glLineWidth(1f);
-        			gl2.glBegin(GL.GL_LINES);
-        	        
-        			for(DefaultWeightedEdge edge : graphToDraw.edgeSet()){			
-        		        drawColoredPoint(gl2, graphToDraw.getEdgeSource(edge));
-        		        drawColoredPoint(gl2, graphToDraw.getEdgeTarget(edge));	      	        
-        			}
-        			
-        			gl2.glEnd();
-        		}
-        		
-        		
+        		if(graphToDraw != null)
+        			DrawingUtils.drawGraph(gl2,sceneParams,graphToDraw,1);
+        		        		
         		gl2.glPointSize(1.5f);
         		gl2.glBegin(GL.GL_POINTS);
                 
         		for(Point p: points){
-        			gl2.glColor3f(1, normalizeColor(p.alt), 0);	
+        			gl2.glColor3f(1, DrawingUtils.normalizeAlt(sceneParams, p.alt), 0);	
         			gl2.glVertex2f(
-        				normalizeWidth(p.x),
-        				normalizeHeight(p.y)
+        				DrawingUtils.normalizeX(sceneParams, p.x),
+        				DrawingUtils.normalizeY(sceneParams, p.y)
         			);     
         		}	
         	
@@ -175,13 +136,13 @@ public class MainDemoWindow {
             		gl2.glColor3f(1, 0.5f, 1);	
             		if(a!=null)
 	        			gl2.glVertex2f(
-	        				normalizeWidth(a.x),
-	        				normalizeHeight(a.y)
+	        				DrawingUtils.normalizeX(sceneParams, a.x),
+	        				DrawingUtils.normalizeY(sceneParams, a.y)
 	        			); 
             		if(b!=null)
 	        			gl2.glVertex2f(
-	        				normalizeWidth(b.x),
-	        				normalizeHeight(b.y)
+	        				DrawingUtils.normalizeX(sceneParams, b.x),
+	        				DrawingUtils.normalizeY(sceneParams, b.y)
 	        			); 
             		
             		gl2.glEnd();
@@ -189,20 +150,8 @@ public class MainDemoWindow {
             		gl2.glPointSize(1.5f);
         		}
         		
-        		if(path!=null){
-        			gl2.glColor3f( 1, 1, 1 );
-
-        			gl2.glLineWidth(3);
-        			gl2.glBegin( GL.GL_LINES );
-        			
-        			int size = path.size();
-        	        for(int i = 0; i < size-1; i++){
-        	        	drawPoint(gl2, path.get(i));
-        	        	drawPoint(gl2, path.get(i+1));
-        	        }
-        	        
-        	        gl2.glEnd();
-        		}
+        		if(path!=null)
+        			DrawingUtils.drawPath(gl2, sceneParams, path, 3);
                 	
         	}
         	

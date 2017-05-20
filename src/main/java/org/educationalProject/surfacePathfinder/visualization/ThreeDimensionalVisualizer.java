@@ -120,6 +120,7 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 			  sceneParams = new SceneParams();
 			  sceneParams.findExtremes(triangles);
 			  sceneParams.setWidthAndHeight(2, 2);
+			  sceneParams.setCenterOffset(true);
 			  
 		      final GLProfile profile = GLProfile.get( GLProfile.GL2 );
 		      GLCapabilities capabilities = new GLCapabilities( profile );
@@ -155,42 +156,22 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 		      frame.setVisible( true );
 		      final FPSAnimator animator = new FPSAnimator( glcanvas, 60,true );
 		      animator.start();
-		   }
+		}
 	   
-		
-		/**
-		* translates map width into 3d model width
-		*/
-		protected float normalizeX(double data){
-			return (float) (sceneParams.getWidth() * (data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX()));
-		}
-		/**
-		* translates map height into 3d model height
-		*/
-		protected float normalizeY(double data){
-			return (float) (sceneParams.getHeight() * (data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY()));
-		}
-
-		protected float normalizeAlt(double data){
-			return (float) ((data - sceneParams.getMinAlt())/(sceneParams.getMaxAlt() - sceneParams.getMinAlt()));
-		}
 		protected void drawPoint(GL2 gl2, Point a){
 			gl2.glVertex3f(
-				normalizeX(a.x)-sceneParams.getWidth()/2 , 
-				normalizeAlt(a.alt),
-				normalizeY(a.y)-sceneParams.getHeight()/2 
+				DrawingUtils.normalizeX(sceneParams, a.x), 
+				DrawingUtils.normalizeAlt(sceneParams, a.alt),
+				DrawingUtils.normalizeY(sceneParams, a.y) 
 				
 			); 
 		}
 		protected void drawColoredPoint(GL2 gl2, Point a){
-    		Point color = ColorLevels.getColor1(normalizeColor(a.alt));
+    		Point color = ColorLevels.getColor1(DrawingUtils.normalizeAlt(sceneParams, a.alt));
     		gl2.glColor3f((float)color.x, (float)color.y, (float)color.alt);
 			drawPoint(gl2, a);
 		}
 		
-		protected float normalizeColor(double data){
-			return normalizeAlt(data);
-		}
 
 	   
 	}

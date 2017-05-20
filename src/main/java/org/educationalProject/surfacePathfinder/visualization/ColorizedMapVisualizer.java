@@ -14,9 +14,9 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 		gl2.glBegin(GL.GL_TRIANGLES);	
 		for(Triangle2D triangle : triangles){
 
-			drawColoredPoint(gl2, (Point)triangle.a);
-			drawColoredPoint(gl2, (Point)triangle.b);
-			drawColoredPoint(gl2, (Point)triangle.c);
+			DrawingUtils.drawColoredPoint(gl2, sceneParams, (Point)triangle.a);
+			DrawingUtils.drawColoredPoint(gl2, sceneParams, (Point)triangle.b);
+			DrawingUtils.drawColoredPoint(gl2, sceneParams, (Point)triangle.c);
 			
 		}
 		gl2.glEnd();
@@ -25,8 +25,8 @@ public class ColorizedMapVisualizer extends MapVisualizer{
 		gl2.glBegin(GL.GL_LINES);
 		gl2.glColor3f(0.5f, 0, 0.5f);
 		for(DefaultWeightedEdge edge : graph.edgeSet()){			
-			drawPoint(gl2, graph.getEdgeSource(edge));
-			drawPoint(gl2, graph.getEdgeTarget(edge));	      	        
+			DrawingUtils.drawPoint(gl2, sceneParams, graph.getEdgeSource(edge));
+			DrawingUtils.drawPoint(gl2, sceneParams, graph.getEdgeTarget(edge));	      	        
 		}
 		
 		gl2.glEnd();
