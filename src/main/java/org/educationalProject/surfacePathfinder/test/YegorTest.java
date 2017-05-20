@@ -23,7 +23,6 @@ import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.ModifiedJdiemke;
 import org.educationalProject.surfacePathfinder.visualization.DecolorizedMapVisualizer;
-import org.educationalProject.surfacePathfinder.visualization.GraphVisualizer;
 
 public class YegorTest {
 

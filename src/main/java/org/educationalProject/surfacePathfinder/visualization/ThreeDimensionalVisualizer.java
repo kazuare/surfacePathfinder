@@ -24,17 +24,11 @@ import io.github.jdiemke.triangulation.Triangle2D;
 import io.github.jdiemke.triangulation.Vector2D;
 
 public class ThreeDimensionalVisualizer implements GLEventListener{	   
-	   protected double maxX = Double.NEGATIVE_INFINITY;
-	   protected double minX = Double.POSITIVE_INFINITY;
-	   protected double maxY = Double.NEGATIVE_INFINITY;
-	   protected double minY = Double.POSITIVE_INFINITY;
-	   protected double maxAlt = Double.NEGATIVE_INFINITY;
-	   protected double minAlt = Double.POSITIVE_INFINITY;
+	   protected SceneParams sceneParams;
 	   private GLU glu = new GLU();
 	   private float rotation =0f;
 	   List<Triangle2D> triangles;
 	   List<Point> nodes = null;
-	   private float seenWidth = 2;
 	   private float staticRotation = 0;
 	   private float rotationDeltaDesired = 0.25f;
 	   private float rotationDelta = rotationDeltaDesired;
@@ -116,25 +110,17 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	      gl2.glLoadIdentity();
 	   }
 	   public void show3DMap(List<Triangle2D> triangles) {
-		  this.triangles = triangles;
-	      findExtremes();
-	      final GLProfile profile = GLProfile.get( GLProfile.GL2 );
-	      GLCapabilities capabilities = new GLCapabilities( profile );
-	      final GLCanvas glcanvas = new GLCanvas( capabilities );
-	      glcanvas.addGLEventListener( this );
-	      glcanvas.setSize( 700, 700 );
-	      final JFrame frame = new JFrame ( "3D" );
-	      frame.getContentPane().add(glcanvas);
-	      frame.setSize( frame.getContentPane().getPreferredSize() );
-	      frame.setVisible( true );
-	      final FPSAnimator animator = new FPSAnimator( glcanvas, 60,true );
-	      animator.start();
+		   	  show3DMap(triangles,null);
 	   }
 	   
 	   public void show3DMap(List<Triangle2D> triangles, List<Point> nodes) {
 			  this.triangles = triangles;
 			  this.nodes = nodes;
-		      findExtremes();
+			  
+			  sceneParams = new SceneParams();
+			  sceneParams.findExtremes(triangles);
+			  sceneParams.setWidthAndHeight(2, 2);
+			  
 		      final GLProfile profile = GLProfile.get( GLProfile.GL2 );
 		      GLCapabilities capabilities = new GLCapabilities( profile );
 		      final GLCanvas glcanvas = new GLCanvas( capabilities );
@@ -173,78 +159,38 @@ public class ThreeDimensionalVisualizer implements GLEventListener{
 	   
 		
 		/**
-		* translates map width into screen width
+		* translates map width into 3d model width
 		*/
 		protected float normalizeX(double data){
-			return (float) (seenWidth * (data - minX)/(maxX - minX));
+			return (float) (sceneParams.getWidth() * (data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX()));
 		}
 		/**
-		* translates map height into screen height
+		* translates map height into 3d model height
 		*/
 		protected float normalizeY(double data){
-			return (float) (seenWidth * (data - minY)/(maxY - minY));
+			return (float) (sceneParams.getHeight() * (data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY()));
 		}
-		/**
-		* translates map height into screen height
-		*/
+
 		protected float normalizeAlt(double data){
-			return (float) ((data - minAlt)/(maxAlt - minAlt));
+			return (float) ((data - sceneParams.getMinAlt())/(sceneParams.getMaxAlt() - sceneParams.getMinAlt()));
 		}
 		protected void drawPoint(GL2 gl2, Point a){
 			gl2.glVertex3f(
-				normalizeX(a.x)-seenWidth/2 , 
+				normalizeX(a.x)-sceneParams.getWidth()/2 , 
 				normalizeAlt(a.alt),
-				normalizeY(a.y)-seenWidth/2 
-				
-			); 
-		}
-		protected void drawPoint(GL2 gl2, Vector2D p){
-			Point a = (Point)p;
-			gl2.glVertex3f(
-				normalizeX(a.x)-seenWidth/2 , 
-				normalizeAlt(a.alt),
-				normalizeY(a.y)-seenWidth/2 
+				normalizeY(a.y)-sceneParams.getHeight()/2 
 				
 			); 
 		}
 		protected void drawColoredPoint(GL2 gl2, Point a){
     		Point color = ColorLevels.getColor1(normalizeColor(a.alt));
     		gl2.glColor3f((float)color.x, (float)color.y, (float)color.alt);
-			//gl2.glColor3f(1, normalizeColor(a.alt), 0);	
 			drawPoint(gl2, a);
 		}
 		
 		protected float normalizeColor(double data){
-			return (float) ((data - minAlt)/(maxAlt - minAlt));
+			return normalizeAlt(data);
 		}
 
-		protected void findExtremes(){	
-			for(Triangle2D t : triangles){
-				Point a = (Point)t.a;			
-				minX = Math.min(minX, a.x);			
-				minY = Math.min(minY, a.y);
-				minAlt = Math.min(minAlt, a.alt);			
-				maxX = Math.max(maxX, a.x);			
-				maxY = Math.max(maxY, a.y);			
-				maxAlt = Math.max(maxAlt, a.alt);
-				
-				a = (Point)t.b;			
-				minX = Math.min(minX, a.x);			
-				minY = Math.min(minY, a.y);
-				minAlt = Math.min(minAlt, a.alt);			
-				maxX = Math.max(maxX, a.x);			
-				maxY = Math.max(maxY, a.y);			
-				maxAlt = Math.max(maxAlt, a.alt);
-
-				a = (Point)t.c;			
-				minX = Math.min(minX, a.x);			
-				minY = Math.min(minY, a.y);
-				minAlt = Math.min(minAlt, a.alt);			
-				maxX = Math.max(maxX, a.x);			
-				maxY = Math.max(maxY, a.y);			
-				maxAlt = Math.max(maxAlt, a.alt);
-			}		
-		}
-		
 	   
 	}

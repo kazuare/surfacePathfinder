@@ -17,6 +17,11 @@ public class DecolorizedMapVisualizer extends MapVisualizer{
 		dataSet = true;
 	}
 	
+	public void setData(WeightedGraph<Point, DefaultWeightedEdge> graph){
+		this.graph = graph;
+		dataSet = true;
+	}
+	
 	protected void drawContent( GL2 gl2 ){
 		gl2.glLineWidth(1f);
 		gl2.glBegin(GL.GL_LINES);

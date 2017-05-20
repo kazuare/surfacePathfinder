@@ -26,14 +26,7 @@ public class MainDemoWindow {
 	public Point a;
 	public Point b;
 	public List<Point> points;
-	private double maxX = Double.NEGATIVE_INFINITY;
-	private double maxY = Double.NEGATIVE_INFINITY;
-	private double minX = Double.POSITIVE_INFINITY;
-	private double minY = Double.POSITIVE_INFINITY;
-	private double maxAlt = Double.NEGATIVE_INFINITY;
-	private double minAlt = Double.POSITIVE_INFINITY;
-	private double globalHeight = 0;
-	private double globalWidth = 0;
+	private SceneParams sceneParams;
 	private WeightedGraph<Point, DefaultWeightedEdge> graphToDraw = null;
 	private List<Point> path = null;
 	
@@ -47,22 +40,13 @@ public class MainDemoWindow {
 		this.path = path;
 	}
 	
-	protected void findExtremes(){		
-		for(Point a : points){			
-			minX = Math.min(minX, a.x);			
-			minY = Math.min(minY, a.y);
-			minAlt = Math.min(minAlt, a.alt);			
-			maxX = Math.max(maxX, a.x);			
-			maxY = Math.max(maxY, a.y);			
-			maxAlt = Math.max(maxAlt, a.alt);
-		}		
-	}
-	
     public void start(List<Point> pointsList, int width, int height, String title){
     	points = pointsList;
-		findExtremes();
-    	globalHeight = height;
-    	globalWidth = width;
+    	
+    	sceneParams = new SceneParams();
+    	sceneParams.findExtremes(points);
+    	sceneParams.setWidthAndHeight(width, height);
+
         GLProfile profile = GLProfile.getDefault();
         GLCapabilities capabilities = new GLCapabilities(profile);
         GLWindow window = GLWindow.create(capabilities);
@@ -83,11 +67,11 @@ public class MainDemoWindow {
         window.addMouseListener(new MouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent e) {	
-				currentClick = new Point(((double)e.getX())/globalWidth*maxX, (globalHeight - (double)e.getY())/globalHeight*maxY, 0);
+				currentClick = new Point(((double)e.getX())/sceneParams.getWidth()*sceneParams.getMaxX(), (sceneParams.getHeight() - (double)e.getY())/sceneParams.getHeight()*sceneParams.getMaxY(), 0);
 				if(a==null || b==null){
           			System.out.println("Point selected");
-          	  		double x = ((double)e.getX())/globalWidth*maxX;
-          	  		double y = (globalHeight - (double)e.getY())/globalHeight*maxY;
+          	  		double x = ((double)e.getX())/sceneParams.getWidth()*sceneParams.getMaxX();
+          	  		double y = (sceneParams.getHeight() - (double)e.getY())/sceneParams.getHeight()*sceneParams.getMaxY();
           	  		System.out.println(x);
           	  		double minDist = Double.POSITIVE_INFINITY;
           	  		Point minPoint = null;
@@ -130,13 +114,13 @@ public class MainDemoWindow {
         	* translates map width into screen width
         	*/
         	protected float normalizeWidth(double data){
-        		return (float) (2*(data - minX)/(maxX - minX)-1);
+        		return (float) (2*(data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX())-1);
         	}
         	/**
         	* translates map height into screen height
         	*/
         	protected float normalizeHeight(double data){
-        		return (float) (2*(data - minY)/(maxY - minY)-1);
+        		return (float) (2*(data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY())-1);
         	}
         	
         	protected void drawPoint(GL2 gl2, Vector2D a){
@@ -147,7 +131,7 @@ public class MainDemoWindow {
         	}
         	
         	protected float normalizeColor(double data){
-        		return (float) ((data - minAlt)/(maxAlt - minAlt));
+        		return (float) ((data - sceneParams.getMinAlt())/(sceneParams.getMaxAlt() - sceneParams.getMinAlt()));
         	}
         	
         	protected void drawColoredPoint(GL2 gl2, Point a){
@@ -219,19 +203,6 @@ public class MainDemoWindow {
         	        gl2.glEnd();
         		}
                 	
-        		/*
-        		if(currentClick!=null){
-        			gl2.glPointSize(1f);
-            		gl2.glBegin(GL.GL_POINTS);
-            		
-            		gl2.glColor3f(1, 0.5f, 1);	
-            		gl2.glVertex2f(
-        					normalizeWidth(currentClick.x),
-        					normalizeHeight(currentClick.y)
-        				); 
-            		gl2.glEnd();
-        		}
-        		*/
         	}
         	
 			@Override
@@ -254,7 +225,7 @@ public class MainDemoWindow {
 			public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
         	
         });
-        window.setSize((int)globalWidth, (int)globalHeight);
+        window.setSize((int)sceneParams.getWidth(), (int)sceneParams.getHeight());
         window.setTitle(title);
         window.setVisible(true);
         animator.start(); 

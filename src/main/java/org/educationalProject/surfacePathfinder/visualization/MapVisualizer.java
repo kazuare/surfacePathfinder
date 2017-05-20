@@ -15,10 +15,10 @@ import io.github.jdiemke.triangulation.Vector2D;
 * Subclasses can draw either filled triangles or not filled
 */
 public abstract class MapVisualizer extends Visualizer {
-	protected List<Point> path;
+	protected List<Point> path = null;
 	protected List<Triangle2D> triangles;
 	protected WeightedGraph<Point, DefaultWeightedEdge> graph;
-	
+	protected SceneParams sceneParams;
 	/**
 	* Sets data that needs to be visualized
 	*/
@@ -31,24 +31,17 @@ public abstract class MapVisualizer extends Visualizer {
 	
 	protected abstract void drawContent( GL2 gl2 );
 	
-	protected double maxX = Double.NEGATIVE_INFINITY;
-	protected double minX = Double.POSITIVE_INFINITY;
-	protected double maxY = Double.NEGATIVE_INFINITY;
-	protected double minY = Double.POSITIVE_INFINITY;
-	protected double maxAlt = Double.NEGATIVE_INFINITY;
-	protected double minAlt = Double.POSITIVE_INFINITY;
-	
 	/**
 	* translates map width into screen width
 	*/
 	protected float normalizeWidth(double data){
-		return (float) (width * (data - minX)/(maxX - minX));
+		return (float) (width * (data - sceneParams.getMinX())/(sceneParams.getMaxX() - sceneParams.getMinX()));
 	}
 	/**
 	* translates map height into screen height
 	*/
 	protected float normalizeHeight(double data){
-		return (float) (height * (data - minY)/(maxY - minY));
+		return (float) (height * (data - sceneParams.getMinY())/(sceneParams.getMaxY() - sceneParams.getMinY()));
 	}
 	
 	protected void drawPoint(GL2 gl2, Vector2D a){
@@ -63,18 +56,7 @@ public abstract class MapVisualizer extends Visualizer {
 	}
 	
 	protected float normalizeColor(double data){
-		return (float) ((data - minAlt)/(maxAlt - minAlt));
-	}
-
-	protected void findExtremes(){		
-		for(Point a : graph.vertexSet()){			
-			minX = Math.min(minX, a.x);			
-			minY = Math.min(minY, a.y);
-			minAlt = Math.min(minAlt, a.alt);			
-			maxX = Math.max(maxX, a.x);			
-			maxY = Math.max(maxY, a.y);			
-			maxAlt = Math.max(maxAlt, a.alt);
-		}		
+		return (float) ((data - sceneParams.getMinAlt())/(sceneParams.getMaxAlt() - sceneParams.getMinAlt()));
 	}
 	
 	protected void drawPath( GL2 gl2 ){
@@ -96,11 +78,14 @@ public abstract class MapVisualizer extends Visualizer {
 	public void display( GL2 gl2 ){
 		gl2.glClear( GL.GL_COLOR_BUFFER_BIT );
 	    gl2.glLoadIdentity();
-	        
-		findExtremes();				
-			
+	    
+	    sceneParams = new SceneParams();
+	    sceneParams.setWidthAndHeight(width, height);
+		sceneParams.findExtremes(graph.vertexSet());			
+		
 		drawContent(gl2);
-			
-		drawPath(gl2);
+		
+		if(path != null)	
+			drawPath(gl2);
 	}
 }
