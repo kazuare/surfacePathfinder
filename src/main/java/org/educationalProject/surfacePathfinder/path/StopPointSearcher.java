@@ -2,67 +2,68 @@ package org.educationalProject.surfacePathfinder.path;
 
 import org.educationalProject.surfacePathfinder.Point;
 
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class StopPointSearcher implements Runnable {
-    private AtomicInteger stopPoint1;
-    private AtomicInteger stopPoint2;
-    private AtomicBoolean stop;
-    private CopyOnWriteArrayList<Point> settledNodes1;
-    private CopyOnWriteArrayList<Point> settledNodes2;
+    protected AtomicInteger stopPointSource;
+    protected AtomicInteger stopPointDestination;
+    protected AtomicBoolean stop;
+    protected CopyOnWriteArrayList<Point> settledNodesSource;
+    protected CopyOnWriteArrayList<Point> settledNodesDestination;
 
-    public StopPointSearcher(AtomicInteger stopPoint1, AtomicInteger stopPoint2,
+    public StopPointSearcher(AtomicInteger stopPointSource, AtomicInteger stopPointDestination,
                              AtomicBoolean stop,
-                             CopyOnWriteArrayList<Point> settledNodes1,
-                             CopyOnWriteArrayList<Point> settledNodes2) {
-        this.stopPoint1 = stopPoint1;
-        this.stopPoint2 = stopPoint2;
+                             CopyOnWriteArrayList<Point> settledNodesSource,
+                             CopyOnWriteArrayList<Point> settledNodesDestination) {
+        this.stopPointSource = stopPointSource;
+        this.stopPointDestination = stopPointDestination;
         this.stop = stop;
-        this.settledNodes1 = settledNodes1;
-        this.settledNodes2 = settledNodes2;
+        this.settledNodesSource = settledNodesSource;
+        this.settledNodesDestination = settledNodesDestination;
     }
-    private void findStopPoint(int oldSizeNodes1, int oldSizeNodes2) {
-        int currentSizeNodes1 = 0;
-        int currentSizeNodes2 = 0;
-        if (settledNodes1.size() > oldSizeNodes1) {
-            currentSizeNodes1 = settledNodes1.size();
-            for (int i = oldSizeNodes1; i < currentSizeNodes1; i++) {
-                Point tmp = settledNodes1.get(i);
-                if (settledNodes2.contains(tmp)) {
+
+
+    protected void findStopPoint(int oldSizeNodesSource, int oldSizeNodesDestination) {
+        int currentSizeNodesSource = 0;
+        int currentSizeNodesDestination = 0;
+
+        if (settledNodesSource.size() > oldSizeNodesSource) {
+            currentSizeNodesSource = settledNodesSource.size();
+            for (int i = oldSizeNodesSource; i < currentSizeNodesSource; i++) {
+                Point tmp = settledNodesSource.get(i);
+                if (settledNodesDestination.contains(tmp)) {
                     stop.set(true);
-                    stopPoint1.set(i);
-                    stopPoint2.set(settledNodes2.indexOf(tmp));
+                    stopPointSource.set(i);
+                    stopPointDestination.set(settledNodesDestination.indexOf(tmp));
                     return;
                 }
             }
-            oldSizeNodes1 = currentSizeNodes1;
+            oldSizeNodesSource = currentSizeNodesSource;
         }
-        if (settledNodes2.size() > oldSizeNodes2) {
-            currentSizeNodes2 = settledNodes2.size();
-            for (int i = oldSizeNodes2; i < currentSizeNodes2; i++) {
-                Point tmp = settledNodes2.get(i);
-                if (settledNodes1.contains(tmp)) {
+
+        if (settledNodesDestination.size() > oldSizeNodesDestination) {
+            currentSizeNodesDestination = settledNodesDestination.size();
+            for (int i = oldSizeNodesDestination; i < currentSizeNodesDestination; i++) {
+                Point tmp = settledNodesDestination.get(i);
+                if (settledNodesSource.contains(tmp)) {
                     stop.set(true);
-                    stopPoint2.set(i);
-                    stopPoint1.set(settledNodes1.indexOf(tmp));
+                    stopPointDestination.set(i);
+                    stopPointSource.set(settledNodesSource.indexOf(tmp));
                     return;
                 }
             }
-            oldSizeNodes2 = currentSizeNodes2;
+            oldSizeNodesDestination = currentSizeNodesDestination;
         }
     }
 
     @Override
     public void run() {
-        int oldSizeNodes1 = 0;
-        int oldSizeNodes2 = 0;
-        int currentSizeNodes1 = 0;
-        int currentSizeNodes2 = 0;
+        int oldSizeNodesSource = 0;
+        int oldSizeNodesDestination = 0;
         while(!stop.get()) {
-            findStopPoint(oldSizeNodes1, oldSizeNodes2);
+            findStopPoint(oldSizeNodesSource, oldSizeNodesDestination);
         }
     }
 }
