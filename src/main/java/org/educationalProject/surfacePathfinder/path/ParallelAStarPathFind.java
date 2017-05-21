@@ -1,7 +1,6 @@
 package org.educationalProject.surfacePathfinder.path;
 
 
-import io.github.jdiemke.triangulation.Vector2D;
 import org.educationalProject.surfacePathfinder.Point;
 import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
 import org.jgrapht.WeightedGraph;
@@ -15,14 +14,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParallelAStarPathFind {
-    private WeightedGraph<Point, DefaultWeightedEdge> graph;
-    private WeightedGraph<Point, DefaultWeightedEdge> graphSource;
-    private WeightedGraph<Point, DefaultWeightedEdge> graphDestination;
-    private int sizePathSource;
-    private int sizePathDestination;
-    private Point source;
-    private Point destination;
-    private List<Point> shortestPath;
+    protected WeightedGraph<Point, DefaultWeightedEdge> graph;
+    protected WeightedGraph<Point, DefaultWeightedEdge> graphFromSource;
+    protected WeightedGraph<Point, DefaultWeightedEdge> graphFromDestination;
+    protected int sizePathSource;
+    protected int sizePathDestination;
+    protected Point source;
+    protected Point destination;
+    protected List<Point> shortestPath;
 
     public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                        Point source, Point destination){
@@ -34,7 +33,7 @@ public class ParallelAStarPathFind {
         }
         return shortestPath;
     }
-    private void initialize(WeightedGraph<Point, DefaultWeightedEdge> graph,
+    protected void initialize(WeightedGraph<Point, DefaultWeightedEdge> graph,
                             Point source, Point destination){
         this.graph = graph;
         GraphProxy graphProxySource = new GraphProxy(
@@ -47,48 +46,46 @@ public class ParallelAStarPathFind {
                 new ArrayList<Point>(graph.vertexSet()),
                 "ModifiedJdiemke"
         );
-        this.graphSource = graphProxySource;
-        this.graphDestination = graphProxyDestination;
+        this.graphFromSource = graphProxySource;
+        this.graphFromDestination = graphProxyDestination;
 
         for (DefaultWeightedEdge edge : graph.edgeSet()) {
             Point v1 = graph.getEdgeSource(edge);
             Point v2 = graph.getEdgeTarget(edge);
-            graphSource.addEdge(v1, v2, edge);
-            graphDestination.addEdge(v1, v2, edge);
+            graphFromSource.addEdge(v1, v2, edge);
+            graphFromDestination.addEdge(v1, v2, edge);
         }
 
         this.source = source;
         this.destination = destination;
     }
-    private void Merge() {
-        System.out.println(graph.edgeSet().size());
-        for (DefaultWeightedEdge edge : graphSource.edgeSet()) {
-            Point v1 = graphSource.getEdgeSource(edge);
-            Point v2 = graphSource.getEdgeTarget(edge);
+    private void FinalMerge() {
+        for (DefaultWeightedEdge edge : graphFromSource.edgeSet()) {
+            Point v1 = graphFromSource.getEdgeSource(edge);
+            Point v2 = graphFromSource.getEdgeTarget(edge);
             graph.addEdge(v1, v2, edge);
         }
-        for (DefaultWeightedEdge edge : graphDestination.edgeSet()) {
-            Point v1 = graphDestination.getEdgeSource(edge);
-            Point v2 = graphDestination.getEdgeTarget(edge);
+        for (DefaultWeightedEdge edge : graphFromDestination.edgeSet()) {
+            Point v1 = graphFromDestination.getEdgeSource(edge);
+            Point v2 = graphFromDestination.getEdgeTarget(edge);
             graph.addEdge(v1, v2, edge);
         }
-        System.out.println(graph.edgeSet().size());
     }
-    private void findPath() throws InterruptedException {
-        ArrayList<Point> path1 = new ArrayList<Point>();
-        ArrayList<Point> path2 = new ArrayList<Point>();
-        CopyOnWriteArrayList<Point> settledNodes1 = new CopyOnWriteArrayList<Point>();
-        CopyOnWriteArrayList<Point> settledNodes2 = new CopyOnWriteArrayList<Point>();
-        AtomicBoolean stop = new AtomicBoolean(false);
-        AtomicInteger stopPoint1 = new AtomicInteger(-1);
-        AtomicInteger stopPoint2 = new AtomicInteger(-1);
+    protected void findPath() throws InterruptedException {
+        ArrayList<Point> pathFromSource = new ArrayList<Point>();
+        ArrayList<Point> pathFromDestination = new ArrayList<Point>();
+        CopyOnWriteArrayList<Point> settledNodesSource = new CopyOnWriteArrayList<Point>();
+        CopyOnWriteArrayList<Point> settledNodesDestination = new CopyOnWriteArrayList<Point>();
+        AtomicBoolean stopFlag = new AtomicBoolean(false);
+        AtomicInteger stopPointSource = new AtomicInteger(-1);
+        AtomicInteger stopPointDestination = new AtomicInteger(-1);
 
-        Runnable partSource = new AStarThread(graphSource, source, destination,
-                settledNodes1, path1, stopPoint1, stop);
-        Runnable partDestination = new AStarThread(graphDestination, destination, source,
-                settledNodes2, path2, stopPoint2, stop);
-        Runnable stopRunnable = new StopPointSearcher(stopPoint1, stopPoint2, stop,
-                settledNodes1, settledNodes2);
+        Runnable partSource = new AStarThread(graphFromSource, source, destination,
+                settledNodesSource, pathFromSource, stopPointSource, stopFlag);
+        Runnable partDestination = new AStarThread(graphFromDestination, destination, source,
+                settledNodesDestination, pathFromDestination, stopPointDestination, stopFlag);
+        Runnable stopRunnable = new StopPointSearcher(stopPointSource, stopPointDestination, stopFlag,
+                settledNodesSource, settledNodesDestination);
 
         Thread threadSource = new Thread(partSource);
         Thread threadDestination = new Thread(partDestination);
@@ -96,19 +93,19 @@ public class ParallelAStarPathFind {
         threadSource.start();
         threadDestination.start();
         stopThread.start();
-        
+
         threadSource.join();
         threadDestination.join();
 
-        Collections.reverse(path2);
+        Collections.reverse(pathFromDestination);
         shortestPath = new ArrayList<Point>();
-        sizePathSource = path1.size();
-        sizePathDestination = path2.size();
+        sizePathSource = pathFromSource.size();
+        sizePathDestination = pathFromDestination.size();
         for (int i = 0; i < sizePathSource - 1; i++)
-            shortestPath.add(path1.get(i));
+            shortestPath.add(pathFromSource.get(i));
         for (int i = 0; i < sizePathDestination; i++)
-            shortestPath.add(path2.get(i));
-        Merge();
+            shortestPath.add(pathFromDestination.get(i));
+        FinalMerge();
     }
 
     public Double getLengthOfPath() {
@@ -117,12 +114,12 @@ public class ParallelAStarPathFind {
             return 0.0;
 
         for (int i = 0; i < sizePathSource - 2; i++) {
-            DefaultWeightedEdge e = graphSource.getEdge(shortestPath.get(i), shortestPath.get(i + 1));
-            length += (double) graphSource.getEdgeWeight(e);
+            DefaultWeightedEdge e = graphFromSource.getEdge(shortestPath.get(i), shortestPath.get(i + 1));
+            length += (double) graphFromSource.getEdgeWeight(e);
         }
         for (int i = 0; i < sizePathDestination - 1; i++) {
-            DefaultWeightedEdge e = graphDestination.getEdge(shortestPath.get(i), shortestPath.get(i + 1));
-            length += (double) graphDestination.getEdgeWeight(e);
+            DefaultWeightedEdge e = graphFromDestination.getEdge(shortestPath.get(i), shortestPath.get(i + 1));
+            length += (double) graphFromDestination.getEdgeWeight(e);
         }
         return length;
     }
