@@ -140,7 +140,7 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 	@Override
 	public DefaultWeightedEdge addEdge(Point sourceVertex, Point targetVertex) {return null;}
 	@Override
-	public boolean addEdge(Point sourceVertex, Point targetVertex, DefaultWeightedEdge e) {return false;}
+	public boolean addEdge(Point sourceVertex, Point targetVertex, DefaultWeightedEdge e) {return graph.addEdge(sourceVertex, targetVertex, e);}
 	@Override
 	public boolean addVertex(Point v) {return false;}
 	@Override
