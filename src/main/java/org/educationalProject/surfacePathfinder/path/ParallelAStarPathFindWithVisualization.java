@@ -8,9 +8,11 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,8 +44,8 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
         ArrayList<Point> pathFromDestination = new ArrayList<Point>();
         CopyOnWriteArrayList<Point> settledNodesSource = new CopyOnWriteArrayList<Point>();
         CopyOnWriteArrayList<Point> settledNodesDestination = new CopyOnWriteArrayList<Point>();
-        ConcurrentHashMap<Point,Point> edgesSource = new ConcurrentHashMap<Point, Point>();
-        ConcurrentHashMap<Point,Point> edgesDestination = new ConcurrentHashMap<Point, Point>();
+        CopyOnWriteArraySet<EdgeWithVertexes> edgesSource = new CopyOnWriteArraySet<EdgeWithVertexes>();
+        CopyOnWriteArraySet<EdgeWithVertexes> edgesDestination = new CopyOnWriteArraySet<EdgeWithVertexes>();
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         AtomicInteger stopPointSource = new AtomicInteger(-1);
         AtomicInteger stopPointDestination = new AtomicInteger(-1);
@@ -67,15 +69,21 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
 
         threadSource.join();
         threadDestination.join();
-
+        stopThread.interrupt();
         Collections.reverse(pathFromDestination);
         shortestPath = new ArrayList<Point>();
-        sizePathSource = pathFromSource.size();
-        sizePathDestination = pathFromDestination.size();
-        for (int i = 0; i < sizePathSource - 1; i++)
+        shortestPath.add(pathFromSource.get(0));
+        for (int i = 1; i < pathFromSource.size() - 1; i++){
             shortestPath.add(pathFromSource.get(i));
-        for (int i = 0; i < sizePathDestination; i++)
+            DefaultWeightedEdge e = graphFromSource.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
+            lengthOfPath += (double) graphFromSource.getEdgeWeight(e);
+        }
+        shortestPath.add(pathFromDestination.get(0));
+        for (int i = 1; i < pathFromDestination.size(); i++) {
             shortestPath.add(pathFromDestination.get(i));
+            DefaultWeightedEdge e = graphFromDestination.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
+            lengthOfPath += (double) graphFromDestination.getEdgeWeight(e);
+        }
     }
 }
 
