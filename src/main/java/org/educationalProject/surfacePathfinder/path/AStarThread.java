@@ -2,9 +2,11 @@ package org.educationalProject.surfacePathfinder.path;
 
 import org.educationalProject.surfacePathfinder.Point;
 import org.jgrapht.WeightedGraph;
+import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AStarThread  implements Runnable {
     protected WeightedGraph<Point, DefaultWeightedEdge> graph;
     protected CopyOnWriteArrayList<Point> settledNodes;
+    protected ConcurrentHashMap<Point, Double> distances;
     protected PriorityQueue<DistancePoint> unSettledNodes;
     protected Map<Point, Double> gScore;
     protected Map<Point, Double> hScore;
@@ -27,7 +30,8 @@ public class AStarThread  implements Runnable {
     AStarThread(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination,
                 CopyOnWriteArrayList<Point> settledNodes,
                 ArrayList<Point> shortestPath,
-                AtomicInteger stopPoint, AtomicBoolean stop){
+                AtomicInteger stopPoint, AtomicBoolean stop,
+                ConcurrentHashMap<Point, Double> distances){
         this.graph = graph;
         this.source = source;
         this.destination = destination;
@@ -35,6 +39,7 @@ public class AStarThread  implements Runnable {
         this.shortestPath = shortestPath;
         this.stop = stop;
         this.stopPoint = stopPoint;
+        this.distances = distances;
     }
 
     @Override
@@ -69,6 +74,7 @@ public class AStarThread  implements Runnable {
     protected void visitNode() {
         Point current = unSettledNodes.poll().point;
         settledNodes.add(current);
+        distances.put(current, gScore.get(current));
 
         if(stop.get() && stopPoint.get() != -1)
             return;

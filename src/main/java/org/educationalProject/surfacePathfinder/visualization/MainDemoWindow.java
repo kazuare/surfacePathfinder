@@ -26,6 +26,7 @@ public class MainDemoWindow {
 	public List<Point> points;
 	private SceneParams sceneParams;
 	private WeightedGraph<Point, DefaultWeightedEdge> graphToDraw = null;
+	private WeightedGraph<Point, DefaultWeightedEdge> graphToDraw2 = null;
 	private List<Point> path = null;
 	
 	Point currentClick = null;
@@ -33,7 +34,12 @@ public class MainDemoWindow {
 	public void setGraph(WeightedGraph<Point, DefaultWeightedEdge> graph){
 		graphToDraw = graph;
 	}
-	
+
+
+	public void setGraph2(WeightedGraph<Point, DefaultWeightedEdge> graph){
+		graphToDraw2 = graph;
+	}
+
 	public void setPath(List<Point> path){
 		this.path = path;
 	}
@@ -111,9 +117,12 @@ public class MainDemoWindow {
         	
         	protected void drawContent( GL2 gl2 ){
         		
-        		if(graphToDraw != null)
-        			DrawingUtils.drawGraph(gl2,sceneParams,graphToDraw,1);
-        		        		
+        		if(graphToDraw != null) {
+					DrawingUtils.drawGraph(gl2, sceneParams, graphToDraw, 1);
+					if(graphToDraw2 != null) {
+						DrawingUtils.drawGraph(gl2, sceneParams, graphToDraw2, 1);
+					}
+				}
         		gl2.glPointSize(1.5f);
         		gl2.glBegin(GL.GL_POINTS);
                 
