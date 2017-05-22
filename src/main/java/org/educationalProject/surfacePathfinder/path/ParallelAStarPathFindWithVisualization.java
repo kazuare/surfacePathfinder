@@ -40,25 +40,24 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
     }
 
     protected void findPath() throws InterruptedException {
+        ConcurrentHashMap<Point, Double> distanceSource = new ConcurrentHashMap<Point, Double>();
+        ConcurrentHashMap<Point, Double> distanceDestination = new ConcurrentHashMap<Point, Double>();
         ArrayList<Point> pathFromSource = new ArrayList<Point>();
         ArrayList<Point> pathFromDestination = new ArrayList<Point>();
         CopyOnWriteArrayList<Point> settledNodesSource = new CopyOnWriteArrayList<Point>();
         CopyOnWriteArrayList<Point> settledNodesDestination = new CopyOnWriteArrayList<Point>();
-        CopyOnWriteArraySet<EdgeWithVertexes> edgesSource = new CopyOnWriteArraySet<EdgeWithVertexes>();
-        CopyOnWriteArraySet<EdgeWithVertexes> edgesDestination = new CopyOnWriteArraySet<EdgeWithVertexes>();
+        CopyOnWriteArrayList<Point> intersection = new CopyOnWriteArrayList<Point>();
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         AtomicInteger stopPointSource = new AtomicInteger(-1);
         AtomicInteger stopPointDestination = new AtomicInteger(-1);
 
         Runnable partSource = new AStarThreadWithVisualization(graphFromSource, source, destination,
-                settledNodesSource, pathFromSource, stopPointSource, stopFlag, edgesSource);
+                settledNodesSource, pathFromSource, stopPointSource, stopFlag, demo, 1, distanceSource);
         Runnable partDestination = new AStarThreadWithVisualization(graphFromDestination, destination, source,
-                settledNodesDestination, pathFromDestination, stopPointDestination, stopFlag, edgesDestination);
+                settledNodesDestination, pathFromDestination, stopPointDestination, stopFlag, demo, 2,distanceDestination);
 
-        Runnable stopRunnable = new StopPointSearcherWithVisualization(graph,
-                edgesSource, edgesDestination,
-                stopPointSource, stopPointDestination, stopFlag,
-                settledNodesSource, settledNodesDestination, demo);
+        Runnable stopRunnable = new StopPointSearcher(stopPointSource, stopPointDestination, stopFlag,
+                settledNodesSource, settledNodesDestination, intersection, distanceSource, distanceDestination);
 
         Thread threadSource = new Thread(partSource);
         Thread threadDestination = new Thread(partDestination);
@@ -69,7 +68,7 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
 
         threadSource.join();
         threadDestination.join();
-        stopThread.interrupt();
+
         Collections.reverse(pathFromDestination);
         shortestPath = new ArrayList<Point>();
         shortestPath.add(pathFromSource.get(0));
@@ -84,6 +83,7 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
             DefaultWeightedEdge e = graphFromDestination.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
             lengthOfPath += (double) graphFromDestination.getEdgeWeight(e);
         }
+        demo.setPath(shortestPath);
     }
 }
 
