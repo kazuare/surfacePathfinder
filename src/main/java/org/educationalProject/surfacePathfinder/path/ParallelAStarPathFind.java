@@ -17,12 +17,10 @@ public class ParallelAStarPathFind {
     protected WeightedGraph<Point, DefaultWeightedEdge> graph;
     protected WeightedGraph<Point, DefaultWeightedEdge> graphFromSource;
     protected WeightedGraph<Point, DefaultWeightedEdge> graphFromDestination;
-    protected int sizePathSource;
-    protected int sizePathDestination;
     protected Point source;
     protected Point destination;
     protected List<Point> shortestPath;
-
+    protected double lengthOfPath;
     public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                        Point source, Point destination){
         initialize(graph, source, destination);
@@ -99,28 +97,25 @@ public class ParallelAStarPathFind {
 
         Collections.reverse(pathFromDestination);
         shortestPath = new ArrayList<Point>();
-        sizePathSource = pathFromSource.size();
-        sizePathDestination = pathFromDestination.size();
-        for (int i = 0; i < sizePathSource - 1; i++)
+
+        for (int i = 0; i < pathFromSource.size() - 1; i++){
             shortestPath.add(pathFromSource.get(i));
-        for (int i = 0; i < sizePathDestination; i++)
+        }
+
+        for (int i = 0; i < pathFromDestination.size(); i++) {
             shortestPath.add(pathFromDestination.get(i));
-        FinalMerge();
+        }
+
+        /*DefaultWeightedEdge e = graphFromDestination.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
+        lengthOfPath += (double) graphFromDestination.getEdgeWeight(e);*/
+
+        //FinalMerge();
     }
 
     public Double getLengthOfPath() {
-        Double length = 0.0;
         if (shortestPath == null)
             return 0.0;
 
-        for (int i = 0; i < sizePathSource - 2; i++) {
-            DefaultWeightedEdge e = graphFromSource.getEdge(shortestPath.get(i), shortestPath.get(i + 1));
-            length += (double) graphFromSource.getEdgeWeight(e);
-        }
-        for (int i = 0; i < sizePathDestination - 1; i++) {
-            DefaultWeightedEdge e = graphFromDestination.getEdge(shortestPath.get(i), shortestPath.get(i + 1));
-            length += (double) graphFromDestination.getEdgeWeight(e);
-        }
-        return length;
+        return lengthOfPath;
     }
 }
