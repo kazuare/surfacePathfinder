@@ -6,26 +6,42 @@ import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AStarThreadWithVisualization extends AStarThread {
-    ConcurrentHashMap<Point, Point> edges;
+    private CopyOnWriteArraySet<EdgeWithVertexes> edges;
+    private int oldGraphEdgeSetSize = 0;
 
     public AStarThreadWithVisualization(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                          Point source, Point destination,
                                          CopyOnWriteArrayList<Point> settledNodes,
                                          ArrayList<Point> shortestPath,
                                          AtomicInteger stopPoint, AtomicBoolean stop,
-                                         ConcurrentHashMap<Point, Point> edges) {
+                                         CopyOnWriteArraySet<EdgeWithVertexes> edges) {
         super(graph, source, destination, settledNodes, shortestPath, stopPoint, stop);
         this.edges = edges;
     }
     private void MergeGraph() {
-        for (DefaultWeightedEdge edge : graph.edgeSet()) {
-            edges.put(graph.getEdgeSource(edge), graph.getEdgeTarget(edge));
+        synchronized (edges) {
+            if (graph.edgeSet().size() == oldGraphEdgeSetSize)
+                return;
+            oldGraphEdgeSetSize = graph.edgeSet().size();
+            for (EdgeWithVertexes edge : edges) {
+                if (!graph.containsEdge(edge.edge))
+                    edges.remove(edge);
+            }
+            for (DefaultWeightedEdge edge : graph.edgeSet()) {
+                edges.add(new EdgeWithVertexes(graph.getEdgeSource(edge),
+                        graph.getEdgeTarget(edge),
+                        edge));
+            }
+            edges.notifyAll();
         }
     }
     protected Point findPath(){

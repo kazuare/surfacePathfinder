@@ -148,7 +148,7 @@ public class GraphProxy implements WeightedGraph<Point, DefaultWeightedEdge>,Und
 	@Override
 	public DefaultWeightedEdge removeEdge(Point sourceVertex, Point targetVertex) {return null;}
 	@Override
-	public boolean removeEdge(DefaultWeightedEdge e) {return false;}
+	public boolean removeEdge(DefaultWeightedEdge e) {return graph.removeEdge(e);}
 	@Override
 	public boolean removeVertex(Point v) {return false;}
 	@Override

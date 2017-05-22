@@ -5,22 +5,24 @@ import org.educationalProject.surfacePathfinder.visualization.MainDemoWindow;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class StopPointSearcherWithVisualization extends  StopPointSearcher {
     private WeightedGraph<Point, DefaultWeightedEdge> graph;
-    private ConcurrentHashMap<Point, Point> edgesSource;
-    private ConcurrentHashMap<Point, Point> edgesDestination;
+    private CopyOnWriteArraySet<EdgeWithVertexes> edgesSource;
+    private CopyOnWriteArraySet<EdgeWithVertexes> edgesDestination;
     private MainDemoWindow demo;
+    private int oldEdgeSourceSize = 0;
+    private int oldEdgeDestinationSize = 0;
     public StopPointSearcherWithVisualization(WeightedGraph<Point, DefaultWeightedEdge> graph,
-                                              ConcurrentHashMap<Point, Point> edgesSource,
-                                              ConcurrentHashMap<Point, Point> edgesDestination,
+                                              CopyOnWriteArraySet<EdgeWithVertexes> edgesDestination,
+                                              CopyOnWriteArraySet<EdgeWithVertexes> edgesSource,
                                               AtomicInteger stopPointSource, AtomicInteger stopPointDestination,
                                               AtomicBoolean stop,
                                               CopyOnWriteArrayList<Point> settledNodesSource,
@@ -34,30 +36,34 @@ public class StopPointSearcherWithVisualization extends  StopPointSearcher {
         this.demo = demo;
     }
 
-    private void MergeGraphs() {
-        HashMap<Point, Point> edgesTmp = new HashMap<Point, Point>();
-        Iterator it = edgesSource.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            edgesTmp.put((Point)pair.getKey(), (Point)pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-        it = edgesDestination.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            edgesTmp.put((Point)pair.getKey(), (Point)pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-        it = edgesTmp.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            graph.addEdge((Point)pair.getKey(), (Point)pair.getValue(), new DefaultWeightedEdge());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    private void MergeGraphs() throws InterruptedException{
+        synchronized (graph) {
+             if (oldEdgeSourceSize != edgesSource.size() ||
+                    oldEdgeDestinationSize != edgesDestination.size()) {
+                oldEdgeSourceSize = edgesSource.size();
+                oldEdgeDestinationSize = edgesDestination.size();
+
+                HashSet<DefaultWeightedEdge> edgesToRemove = new HashSet<DefaultWeightedEdge>();
+                for (DefaultWeightedEdge edge :graph.edgeSet()) {
+                    edgesToRemove.add(edge);
+                }
+                for (DefaultWeightedEdge edge : edgesToRemove) {
+                    graph.removeEdge(edge);
+                }
+                synchronized (edgesSource) {
+                    for (EdgeWithVertexes edge : edgesSource) {
+                        graph.addEdge(edge.source, edge.target, edge.edge);
+                    }
+                    edgesSource.wait();
+                }
+                synchronized (edgesDestination) {
+                     for (EdgeWithVertexes edge : edgesDestination) {
+                         graph.addEdge(edge.source, edge.target, edge.edge);
+                     }
+                     edgesDestination.wait();
+                 }
+             }
+             graph.wait();
         }
     }
     @Override
@@ -67,9 +73,14 @@ public class StopPointSearcherWithVisualization extends  StopPointSearcher {
 
         while(!stop.get()) {
             findStopPoint(oldSizeNodes1, oldSizeNodes2);
-            MergeGraphs();
             demo.setGraph(graph);
-
+            if (!stop.get())
+                try {
+                    MergeGraphs();
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
         }
     }
 }
