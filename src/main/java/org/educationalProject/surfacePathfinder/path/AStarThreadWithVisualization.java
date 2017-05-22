@@ -2,6 +2,8 @@ package org.educationalProject.surfacePathfinder.path;
 
 
 import org.educationalProject.surfacePathfinder.Point;
+import org.educationalProject.surfacePathfinder.onlineTriangulation.GraphProxy;
+import org.educationalProject.surfacePathfinder.visualization.MainDemoWindow;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -15,43 +17,41 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AStarThreadWithVisualization extends AStarThread {
-    private CopyOnWriteArraySet<EdgeWithVertexes> edges;
-    private int oldGraphEdgeSetSize = 0;
+    private MainDemoWindow demo;
+    private int index;
 
     public AStarThreadWithVisualization(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                          Point source, Point destination,
                                          CopyOnWriteArrayList<Point> settledNodes,
                                          ArrayList<Point> shortestPath,
                                          AtomicInteger stopPoint, AtomicBoolean stop,
-                                         CopyOnWriteArraySet<EdgeWithVertexes> edges) {
-        super(graph, source, destination, settledNodes, shortestPath, stopPoint, stop);
-        this.edges = edges;
+                                         MainDemoWindow demo, int index,
+                                        ConcurrentHashMap<Point, Double> distances) {
+        super(graph, source, destination, settledNodes, shortestPath, stopPoint, stop, distances);
+        this.demo = demo;
+        this.index = index;
     }
-    private void MergeGraph() {
-        synchronized (edges) {
-            if (graph.edgeSet().size() == oldGraphEdgeSetSize)
-                return;
-            oldGraphEdgeSetSize = graph.edgeSet().size();
-            for (EdgeWithVertexes edge : edges) {
-                if (!graph.containsEdge(edge.edge))
-                    edges.remove(edge);
-            }
-            for (DefaultWeightedEdge edge : graph.edgeSet()) {
-                edges.add(new EdgeWithVertexes(graph.getEdgeSource(edge),
-                        graph.getEdgeTarget(edge),
-                        edge));
-            }
-            edges.notifyAll();
-        }
-    }
+
     protected Point findPath(){
+        int oldSizeNodes = 0;
+
         while (!unSettledNodes.isEmpty()){
             visitNode();
-            MergeGraph();
             if(stop.get() && stopPoint.get() != -1) {
                 Point tmp = settledNodes.get(stopPoint.get());
                 return tmp;
             }
+            if (graph.edgeSet().size() == oldSizeNodes)
+                continue;
+            oldSizeNodes = graph.edgeSet().size();
+            if(graph instanceof GraphProxy){
+                if (index == 1)
+                    demo.setGraph(((GraphProxy) graph).getGraphClone());
+                else
+                    demo.setGraph2(((GraphProxy) graph).getGraphClone());
+
+            }
+
         }
         return source;
     }
