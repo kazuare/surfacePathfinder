@@ -59,15 +59,18 @@ public class DrawingUtils {
 		}
 	}
 	public static void drawGraph(GL2 gl2, SceneParams sceneParams, WeightedGraph<Point, DefaultWeightedEdge> graph, float lineWidth){
-		gl2.glLineWidth(lineWidth);
-		gl2.glBegin(GL.GL_LINES);
-        
-		for(DefaultWeightedEdge edge : graph.edgeSet()){			
-			drawColoredPoint(gl2, sceneParams, graph.getEdgeSource(edge));
-			drawColoredPoint(gl2, sceneParams, graph.getEdgeTarget(edge));	      	        
+		synchronized (graph) {
+			gl2.glLineWidth(lineWidth);
+			gl2.glBegin(GL.GL_LINES);
+
+			for (DefaultWeightedEdge edge : graph.edgeSet()) {
+				drawColoredPoint(gl2, sceneParams, graph.getEdgeSource(edge));
+				drawColoredPoint(gl2, sceneParams, graph.getEdgeTarget(edge));
+			}
+
+			gl2.glEnd();
+			graph.notifyAll();
 		}
-		
-		gl2.glEnd();
 	}
 	public static void drawPath(GL2 gl2, SceneParams sceneParams, List<Point> path, float lineWidth){
         gl2.glColor3f( 1, 1, 1 );
