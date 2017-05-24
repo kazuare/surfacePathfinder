@@ -3,6 +3,7 @@ package org.educationalProject.surfacePathfinder.twoTierAStar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.educationalProject.surfacePathfinder.EdgeWeighter;
@@ -30,7 +31,7 @@ public class TwoTierAStar {
 		this.ALTITUDE_MULTIPLIER = ALTITUDE_MULTIPLIER;
 		this.TRIANGULATION_RADIUS = TRIANGULATION_RADIUS;
 		points = (ArrayList<Vector2D>) p.clone();
-		Collections.shuffle(points);
+		Collections.shuffle(points, new Random(1));
 		roughPoints = new ArrayList<Vector2D>(points.subList(0, pointsInRough));
 		step = roughPathStep;
 	}
@@ -54,15 +55,22 @@ public class TwoTierAStar {
         	);        
         List<Point> roughNodes = roughAStar.getPath(a, b).getVertexList();
         
-        //DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
-        //vis.setData(roughGraph, roughNodes);
-        //SwingWindow.start(vis, 700, 700, "rough map");
-        
         List<Point> filteredNodes = new ArrayList<Point>();
         for(int i = 0; i < roughNodes.size() - 1; i += step)
         	filteredNodes.add(roughNodes.get(i));
         filteredNodes.add(roughNodes.get(roughNodes.size()-1));
         
+        ArrayList<Point> morePrecisePath = getMorePrecisePath(filteredNodes);
+        
+        DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
+        vis.setData(roughGraph, morePrecisePath);
+        SwingWindow.start(vis, 700, 700, "final map");
+        
+        return morePrecisePath;
+	}
+	
+	public ArrayList<Point> getMorePrecisePath(List<Point>filteredNodes){
+ 
         ArrayList<Point> finalNodes = new ArrayList<Point>();
         
         GraphProxy partialGraph;
@@ -84,17 +92,15 @@ public class TwoTierAStar {
             List<Point> partialNodes = partialAStar.getPath(filteredNodes.get(i), filteredNodes.get(i+1)).getVertexList();
             
             for(int j = 0; j < partialNodes.size(); j++)
-            	finalNodes.add(partialNodes.get(j));
+            	if(finalNodes.size()==0 || !finalNodes.get(finalNodes.size()-1).equals(partialNodes.get(j)))
+            		finalNodes.add(partialNodes.get(j));
         	
         }
         
-        DecolorizedMapVisualizer vis = new DecolorizedMapVisualizer();
-        vis.setData(roughGraph, finalNodes);
-        SwingWindow.start(vis, 700, 700, "final map");
         
         return finalNodes;
-        
 	}
+	
 	public static void analyzeResult(List<Point> path, SimpleWeightedGraph<Point,DefaultWeightedEdge> preparedGraph,  Point a, Point b){
 		if(path.get(0).equals(a))
 			System.out.println("path start is correct");
@@ -106,30 +112,21 @@ public class TwoTierAStar {
 		else
 			System.out.println("path end is _not_ correct");
 	
-		double weight = 0;
 		boolean invalid = false;
 		for(int i = 0; i < path.size()-1; i++){
-			Set<DefaultWeightedEdge> edges = preparedGraph.edgesOf(path.get(i));
-			boolean isWay = false;
-			for(DefaultWeightedEdge edge : edges){
-				if(
-					preparedGraph.getEdgeTarget(edge).equals(path.get(i+1))||
-					preparedGraph.getEdgeSource(edge).equals(path.get(i+1))
-				){
-					weight += preparedGraph.getEdgeWeight(edge);
-					isWay = true;
-					break;
-				}
-			}
-			if(!isWay){
-				System.out.println("path is incorrect");
+			if(
+				!preparedGraph.containsEdge(path.get(i), path.get(i+1))&&
+				!preparedGraph.containsEdge(path.get(i+1), path.get(i))
+			){
+				System.out.println("path is incorrect at index " + i);
+				System.out.println(path.get(i) + " to " + path.get(i+1));
 				invalid = true;
 				break;
 			}
 		}
 		if(!invalid){
 			System.out.println("path is OK");
-			System.out.println("weight is " + weight);
+			printPathWeight(path);
 		}
 		
 	}
