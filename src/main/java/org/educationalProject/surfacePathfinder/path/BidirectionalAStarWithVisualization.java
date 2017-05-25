@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFind{
-    private MainDemoWindow demo;
+public class BidirectionalAStarWithVisualization extends BidirectionalAStar {
+    protected MainDemoWindow demo;
 
     public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                        Point source, Point destination, MainDemoWindow demo) {
