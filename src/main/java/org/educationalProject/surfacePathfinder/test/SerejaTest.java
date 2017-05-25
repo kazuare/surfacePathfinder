@@ -50,7 +50,7 @@ public class SerejaTest {
     //is used to determene whether the edge is "bad" and should not be included
   //  static final double COS_THRESHOLD = 0.7;
 
-    public void test1() {
+    /*public void test1() {
         try{
             double resultingTime;
             // We will used this clock to measure time through all the phases
@@ -170,7 +170,7 @@ public class SerejaTest {
 
             PathVisualizer vis4 = new PathVisualizer();
             vis4.setData(aStarNodes, points);
-            SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s A*");*/
+            SwingWindow.start(vis4, 800, vis4.calculateWindowHeight(800), " Sereja`s A*");
 
             System.out.println("end");
         }catch(IOException e){
@@ -258,5 +258,5 @@ public class SerejaTest {
         DecolorizedMapVisualizer vis1 = new DecolorizedMapVisualizer();
         vis1.setData(graph, serejaNodes);
         SwingWindow.start(vis1, 700, 700, "Sereja");
-    }
+    }*/
 }

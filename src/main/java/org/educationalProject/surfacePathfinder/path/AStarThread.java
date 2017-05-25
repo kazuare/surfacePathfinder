@@ -14,8 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AStarThread  implements Runnable {
     protected WeightedGraph<Point, DefaultWeightedEdge> graph;
-    protected CopyOnWriteArrayList<Point> settledNodes;
-    protected ConcurrentHashMap<Point, Double> distances;
+    protected List<Point> settledNodes;
     protected PriorityQueue<DistancePoint> unSettledNodes;
     protected Map<Point, Double> gScore;
     protected Map<Point, Double> hScore;
@@ -25,21 +24,24 @@ public class AStarThread  implements Runnable {
     protected final Point source;
     protected final Point destination;
     protected AtomicBoolean stop;
-    protected AtomicInteger stopPoint;
+    ///
+    protected Point stopPoint;
+    protected CopyOnWriteArrayList<VisitedVertex> visitedVertices;
 
-    AStarThread(WeightedGraph<Point, DefaultWeightedEdge> graph, Point source, Point destination,
-                CopyOnWriteArrayList<Point> settledNodes,
-                ArrayList<Point> shortestPath,
-                AtomicInteger stopPoint, AtomicBoolean stop,
-                ConcurrentHashMap<Point, Double> distances){
+
+    public AStarThread(WeightedGraph<Point, DefaultWeightedEdge> graph,
+                          Point source, Point destination,
+                          ArrayList<Point> shortestPath,
+                          AtomicBoolean stop, Point stopPoint,
+                          CopyOnWriteArrayList<VisitedVertex> visitedVertices
+    ){
         this.graph = graph;
         this.source = source;
         this.destination = destination;
-        this.settledNodes = settledNodes;
         this.shortestPath = shortestPath;
         this.stop = stop;
         this.stopPoint = stopPoint;
-        this.distances = distances;
+        this.visitedVertices = visitedVertices;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class AStarThread  implements Runnable {
     };
 
     protected void initialize(){
-
+        settledNodes = new ArrayList<Point>();
         unSettledNodes = new PriorityQueue<DistancePoint>(comparator);
         gScore = new HashMap<Point, Double>();
         hScore = new HashMap<Point, Double>();
@@ -74,18 +76,26 @@ public class AStarThread  implements Runnable {
     protected void visitNode() {
         Point current = unSettledNodes.poll().point;
         settledNodes.add(current);
-        distances.put(current, gScore.get(current));
 
-        if(stop.get() && stopPoint.get() != -1)
+        VisitedVertex visitedVertex = new VisitedVertex(current, gScore.get(current), getHScore(current));
+        if(current.equals(destination)) {
+            stop.set(true);
+            stopPoint = destination;
+            return;
+        }
+        if(stop.get())
             return;
 
         List<Point> neighbors = getNeighbors(current);
         for (Point neighbor : neighbors) {
-            if(stop.get() && stopPoint.get() != -1)
+            if(stop.get())
                 return;
+
             if (settledNodes.contains(neighbor))
                 continue;
+
             Double tentativeScore = getGScore(current) + getDistance(current, neighbor);
+
             if (tentativeScore >= getGScore(neighbor))
                 continue;
             if(isUnSettled(neighbor)){
@@ -93,20 +103,22 @@ public class AStarThread  implements Runnable {
                 gScore.remove(neighbor);
                 hScore.remove(neighbor);
                 fScore.remove(neighbor);
+                // predecessors.remove(neighbor);
             }
             gScore.put(neighbor, tentativeScore);
             hScore.put(neighbor, getHScore(neighbor));
             fScore.put(neighbor, getGScore(neighbor) + getHScore(neighbor));
             predecessors.put(neighbor, current);
             unSettledNodes.add(new DistancePoint(neighbor, getFScore(neighbor)));
+            visitedVertex.addNeighbour(neighbor, getDistance(current, neighbor));
         }
+        visitedVertices.add(visitedVertex);
     }
     protected Point findPath(){
         while (!unSettledNodes.isEmpty()){
             visitNode();
-            if(stop.get() && stopPoint.get() != -1) {
-                Point tmp = settledNodes.get(stopPoint.get());
-                return tmp;
+            if(stop.get()) {
+                return stopPoint;
             }
         }
         return source;
@@ -154,7 +166,7 @@ public class AStarThread  implements Runnable {
     protected Double getHScore(Point current){
         Double h = hScore.get(current);
         if (h == null)
-            return Math.sqrt((destination.x - current.x) * (destination.x - current.x)
+            return  Math.sqrt((destination.x - current.x) * (destination.x - current.x)
                     + (destination.y - current.y) * (destination.y - current.y)
                     + (destination.alt - current.alt) * (destination.alt - current.alt));
 
