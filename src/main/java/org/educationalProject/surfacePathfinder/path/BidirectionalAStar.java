@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ParallelAStarPathFind {
+public class BidirectionalAStar {
     protected WeightedGraph<Point, DefaultWeightedEdge> graph;
     protected WeightedGraph<Point, DefaultWeightedEdge> graphForward;
     protected WeightedGraph<Point, DefaultWeightedEdge> graphReverse;
@@ -99,7 +99,7 @@ public class ParallelAStarPathFind {
         for (int i = 0; i < pathReverse.size(); i++)
             shortestPath.add(pathReverse.get(i));
 
-        for (int i = 1; i < shortestPath.size(); i++){
+        /*for (int i = 1; i < shortestPath.size(); i++){
             DefaultWeightedEdge e = graphForward.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
             if (e != null)
                 lengthOfPath += graphForward.getEdgeWeight(e);
@@ -107,7 +107,7 @@ public class ParallelAStarPathFind {
                 e = graphReverse.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
                 lengthOfPath += graphReverse.getEdgeWeight(e);
             }
-        }
+        }*/
     }
     public Double getLengthOfPath() {
         return lengthOfPath;
