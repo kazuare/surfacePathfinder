@@ -10,17 +10,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class StopPointSearcher implements Runnable {
-    private AtomicBoolean stop;
-    private Point stopPointForward;
-    private Point stopPointReverse;
-    private CopyOnWriteArrayList<VisitedVertex> visitedVerticesForward;
-    private CopyOnWriteArrayList<VisitedVertex> visitedVerticesReverse;
-    private Double minLength;
-    private double topF = 0.0;
-    private double topR = 0.0;
-    private double topFHeuristic = Double.MAX_VALUE;
-    private double topRHeuristic = Double.MAX_VALUE;
-    private boolean flag = false;
+    protected AtomicBoolean stop;
+    protected Point stopPointForward;
+    protected Point stopPointReverse;
+    protected CopyOnWriteArrayList<VisitedVertex> visitedVerticesForward;
+    protected CopyOnWriteArrayList<VisitedVertex> visitedVerticesReverse;
+    protected Double minLength;
+    protected double topF = 0.0;
+    protected double topR = 0.0;
+    protected double topFHeuristic = Double.MAX_VALUE;
+    protected double topRHeuristic = Double.MAX_VALUE;
+    protected boolean flag = false;
 
     public StopPointSearcher(AtomicBoolean stop, Point stopPointForward,
                                 Point stopPointReverse,
@@ -34,12 +34,8 @@ public class StopPointSearcher implements Runnable {
         minLength = Double.MAX_VALUE;
     }
 
-    private void setPoint(Point a, Point b) {
-        a.x = b.x;
-        a.y = b.y;
-        a.alt = b.alt;
-    }
-    private int containsVertex(CopyOnWriteArrayList<VisitedVertex> visitedVertices, Point p){
+
+    protected int containsVertex(CopyOnWriteArrayList<VisitedVertex> visitedVertices, Point p){
         for (int i = 0; i < visitedVertices.size(); i++) {
             if (visitedVertices.get(i).vertex.equals(p)) {
                 return i;
@@ -47,9 +43,22 @@ public class StopPointSearcher implements Runnable {
         }
         return -1;
     }
+    protected boolean checkStop() {
+        if (stop.get()) {
+            if (!stopPointForward.equals(new Point(0.0, 0.0, 0.0)))
+                stopPointReverse.setPoint(visitedVerticesReverse.get(0).vertex);
+            if (!stopPointReverse.equals(new Point(0.0, 0.0, 0.0)))
+                stopPointForward.setPoint(visitedVerticesForward.get(0).vertex);
+            return true;
+        }
+        return false;
+    }
 
-    private void findStopPoint(int oldSizeVisitedForward,
+    protected void findStopPoint(int oldSizeVisitedForward,
                                int oldSizeVisitedReverse){
+
+        if (checkStop())
+            return;
 
 
         int curSizeVisitedForward = visitedVerticesForward.size();
@@ -61,23 +70,23 @@ public class StopPointSearcher implements Runnable {
                 if (index != -1) {
                     double tmpLength = v.distance + v.neighbours.get(neighbour) + visitedVerticesReverse.get(index).distance;
                     if (tmpLength < minLength) {
-                        // System.out.println("minLength " + minLength);
                         minLength = tmpLength;
                         flag = true;
-                        setPoint(stopPointForward, v.vertex);
-                        setPoint(stopPointReverse, neighbour);
+                        stopPointForward.setPoint(v.vertex);
+                        stopPointReverse.setPoint(neighbour);
                         topFHeuristic = v.heuristic;
                         topRHeuristic = visitedVerticesReverse.get(index).heuristic;
                     }
                 }
             }
-            if ((v.distance > topF) && (v.heuristic > topFHeuristic) && flag) {
+            if ((v.distance > topF) && (v.heuristic < topFHeuristic) && flag) {
                 topF = v.distance;
                 //topFHeuristic = v.heuristic;
             }
-
         }
 
+        if (checkStop())
+            return;
 
         int curSizeVisitedReverse = visitedVerticesReverse.size();
         for (int i = oldSizeVisitedReverse; i < curSizeVisitedReverse; i++){
@@ -87,38 +96,31 @@ public class StopPointSearcher implements Runnable {
                 if (index != -1) {
                     double tmpLength = v.distance + v.neighbours.get(neighbour) + visitedVerticesForward.get(index).distance;
                     if (tmpLength < minLength) {
-                        // System.out.println("minLength " + minLength);
                         minLength = tmpLength;
                         flag = true;
-                        setPoint(stopPointReverse, v.vertex);
-                        setPoint(stopPointForward, neighbour);
+                        stopPointReverse.setPoint(v.vertex);
+                        stopPointForward.setPoint(neighbour);
                         topRHeuristic = v.heuristic;
                         topFHeuristic = visitedVerticesForward.get(index).heuristic;
                     }
                 }
             }
-            if((v.distance > topR) && (v.heuristic > topRHeuristic) && flag) {
+            if((v.distance > topR) && (v.heuristic < topRHeuristic) && flag) {
                 topR = v.distance;
                 //topRHeuristic = v.heuristic;
             }
         }
 
+        if (checkStop())
+            return;
+
         oldSizeVisitedForward = curSizeVisitedForward;
         oldSizeVisitedReverse = curSizeVisitedReverse;
-
-        if (topF + topR > minLength) {
-            // System.out.println("top " + (topF + topR));
-            System.out.println("minLength " + minLength);
-            /*System.out.println("forw " + containsVertex(visitedVerticesForward, stopPointForward) +
-                   "/" + stopIndexForward.get() + "/" + visitedVerticesForward.size());
-            System.out.println("rever " + containsVertex(visitedVerticesReverse, stopPointReverse)
-                    + "/" + stopIndexReverse.get() + "/" + visitedVerticesReverse.size());
-            System.out.println("forw nsp" + stopPointForward.toString());
-            System.out.println("rever nsp" + stopPointReverse.toString());
-            System.out.println("forw nsp stindex " + visitedVerticesForward.get(stopIndexForward.get()).vertex.toString());
-            System.out.println("rever nsp stindex " + visitedVerticesReverse.get(stopIndexReverse.get()).vertex.toString());*/
+        /*if (flag)
+            stop.set(true);*/
+        if (topF + topR > minLength)
             stop.set(true);
-        }
+
     }
     @Override
     public void run() {

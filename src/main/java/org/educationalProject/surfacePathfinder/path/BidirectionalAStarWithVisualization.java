@@ -6,14 +6,13 @@ import org.jgrapht.WeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFind{
-    private MainDemoWindow demo;
-    private double lengthOfPath = 0.0;
+public class BidirectionalAStarWithVisualization extends BidirectionalAStar {
+    protected MainDemoWindow demo;
+
     public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                        Point source, Point destination, MainDemoWindow demo) {
         initialize(graph, source, destination, demo);
@@ -40,9 +39,9 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
         CopyOnWriteArrayList<VisitedVertex> visitedForward = new CopyOnWriteArrayList<VisitedVertex>();
         CopyOnWriteArrayList<VisitedVertex> visitedReverse = new CopyOnWriteArrayList<VisitedVertex>();
 
-        Runnable partSource = new AStarThreadWithVisualization(graphFromSource, source, destination,
+        Runnable partSource = new AStarThreadWithVisualization(graphForward, source, destination,
                 pathForward, stopFlag, stopPointForward, visitedForward, demo, 1);
-        Runnable partDestination = new AStarThreadWithVisualization(graphFromDestination, destination, source,
+        Runnable partDestination = new AStarThreadWithVisualization(graphReverse, destination, source,
                 pathReverse, stopFlag, stopPointReverse, visitedReverse, demo, 2);
         Runnable stopRunnable = new StopPointSearcher(stopFlag, stopPointForward, stopPointReverse,
                 visitedForward, visitedReverse);
@@ -57,27 +56,9 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
         threadSource.join();
         threadDestination.join();
 
-        System.out.println(pathForward.size());
-        System.out.println(pathReverse.size());
-
-        Collections.reverse(pathReverse);
-        shortestPath = new ArrayList<Point>();
-        for (int i = 0; i < pathForward.size(); i++)
-            shortestPath.add(pathForward.get(i));
-
-        for (int i = 0; i < pathReverse.size(); i++)
-            shortestPath.add(pathReverse.get(i));
-
-        for (int i = 1; i < shortestPath.size(); i++){
-            DefaultWeightedEdge e = graphFromSource.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
-            if (e != null)
-                lengthOfPath += (double) graphFromSource.getEdgeWeight(e);
-            else {
-                e = graphFromDestination.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
-                lengthOfPath += (double) graphFromDestination.getEdgeWeight(e);
-            }
-        }
+        retrievePath(pathForward, pathReverse);
         demo.setPath(shortestPath);
     }
+
 }
 
