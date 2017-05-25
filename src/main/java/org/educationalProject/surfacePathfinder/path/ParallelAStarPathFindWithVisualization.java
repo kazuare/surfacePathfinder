@@ -1,6 +1,5 @@
 package org.educationalProject.surfacePathfinder.path;
 
-
 import org.educationalProject.surfacePathfinder.Point;
 import org.educationalProject.surfacePathfinder.visualization.MainDemoWindow;
 import org.jgrapht.WeightedGraph;
@@ -8,22 +7,15 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
-
-public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFind {
+public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFind{
     private MainDemoWindow demo;
-
+    private double lengthOfPath = 0.0;
     public List<Point> getShortestPath(WeightedGraph<Point, DefaultWeightedEdge> graph,
                                        Point source, Point destination, MainDemoWindow demo) {
-
-
         initialize(graph, source, destination, demo);
         try {
             findPath();
@@ -40,24 +32,20 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
     }
 
     protected void findPath() throws InterruptedException {
-        ConcurrentHashMap<Point, Double> distanceSource = new ConcurrentHashMap<Point, Double>();
-        ConcurrentHashMap<Point, Double> distanceDestination = new ConcurrentHashMap<Point, Double>();
-        ArrayList<Point> pathFromSource = new ArrayList<Point>();
-        ArrayList<Point> pathFromDestination = new ArrayList<Point>();
-        CopyOnWriteArrayList<Point> settledNodesSource = new CopyOnWriteArrayList<Point>();
-        CopyOnWriteArrayList<Point> settledNodesDestination = new CopyOnWriteArrayList<Point>();
-        CopyOnWriteArrayList<Point> intersection = new CopyOnWriteArrayList<Point>();
+        ArrayList<Point> pathForward = new ArrayList<Point>();
+        ArrayList<Point> pathReverse = new ArrayList<Point>();
         AtomicBoolean stopFlag = new AtomicBoolean(false);
-        AtomicInteger stopPointSource = new AtomicInteger(-1);
-        AtomicInteger stopPointDestination = new AtomicInteger(-1);
+        Point stopPointForward = new Point(0.0, 0.0, 0.0);
+        Point stopPointReverse = new Point(0.0, 0.0, 0.0);
+        CopyOnWriteArrayList<VisitedVertex> visitedForward = new CopyOnWriteArrayList<VisitedVertex>();
+        CopyOnWriteArrayList<VisitedVertex> visitedReverse = new CopyOnWriteArrayList<VisitedVertex>();
 
         Runnable partSource = new AStarThreadWithVisualization(graphFromSource, source, destination,
-                settledNodesSource, pathFromSource, stopPointSource, stopFlag, demo, 1, distanceSource);
+                pathForward, stopFlag, stopPointForward, visitedForward, demo, 1);
         Runnable partDestination = new AStarThreadWithVisualization(graphFromDestination, destination, source,
-                settledNodesDestination, pathFromDestination, stopPointDestination, stopFlag, demo, 2,distanceDestination);
-
-        Runnable stopRunnable = new StopPointSearcher(stopPointSource, stopPointDestination, stopFlag,
-                settledNodesSource, settledNodesDestination, intersection, distanceSource, distanceDestination);
+                pathReverse, stopFlag, stopPointReverse, visitedReverse, demo, 2);
+        Runnable stopRunnable = new StopPointSearcher(stopFlag, stopPointForward, stopPointReverse,
+                visitedForward, visitedReverse);
 
         Thread threadSource = new Thread(partSource);
         Thread threadDestination = new Thread(partDestination);
@@ -69,19 +57,25 @@ public class ParallelAStarPathFindWithVisualization extends ParallelAStarPathFin
         threadSource.join();
         threadDestination.join();
 
-        Collections.reverse(pathFromDestination);
+        System.out.println(pathForward.size());
+        System.out.println(pathReverse.size());
+
+        Collections.reverse(pathReverse);
         shortestPath = new ArrayList<Point>();
-        shortestPath.add(pathFromSource.get(0));
-        for (int i = 1; i < pathFromSource.size() - 1; i++){
-            shortestPath.add(pathFromSource.get(i));
+        for (int i = 0; i < pathForward.size(); i++)
+            shortestPath.add(pathForward.get(i));
+
+        for (int i = 0; i < pathReverse.size(); i++)
+            shortestPath.add(pathReverse.get(i));
+
+        for (int i = 1; i < shortestPath.size(); i++){
             DefaultWeightedEdge e = graphFromSource.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
-            lengthOfPath += (double) graphFromSource.getEdgeWeight(e);
-        }
-        shortestPath.add(pathFromDestination.get(0));
-        for (int i = 1; i < pathFromDestination.size(); i++) {
-            shortestPath.add(pathFromDestination.get(i));
-            DefaultWeightedEdge e = graphFromDestination.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
-            lengthOfPath += (double) graphFromDestination.getEdgeWeight(e);
+            if (e != null)
+                lengthOfPath += (double) graphFromSource.getEdgeWeight(e);
+            else {
+                e = graphFromDestination.getEdge(shortestPath.get(i - 1), shortestPath.get(i));
+                lengthOfPath += (double) graphFromDestination.getEdgeWeight(e);
+            }
         }
         demo.setPath(shortestPath);
     }
