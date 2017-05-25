@@ -21,7 +21,11 @@ public class Point extends Vector2D {
 			return true;
 		return (x == b.x) && (y == b.y);
 	}
-	
+	public void setPoint(Point b) {
+		this.x = b.x;
+		this.y = b.y;
+		this.alt = b.alt;
+	}
 	@Override
 	public boolean equals(Object obj){
 		if (this == obj)
