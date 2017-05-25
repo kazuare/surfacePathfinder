@@ -85,7 +85,7 @@ public class ParallelAStarPathFind {
                 pathForward, stopFlag, stopPointForward, visitedForward);
         Runnable partDestination = new AStarThread(graphFromDestination, destination, source,
                 pathReverse, stopFlag, stopPointReverse, visitedReverse);
-        Runnable stopRunnable = new NewStopPointSearcher(stopFlag, stopPointForward, stopPointReverse,
+        Runnable stopRunnable = new StopPointSearcher(stopFlag, stopPointForward, stopPointReverse,
                 visitedForward, visitedReverse);
 
         Thread threadSource = new Thread(partSource);
