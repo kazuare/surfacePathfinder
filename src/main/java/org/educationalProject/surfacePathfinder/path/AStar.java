@@ -8,7 +8,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import java.util.*;
 
 
-public class AStarPathFind {
+public class AStar {
     protected WeightedGraph<Point, DefaultWeightedEdge> graph;
     protected PriorityQueue<DistancePoint> unSettledNodes;
     protected List<Point> settledNodes;
