@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class AStarThreadWithVisualization extends NewAStarThread {
+public class AStarThreadWithVisualization extends AStarThread {
     private MainDemoWindow demo;
     private int index;
 
