@@ -7,12 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import org.educationalProject.surfacePathfinder.*;
-import org.educationalProject.surfacePathfinder.path.AStarPathFind;
-import org.educationalProject.surfacePathfinder.path.ParallelAStarPathFind;
 import org.educationalProject.surfacePathfinder.timing.NanoClock;
 import org.educationalProject.surfacePathfinder.timing.TicTocException;
 import org.educationalProject.surfacePathfinder.visualization.ColorizedMapVisualizer;
